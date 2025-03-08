@@ -1,2 +1,833 @@
 \section{Information and Conditioning}
 \label{sect:info-cond}
+\begin{enumerate}
+\item In financial economics, often we are dealing with \emph{stochastic
+processes}, which describe how different economic variables change over time; we
+are handling some ``dynamic'' random variables. An important topic to be
+studied here is \emph{hedging}, which is about adjusting our portfolio
+positions in response to the changes in the economic variables over time.
+Of course, when we are constructing our portfolio position at time \(t\), we
+would only have access to \emph{information} available as of time \(t\); we
+cannot look into the future! In view of this, it is crucial to investigate the
+\emph{accrual of information} over time, to ensure that our hedging strategy
+would not ``accidentally'' use some information that cannot be accessed.
+
+Therefore, in \Cref{sect:info-cond}, we will establish a rigorous framework for
+studying the concepts of \emph{information} and \emph{conditioning}
+(``incorporating information on hand''), which are fundamental for our later
+discussions on the stochastic processes appearing in financial economics.
+\end{enumerate}
+\subsection{Information and \(\sigma\)-algebras}
+\begin{enumerate}
+\item \label{it:coin-tossing-eg} \textbf{Coin tossing example.} To illustrate
+the concept of \emph{information}, we will consider the following example of
+tossing a coin three times independently, whose sample space can be expressed
+as
+\begin{align*}
+\Omega&=\{H,T\}^{3}=\{\omega=(\omega_1,\omega_2,\omega_3):\omega_1,\omega_2,\omega_3\in\{H,T\}\} \\
+&=\{(H,H,H), (T,H,H), (H,T,H), (H,H,T), (T,T,H), (T,H,T), (H,T,T), (T,T,T)\}
+\end{align*}
+(\(H\): heads, \(T\): tails). As \(\Omega\) is finite, we can set the
+\(\sigma\)-algebra on \(\Omega\) as \(\mathcal{F}=\mathcal{P}(\Omega)\) without
+issues.  For every \(n=0,1,2,3\), let \(\mathcal{F}_n\) denote the family of
+all events whose occurrence can be decided (or events \emph{resolved}) after
+the first \(n\) tosses, i.e.,
+\begin{align*}
+\mathcal{F}_0&=\{\varnothing,\Omega\}, \\
+\mathcal{F}_1&=\{\{\omega\in\Omega:\omega_1\in A\}:A\subseteq \{H,T\}\} \\
+&=\{\{\omega\in\Omega:\omega_1\in \varnothing\},
+\{\omega\in\Omega:\omega_1=\vc{H}\},
+\{\omega\in\Omega:\omega_1=\mgc{T}\},
+\{\omega\in\Omega:\omega_1\in\{H,T\}\}
+\} \\
+&=\{\varnothing,\{(\vc{H},H,H), (\vc{H},T,H), (\vc{H},H,T), (\vc{H},T,T)\},
+\{(\mgc{T},H,H), (\mgc{T},T,H), (\mgc{T},H,T), (\mgc{T},T,T)\}, \Omega\}, \\
+\mathcal{F}_2&=\{\{\omega\in\Omega:(\omega_1,\omega_2)\in A\}:A\subseteq \{H,T\}^{2}\}, \\
+\mathcal{F}_3&=\mathcal{P}(\Omega).
+\end{align*}
+The families \(\mathcal{F}_0,\mathcal{F}_1,\mathcal{F}_2,\mathcal{F}_3\) are
+all \(\sigma\)-algebras on \(\Omega\) (check!). It is instructive to interpret
+these \(\sigma\)-algebras as representations of the available information about
+the true outcome \(\omega\), which is identified by what events are
+resolved. When there are more events resolved, more information is available
+and we can specify the true \(\omega\) more precisely. Examples:
+\begin{itemize}
+\item The set \(\mathcal{F}_0=\{\varnothing,\Omega\}\) represents the
+information available initially before having any tosses. Initially we know
+nothing more than just ``\(\omega\) belongs to \(\Omega\) (and does not
+belong to \(\varnothing\))'', so only \(\varnothing\) and \(\Omega\) appear in
+\(\mathcal{F}_0\).
+\item The set \(\mathcal{F}_1\) represents the information available after the
+first toss. Intuitively, we know the information gained by having the first
+toss is the outcome of the first toss; this piece of information is represented
+mathematically by the two sets: \(\{(\vc{H},H,H), (\vc{H},T,H), (\vc{H},H,T),
+(\vc{H},T,T)\}\) and \(\{(\mgc{T},H,H), (\mgc{T},T,H), (\mgc{T},H,T),
+(\mgc{T},T,T)\}\). More precisely, with this piece of information, we can
+determine whether the true \(\omega\) lies in each of these sets: If the
+first toss is heads, then the true \(\omega\) lies in the former set;
+otherwise, the true \(\omega\) lies in the latter set. This allows us to
+specify the true \(\omega\) more precisely than the mere
+``the true \(\omega\) is in \(\Omega\)''.
+\item The set \(\mathcal{F}_3=\mathcal{P}(\Omega)\) represents the information
+available after all three tosses. Since we would be able to know exactly what
+the true \(\omega\) is after the three tosses, we can determine for
+every subset of \(\Omega\) whether the true \(\omega\) lies in that set
+(including singletons); ``full'' information is available, and we can specify
+the true \(\omega\) \emph{exactly} by identifying the singleton to
+which the true \(\omega\) belongs.
+\end{itemize}
+The feature that more information about the true \(\omega\) would be
+gained when we toss the coin more number of times is reflected by the increasing
+number of events resolved upon more number of tosses:
+\(\mathcal{F}_0\subseteq \mathcal{F}_1\subseteq \mathcal{F}_2\subseteq\mathcal{F}_3\); these form a \emph{filtration}, which is a concept used for
+describing the information accrual over time.
+
+\item \textbf{Filtration.} The coin tossing example in
+\labelcref{it:coin-tossing-eg} illustrates (i) how \emph{information} can be
+represented mathematically (namely through the events appearing in
+\(\sigma\)-algebras, which can elucidate the true \(\omega\)), and (ii)
+a mathematical way to represent the information accrual over time (namely
+through \emph{filtration}).
+
+Now, let us introduce some terminologies for describing information. Let
+\((\Omega,\mathcal{F},\pr)\) be a probability space, and
+\(\mathcal{F}_t\subseteq \mathcal{F}\) be a \(\sigma\)-algebra on \(\Omega\)
+(such \(\sigma\)-algebra \(\mathcal{F}_t\) is sometimes said to be a
+\defn{sub-\(\sigma\)-algebra} of \(\mathcal{F}\)) for all \(t\in[0,T]\), where
+\(T>0\) is a constant.  If we have \(\mathcal{F}_s\subseteq \mathcal{F}_t\) for
+all \(0\le s\le t\le T\), then the collection \(\{\mathcal{F}_t\}\) (or
+\(\{\mathcal{F}_{t}\}_{t\in[0,T]}\) to be more specific) is said to be a
+\defn{filtration}.  In such case, the quadruple
+\((\Omega,\mathcal{F},\{\mathcal{F}_t\},\pr)\) is called a \defn{filtered
+probability space}.
+
+At time \(t\in[0,T]\), we would know for each set in \(\mathcal{F}_t\) whether
+the true \(\omega\) lies in that set, so \(\mathcal{F}_t\) effectively
+``\underline{filters}'' out impossible candidates for the true
+\(\omega\). For instance, in the coin tossing example from
+\labelcref{it:coin-tossing-eg}, assuming that the first toss in heads,
+\(\mathcal{F}_1\) would ``filter out'' the outcomes in \(\{(\mgc{T},H,H),
+(\mgc{T},T,H), (\mgc{T},H,T), (\mgc{T},T,T)\}\), as we know the true
+\(\omega\) must be in the set \\
+\(\{(\vc{H},H,H), (\vc{H},T,H), (\vc{H},H,T), (\vc{H},T,T)\}\).
+
+\item \textbf{\(\sigma\)-algebras generated by random variables.} Let \(X\) be
+a random variable. Then the \defn{\(\sigma\)-algebra generated by \(X\)},
+denoted by \(\sigma(X)\), is given by
+\(\sigma(X):=X^{-1}(\mathcal{B})=\{X^{-1}(B):B\in\mathcal{B}\}.\)
+We can verify that it is indeed a \(\sigma\)-algebra as follows:
+
+\begin{pf}
+\begin{enumerate}[label={(\arabic*)}]
+\item We have \(\varnothing=X^{-1}(\underbrace{\varnothing}_{\in\mathcal{B}})\in\sigma(X)\). \cmark
+\item Fix any \(A\in\sigma(X)\). Then \(A=X^{-1}(B)\) for some
+\(B\in\mathcal{B}\). Hence,
+\[
+A^{c}=(X^{-1}(B))^{c}
+=X^{-1}(\underbrace{B^{c}}_{\in\mathcal{B}})
+\in\sigma(X). \text{ \cmark}
+\]
+\item Fix any \(A_1,A_2,\dotsc\in\sigma(X)\). Then for all \(i\in\N\),
+\(A_i=X^{-1}(B_i)\) for some \(B_i\in\mathcal{B}\). Thus,
+\[
+\bigcup_{i=1}^{\infty}A_i
+=\bigcup_{i=1}^{\infty}X^{-1}(B_i)
+=X^{-1}\biggl(\underbrace{\bigcup_{i=1}^{\infty}B_i}_{\in\mathcal{B}}\biggr)
+\in\sigma(X). \text{ \cmark}
+\]
+\end{enumerate}
+\end{pf}
+
+\item \textbf{Understanding \(\sigma(X)\) from the information perspective.}
+From the information perspective, \(\sigma(X)\) is a special kind of
+\(\sigma\)-algebra that represents the information about the true \(\omega\)
+available from the random variable \(X\), or more precisely, from knowing the
+value \(X(\omega)\) where \(\omega\) is the true outcome (but not the value of
+the true \(\omega\) itself). To understand this better, we will revisit the
+coin tossing example in \labelcref{it:coin-tossing-eg}.
+
+To relate with financial economics more closely, we can associate the three
+coin tosses in \labelcref{it:coin-tossing-eg} with a \emph{three-period
+binomial tree}, where the outcomes in \(\Omega\) represents the paths taken in
+the three periods, say \(H\) represents an up move and \(T\) represents a down
+move. Let us fix the parameters as follows:
+\begin{itemize}
+\item \emph{up and down factors:} \(u=1.2\) and \(d=0.8\),
+\item \emph{initial stock price:} \(S_0=100\).
+\end{itemize}
+Now, let us consider the time-2 stock price \(S_2\) for example. We may treat
+\(S_2\) as a random variable (a function from \(\Omega\) to \(\R\)), defined by:
+\begin{align*}
+S_2(H,H,H)&=S_2(H,H,T)=120\text{ (\(uu\) node)}, \\
+S_2(H,T,H)&=S_2(H,T,T)=S_2(T,H,H)=S_2(T,H,T)=96 \text{ (\(ud\) node)}, \\
+S_2(T,T,H)&=S_2(T,T,T)=80 \text{ (\(dd\) node)}.
+\end{align*}
+(Note that the value taken by \(S_2\) depends only on the first two entries of the outcome \(\omega\).)
+
+Let \(A_{HH}=\{(H,H,H),(H,H,T)\}\), \(A_{HT}=\{(H,T,H),(H,T,T)\}\), \(A_{TH}=\{(T,H,H),(T,H,T)\}\), and
+\(A_{TT}=\{(T,T,H),(T,T,T)\}\). Then, note that:
+\[
+S_2^{-1}(\{120\})=A_{HH},\quad S_2^{-1}(\{96\})=A_{HT}\cup A_{TH},\quad S_2^{-1}(\{80\})=A_{TT}.
+\]
+Intuitively, this means that:
+\begin{itemize}
+\item if we observe \(S_2(\omega)=120\), then we know \(\omega\in A_{HH}\) (both heads in the first two tosses);
+\item if we observe \(S_2(\omega)=96\), then we know \(\omega\in A_{HT}\cup
+A_{TH}\) (one heads and one tails in the first two tosses);
+ \item if we observe \(S_2(\omega)=80\), then we know \(\omega\in A_{TT}\) (both tails in the first two tosses)
+\end{itemize}
+(\(\omega\) is the true outcome). Thus, by knowing the value of
+\(S_2(\omega)\), we can determine whether the true \(\omega\) lies in each
+of the sets \(A_{HH}\), \(A_{HT}\cup A_{TH}\), and \(A_{TT}\), i.e., these sets
+are resolved. Of course \(\varnothing\) and \(\Omega\) are also resolved, so do
+all unions and complements of these sets. These resolved sets altogether would
+then form the \(\sigma\)-algebra \(\sigma(S_2)\):
+\[
+\sigma(S_2)=\{
+\varnothing,A_{HH},A_{HT}\cup A_{TH}, A_{TT},
+A_{HH}\cup A_{HT}\cup A_{TH},
+A_{HT}\cup A_{TH}\cup A_{TT},
+A_{HH}\cup A_{TT},
+\Omega\}
+\]
+\begin{note}
+We have \(S_2^{-1}(\varnothing)=\varnothing\), \(S_{2}^{-1}(\{96,120\})=A_{HH}\cup A_{HT}\cup A_{TH}\),
+\(S_2^{-1}(\{80,96\})=A_{HT}\cup A_{TH}\cup A_{TT}\),
+\(S_2^{-1}(\{80,120\})=A_{HT}\cup A_{TT})\),
+and \(S_{2}^{-1}(\{80,96,120\})=\Omega\).
+\end{note}
+\item \textbf{Understanding measurability from the information perspective.}
+Continuing the example above, note that every set in \(\sigma(S_2)\) is also in
+\(\mathcal{F}_2\) in the coin tossing example, because the occurrence of each
+set in \(\sigma(S_2)\) can be decided (and thus also the value taken by
+\(S_2\)) after the first two coin tosses (two periods in three-period binomial tree).
+This suggests that \(S_2^{-1}(\mathcal{B})=\sigma(S_2)\subseteq
+\vc{\mathcal{F}_2}\) which, by our definition of measurability in
+\Cref{subsect:random-var}, means that \(S_2\) is
+\vc{\(\mathcal{F}_2\)}-measurable. Also, it is clear by definition that \(S_2\)
+is always \(\sigma(S_2)\)-measurable and \(\sigma(S_2)\) is the smallest
+\(\sigma\)-algebra under which \(S_2\) is measurable (this applies for random
+variable in general).
+
+Identifying \(\sigma(S_2)=S_2^{-1}(\mathcal{B})\) as the representation of the
+information available from the random variable \(S_2\), if \(S_2\) is
+\orc{\(\mathcal{G}\)}-measurable (i.e.,
+\(\sigma(S_2)=S_2^{-1}(\mathcal{B})\subseteq\orc{\mathcal{G}}\)), then it means
+that \orc{\(\mathcal{G}\)} contains all information from \(\sigma(S_2)\).
+Noting that \(\sigma(S_2)\) is the smallest \(\sigma\)-algebra that contains all the
+sets needed to be resolved in order to know exactly the value taken by
+\(S_2\)\footnote{We must be able to determine whether the true
+\(\omega\) lies in each of \(A_{HH}\), \(A_{HT}\cup A_{TH}\), and
+\(A_{TT}\). The smallest \(\sigma\)-algebra containing them is indeed
+\(\sigma(S_2)\).}, having the information from \orc{\(\mathcal{G}\)} would be
+sufficient for determining the value \(S_2(\omega)\).
+
+In general, if a random variable \(X\) is \(\mathcal{G}\)-measurable, it means
+that the information represented by \(\mathcal{G}\) is sufficient for
+determining the value \(X(\omega)\) where \(\omega\in\Omega\) is the true
+outcome.
+
+On the other hand, if \(X\) is \emph{not} \(\mathcal{G}\)-measurable (i.e.,
+\(\sigma(X)=X^{-1}(\mathcal{B})\not\subseteq \mathcal{G}\)), then it means that
+some information needed for determining \(X(\omega)\) is missing from the
+information represented by \(\mathcal{G}\) and knowing the information from
+\(\mathcal{G}\) alone is \emph{not} enough for determining \(X(\omega)\)
+exactly (but the information from \(\mathcal{G}\) may help \emph{inferring}
+\(X(\omega)\); see \Cref{subsect:cond-exp}). For instance, in the example
+above, \(S_2\) is not \(\mathcal{F}_1\)-measurable as
+\(\mathcal{F}_1=\{\varnothing,A_{H},A_{T},\Omega\}\not\subseteq \sigma(S_2)\),
+where \(A_{H}=\{(\vc{H},H,H), (\vc{H},T,H), (\vc{H},H,T), (\vc{H},T,T)\}\) and
+\(A_{T}=\{(\mgc{T},H,H), (\mgc{T},T,H), (\mgc{T},H,T), (\mgc{T},T,T)\}\).
+More intuitively, knowing only the outcome of the first toss (whether we have
+an ``up move'' or a ``down move'' in the first period) is not enough for
+determining exactly the value of \(S_2(\omega)\), which is at the end of the
+\emph{second} period. \begin{note}
+However, assuming the first toss is heads, we know
+either \(A_{HH}\) or \(A_{HT}\) would occur, so \(S_2(\omega)=96\text{ or }120\);
+we have narrowed down the possible values of \(S_2(\omega)\). This illustrates
+how the information from \(\mathcal{F}_1\) could help inferring the value
+\(S_2(\omega)\), although it is not sufficient for exactly determining the
+value.
+\end{note}
+
+\item \textbf{Adapted stochastic processes.} In the discussion of hedging, we
+will work in a filtered probability space where the filtration
+\(\{\mathcal{F}_t\}_{t\in [0,T]}\) would be treated as a model of the accrual
+of public information available in the market. For our time-\(t\) hedging
+strategy to be sensible, the portfolio position taken \(\Delta_{t}(\omega)\) at
+time \(t\) should be determinable from the information available at time \(t\),
+i.e., \(\sigma(\Delta_{t})\subseteq \mathcal{F}_t\). It means that
+\(\Delta_t\) should be \(\mathcal{F}_t\)-measurable for all time \(t\in
+[0,T]\). This gives rise to the definition of \emph{adapted stochastic process}.
+
+Let \((\Omega,\mathcal{F},\{\mathcal{F}_t\}_{t\in[0,T]},\pr)\) be a filtered probability
+space. Then a stochastic process \(\{X_t\}_{t\in[0,T]}\) is said to be
+\defn{adapted (to the filtration \(\{\mathcal{F}_t\}_{t\in[0,T]}\))} if \(X_t\) is
+\(\mathcal{F}_t\)-measurable for all time \(t\in[0,T]\).
+\end{enumerate}
+\subsection{Independence}
+\label{subsect:independence}
+\begin{enumerate}
+\item Recall that if a random variable \(X\) is \(\mathcal{G}\)-measurable,
+then the information represented by \(\mathcal{G}\) is sufficient for
+determining exactly the value \(X(\omega)\) where \(\omega\in\Omega\) is the
+true outcome. Another extreme would be the case where the information
+represented by \(\mathcal{G}\) is of \emph{no use} for determining the value
+\(X(\omega)\); it does not even marginally help estimating \(X(\omega)\). This
+case corresponds to the concept of \emph{independence}. While the concept of
+measurability has nothing to do with probability measure (we have made no
+reference to \(\pr\) in the definition), the probability measure \(\pr\) is
+crucial in the definition of independence, and so the choice of \(\pr\) would
+affect whether we have independence or not.
+
+Intuitively, probability measure plays no role for measurability since this
+concept is about \emph{exactness}: whether we can determine the value
+\(X(\omega)\) \emph{exactly}; it carries no probabilistic meaning. On the other
+hand, independence requires the information to be of \emph{no use} for
+inferring the value \(X(\omega)\), so we need to ensure that the information
+would not ``indirectly'' help inferring the value \(X(\omega)\) by making some
+impacts on the \emph{probabilities} about \(X\).
+\item \textbf{Independence of \(\sigma\)-algebras.} In your first probability
+course, you should have learnt the concept of independence for \emph{events}:
+Given a probability space \((\Omega,\mathcal{F},\pr)\), the events
+\(A,B\in\mathcal{F}\) are \emph{independent} if \(\prob{A\cap
+B}=\prob{A}\prob{B}\). Intuitively, this means that knowing the true outcome
+\(\omega\) is in \(A\) does not affect our assessment on the probability that
+\(\omega\) is in \(B\), and vice versa.
+
+We would like to extend this idea to random variables also. Intuitively, if two
+random variables \(X\) and \(Y\) are independent, then having knowledge about
+\(X\) should not affect our assessment on the probabilities about \(Y\),
+and vice versa. (You may have also learnt the independence of random variables
+in your first probability course.)
+
+It turns out that, by utilizing the concepts of \emph{\(\sigma\)-algebras}, we
+can neatly unify these two kinds of independence together, and we can focus on
+discussing about the independence of \(\sigma\)-algebras in general. Let
+\((\Omega,\mathcal{F},\pr)\) be a probability space, and
+\(\mathcal{G},\mathcal{H}\subseteq \mathcal{F}\) be \(\sigma\)-algebras on
+\(\Omega\). Then the \(\sigma\)-algebras \(\mathcal{G}\) and \(\mathcal{H}\)
+are called \defn{independent} if \(\prob{A\cap B} =\prob{A}\prob{B}\) for all
+\(A\in\mathcal{G}, B\in\mathcal{H}\).
+
+To illustrate how this independence unifies the notions of independence of
+events and independence of random variables, consider the following.
+\begin{itemize}
+\item \emph{(independence of events)} Given two events \(A,B\in\mathcal{F}\),
+we note that \(A\) and \(B\) are independent iff the \(\sigma\)-algebras
+\(\sigma(\{A\})=\{\varnothing,A,A^c,\Omega\}\) and
+\(\sigma(\{B\})=\{\varnothing,B,B^c,\Omega\}\) are independent (they are
+\emph{\(\sigma\)-algebras generated by families of sets in \(\Omega\)}).
+\item \emph{(independence of random variables)} Let \(X\) and \(Y\) be random
+variables. They are said to be independent if \(\prob{X\in C\cap Y\in
+D}=\prob{X\in C}\prob{Y\in D}\) for all \emph{Borel subsets} \(C\) and \(D\) of
+\(\R\)\footnote{The condition that the sets \(C\) and \(D\) involved should be
+\emph{Borel subsets} of \(\R\) may not be emphasized in your first probability
+course. It ensures that we can assign probabilities to \(\{X\in C\}\) and
+\(\{X\in D\}\), and also their intersection.}. Then, \(X\) and \(Y\) are
+independent iff the \(\sigma\)-algebras \(\sigma(X)=X^{-1}(\mathcal{B})\) and
+\(\sigma(Y)=Y^{-1}(\mathcal{B})\) are independent.
+\end{itemize}
+\item Here we give an example about the independence of random variables. Consider
+the previous three-period binomial tree example. We let \(S_3\) denote the
+time-3 stock price, which can be treated as a random variable defined by:
+\begin{align*}
+S_3(H,H,H)&=144\text{ (\(uuu\) node)}, \\
+S_3(H,H,T)&=S_3(H,T,H)=S_3(T,H,H)=115.2\text{ (\(uud\) node)}, \\
+S_3(H,T,T)&=S_3(T,H,T)=S_3(T,T,H)=76.8\text{ (\(udd\) node)}, \\
+S_3(T,T,T)&=51.2\text{ (\(ddd\) node)}.
+\end{align*}
+We would then like to investigate whether \(S_2\) and \(S_3\) are independent.
+Intuition tells us that they should not be independent: For instance, if we
+know that \(S_2=120\), then \(S_3\) cannot possibly take the values of \(76.8\) or
+\(51.2\) anymore. So, knowledge about \(S_2\) \emph{should} affect our assessment on
+the probabilities about \(S_3\). This is indeed the case and we can show it by
+considering the events \(\{(H,H,H),(H,H,T)\}=\{S_2=120\}\in\sigma(S_2)\) and
+\(\{(H,H,H)\}=\{S_3=144\}\in\sigma(S_3)\). We have
+\(\prob{\{S_2=120\}\cap\{S_3=144\}}=\prob{\{(H,H,H)\}}=p^3\), while
+\(\prob{S_2=120}\prob{S_3=144}=\prob{\{(H,H,H),(H,H,T)\}}\prob{\{(H,H,H)\}}=p^2\cdot
+p^3=p^5\)
+(where \(p\) is the probability of getting heads in a coin toss, assumed to be
+positive and the same for all three \emph{independent} tosses). To understand this more
+intuitively, the probability for \(S_3=144\) when we know
+\(S_2=120\) is the \emph{conditional probability}
+\[\prob{\{S_3=144\}|\{S_2=120\}}
+=\frac{\prob{\{S_2=120\}\cap\{S_3=144\}}}{\prob{\{S_2=120\}}}
+=\frac{p^3}{p^2}=p,
+\]
+but without this piece of knowledge, the probability for \(S_3=144\) is instead
+\(\prob{\{S_3=144\}}=p^3\). In other words, having this piece of knowledge
+raises the probability for \(S_3=144\) from \(p^3\) to \(p\).
+
+On the other hand, \(S_2\) and \(S_3/S_2\) are independent. This can be
+verified by considering the \(\sigma\)-algebras:
+\[
+\sigma(S_2)=\{
+\varnothing,A_{HH},A_{HT}\cup A_{TH}, A_{TT},
+A_{HH}\cup A_{HT}\cup A_{TH},
+A_{HT}\cup A_{TH}\cup A_{TT},
+A_{HH}\cup A_{TT},
+\Omega\},
+\]
+and
+\[
+\sigma(S_3/S_2)
+=\{\varnothing,(S_3/S_2)^{-1}(\{1.2\}),(S_3/S_2)^{-1}(\{0.8\}),\Omega\}
+=\{
+\varnothing,A_{\bullet\bullet \vc{H}},A_{\bullet\bullet \mgc{T}},
+\Omega\},
+\]
+where \(A_{\bullet\bullet \vc{H}}=\{(H,H,\vc{H}),(H,T,\vc{H}),(T,H,\vc{H}),(T,T,\vc{H})\}\)
+and \(A_{\bullet\bullet \mgc{T}}=\{(H,H,\mgc{T}),(H,T,\mgc{T}),(T,H,\mgc{T}),(T,T,\mgc{T})\}\).
+\item \textbf{More general definitions of independence.} We can
+extend the definition for independence of two \(\sigma\)-algebras in a natural
+way.  Let \((\Omega,\mathcal{F},\pr)\) be a probability space, and
+\(\mathcal{G}_1,\mathcal{G}_2,\dotsc\subseteq \mathcal{F}\) be \(\sigma\)-algebras on
+\(\Omega\). Then the \(\sigma\)-algebras \(\mathcal{G}_1,\dotsc,\mathcal{G}_n\)
+are called \defn{independent} if \(\prob{A_1\cap\dotsb A_n} =\prob{A_1}\dotsb\prob{A_n}\) for all
+\(A_1\in\mathcal{G}_1,\dotsc, A_n\in\mathcal{G}_n\). Also, the sequence of
+\(\sigma\)-algebras \(\mathcal{G}_1,\mathcal{G}_2,\dotsc\) is called \defn{independent}
+if the \(n\) \(\sigma\)-algebras \(\mathcal{G}_1,\dotsc,\mathcal{G}_n\) are
+independent for every \(n\in\N\).
+
+Let \(X_1,X_2,\dotsc\) be random variables. The random variables
+\(X_1,\dotsc,X_n\) are said to be independent if \(\prob{X_1\in B_1\cap\dotsb
+X_n\in B_n}=\prob{X_1\in B_1}\dotsb\prob{X_n\in B_n}\) for all \emph{Borel
+subsets} \(B_1,\dotsc,B_n\) of \(\R\). Also, the sequence of random variable
+\(X_1,X_2,\dotsc\) is called independent if the \(n\) random variables
+\(X_1,\dotsc,X_n\) are independent for every \(n\in\N\). It can then be shown
+that \(X_1,\dotsc,X_n\) are independent iff \(\sigma(X_1),\dotsc,\sigma(X_n)\)
+are independent, and the sequence \(X_1,X_2,\dotsc\) is independent iff the
+sequence \(\sigma(X_1),\sigma(X_2),\dotsc\) is independent.
+
+Sometimes we also talk about independence of a random variable and a
+\(\sigma\)-algebra, which is defined as follows. A random variable \(X\) and a
+\(\sigma\)-algebra \(\mathcal{G}\) are called \defn{independent} if
+\(\sigma(X)\) and \(\mathcal{G}\) are independent.
+
+\item\label{it:indpt-results} \textbf{Some results about independence.} Let
+\((\Omega,\mathcal{F},\pr)\) be a probability space.
+\begin{enumerate}
+\item \emph{(measurable functions of random variables are independent)} Let
+\(X\) and \(Y\) be independent random variables, and \(f\) and \(g\) be
+measurable real-valued functions on \(\R\). Then \(f(X)\) and \(g(Y)\) are
+independent random variables.
+
+\begin{pf}
+From \labelcref{it:rv-prop} we know that \(f(X)\) and \(g(Y)\) are random
+variables, so it suffices to show that they are independent, or
+\(\sigma(f(X))\) and \(\sigma(f(Y))\) are independent.
+
+Fix any sets \(A\in\sigma(f(X))\) and \(B\in\sigma(g(Y))\). Since
+\(A\in\sigma(f(X))\), there is \(C\in\mathcal{B}\) such that
+\(A=\{\omega\in\Omega:f(X(\omega))\in C\}\). Letting \(D=\{x\in\R:f(x)\in
+C\}\in\mathcal{B}\) (as \(f\) is measurable), we have
+\[
+A=\{\omega\in\Omega:f(X(\omega))\in C\}=\{\omega\in\Omega:X(\omega)\in D\}
+\]
+(since \(f(\vc{X(\omega)})\in C\iff \vc{X(\omega)}\in D\) by construction of
+\(D\)). Hence \(A\in\sigma(X)\). Similarly, we can show that \(B\in\sigma(Y)\).
+Now, since \(X\) and \(Y\) are independent, we have \(\prob{A\cap
+B}=\prob{A}\prob{B}\), as desired.
+\end{pf}
+\item \emph{(expectation of product is product of expectations)} If \(X\) and
+\(Y\) are independent random variables, then \(\expv{XY}=\expv{X}\expv{Y}\)
+provided that \(\expv{|XY|}<\infty\).
+\item \emph{(equivalent characterization of independence of random variables)}
+Let \(X\) and \(Y\) be random variables. The \defn{joint distribution measure}
+of \((X,Y)\) is defined by \[\mu_{X,Y}(C)=\prob{\{(X,Y)\in
+C\}}=\prob{\{\omega\in\Omega:(X(\omega),Y(\omega))\in C\}}\] for all
+\(C\in\mathcal{B}(\R^2)\), where \(\mathcal{B}(\R^2)\) denotes the Borel
+\(\sigma\)-algebra on \(\R^2\)\footnote{We shall omit the definition of
+\(\mathcal{B}(\R^2)\) here, but we can treat \(\mathcal{B}(\R^2)\) to contain
+all ``normal'' subsets of \(\R^2\). Particularly, if we have
+\(A,B\in\mathcal{B}\), then we always have \(A\times B\in\mathcal{B}(\R^2)\).}.
+Then \(X\) and \(Y\) are independent iff \(\mu_{X,Y}(A\times
+B)=\mu_X(A)\mu_Y(B)\) for all \(A,B\in\mathcal{B}(\R)\).
+\end{enumerate}
+\end{enumerate}
+\subsection{Conditional Expectations}
+\label{subsect:cond-exp}
+\begin{enumerate}
+\item After studying the concept of \emph{information}, the next important
+topic to be studied in \Cref{sect:info-cond} is \emph{conditioning}, which is
+about incorporating information available in probabilistic calculations. Based
+on our previous discussion, we know that:
+\begin{itemize}
+\item If a random variable \(X\) is \(\mathcal{G}\)-measurable, then the
+information from the \(\sigma\)-algebra \(\mathcal{G}\) is sufficient for
+determining the value of \(X(\omega)\).
+\item If a random variable \(X\) is independent of the \(\sigma\)-algebra \(\mathcal{G}\), then the
+information from \(\mathcal{G}\) should be of no use for inferring the value
+of \(X(\omega)\) (more precisely, we have \(\prob{\{X\in B\}\cap C}=\prob{X\in
+B}\prob{C}\) for all \(B\in\mathcal{B}\) and \(C\in\mathcal{G}\), as
+\(\sigma(X)\) and \(\mathcal{G}\) are independent).
+\end{itemize}
+In \Cref{subsect:cond-exp}, we are going to investigate the ``middle case'',
+where the information from the \(\sigma\)-algebra \(\mathcal{G}\) may not be
+sufficient for determining the value of \(X(\omega)\), but may help inferring
+it.  An estimation of the value \(X(\omega)\) based on the information from
+\(\mathcal{G}\) (as a function of \(\omega\in\Omega\), and indeed a random
+variable) is known as the \emph{conditional expectation of \(X\) given
+\(\mathcal{G}\)}, denoted by \(\expv{X|\mathcal{G}}\).
+\item \textbf{Motivation.} To motivate the definition of conditional
+expectation, we again consider the three-period binomial tree example. Here we
+would like to investigate how the information from \(\mathcal{F}_2\)
+(information available after two tosses, or two periods) can be incorporated in
+calculating the expectation of \(S_3\); more colloquially, we would like to
+compute the expectation of \(S_3\) at time \(2\).
+
+Intuitively, the conditional expectation \(\expv{S_3|\mathcal{F}_2}\) should be
+given by
+\[
+\expv{S_3|\mathcal{F}_2}(\omega)=
+\begin{cases}
+pS_3(\vc{H},\vc{H},H)+(1-p)S_3(\vc{H},\vc{H},T)&\text{if \(\omega\in A_{\vc{HH}}
+=\{(\vc{H},\vc{H},H),(\vc{H},\vc{H},T)\}\)}, \\
+pS_3(\vc{H},\vc{T},H)+(1-p)S_3(\vc{H},\vc{T},T)&\text{if \(\omega\in A_{\vc{HT}}
+=\{(\vc{H},\vc{T},H),(\vc{H},\vc{T},T)\}\)}, \\
+pS_3(\vc{T},\vc{H},H)+(1-p)S_3(\vc{T},\vc{H},T)&\text{if \(\omega\in A_{\vc{TH}}
+=\{(\vc{T},\vc{H},H),(\vc{T},\vc{H},T)\}\)}, \\
+pS_3(\vc{T},\vc{T},H)+(1-p)S_3(\vc{T},\vc{T},T)&\text{if \(\omega\in A_{\vc{TT}}
+=\{(\vc{T},\vc{T},H),(\vc{T},\vc{T},T)\}\)}.
+\end{cases}
+\]
+
+The intuitive idea is that, based on the information from \(\mathcal{F}_2\), we
+know that one of these cases must hold (we can determine if the true
+\(\omega\) lies in each of these sets). Then, the formula above
+estimates the value of \(S_3(\omega)\) through taking average over all
+the possible candidates of \(\omega\) (i.e., the outcomes in the set
+containing \(\omega\)) weighted by the conditional probabilities.  For
+example, if we know \(\omega\in A_{HH}\), then the conditional
+probability of having the outcome \((H,H,H)\) is
+\(\prob{\{(H,H,H)\}|A_{HH}}=\prob{\{(H,H,H)\}}/\prob{A_{HH}} =p^3/p^2=p\), and
+similarly the conditional probability of having \((H,H,T)\) is \(1-p\). Hence,
+the conditional expectation would take the value
+\(\expv{S_3|\mathcal{F}_2}(\omega)=pS_3(H,H,H)+(1-p)S_3(H,H,T)\).
+
+Multiplying the probabilities of each of the events
+\(A_{HH},A_{HT},A_{TH},A_{TT}\) in the corresponding cases from the formula
+above gives
+\begin{align*}
+\expv{S_3|\mathcal{F}_2}(\omega)\prob{A_{HH}}&=
+S_3(H,H,H)\prob{\{(H,H,H)\}}+(1-p)S_3(H,H,T)\prob{\{H,H,T\}}&\text{if \(\omega\in A_{HH}\)}, \\
+\expv{S_3|\mathcal{F}_2}(\omega)\prob{A_{HT}}&=
+S_3(H,T,H)\prob{\{(H,T,H)\}}+(1-p)S_3(H,T,T)\prob{\{H,T,T\}}&\text{if \(\omega\in A_{HT}\)}, \\
+\expv{S_3|\mathcal{F}_2}(\omega)\prob{A_{TH}}&=
+S_3(T,H,H)\prob{\{(T,H,H)\}}+(1-p)S_3(T,H,T)\prob{\{T,H,T\}}&\text{if \(\omega\in A_{TH}\)}, \\
+\expv{S_3|\mathcal{F}_2}(\omega)\prob{A_{TT}}&=
+S_3(T,T,H)\prob{\{(T,T,H)\}}+(1-p)S_3(T,T,T)\prob{\{T,T,T\}}&\text{if \(\omega\in A_{TT}\)}.
+\end{align*}
+To generalize the idea, we represent these equations more abstractly through
+\emph{Lebesgue integrals}:
+\begin{align*}
+\int_{A_{HH}}^{}\expv{S_3|\mathcal{F}_2}(\omega)\odif{\prob{\omega}}&=
+\int_{A_{HH}}^{}S_3(\omega)\odif{\prob{\omega}}, \\
+\int_{A_{HT}}^{}\expv{S_3|\mathcal{F}_2}(\omega)\odif{\prob{\omega}}&=
+\int_{A_{HT}}^{}S_3(\omega)\odif{\prob{\omega}}, \\
+\int_{A_{TH}}^{}\expv{S_3|\mathcal{F}_2}(\omega)\odif{\prob{\omega}}&=
+\int_{A_{TH}}^{}S_3(\omega)\odif{\prob{\omega}}, \\
+\int_{A_{TT}}^{}\expv{S_3|\mathcal{F}_2}(\omega)\odif{\prob{\omega}}&=
+\int_{A_{TT}}^{}S_3(\omega)\odif{\prob{\omega}}.
+\end{align*}
+\begin{note}
+Since \(\expv{S_3|\mathcal{F}_2}(\omega)\) takes constant value for all
+\(\omega\in A_{HH}\),  we have
+\(\int_{A_{HH}}^{}\expv{S_3|\mathcal{F}_2}(\omega)\odif{\prob{\omega}}=\expv{S_3|\mathcal{F}_2}(\omega)\prob{A_{HH}}\),
+and similarly for others.
+\end{note}
+
+With these equations, we can show that
+\[
+\int_{A}^{}\expv{S_3|\mathcal{F}_2}(\omega)\odif{\prob{\omega}}=\int_{A}^{}S_3(\omega)\odif{\prob{\omega}}
+\quad\text{for all \(A\in\mathcal{F}_2\)},
+\]
+which is known as the \emph{partial averaging property}, since, as we see
+above, it originates from computing the conditional expectation via averaging
+over ``parts'' of \(\Omega\), weighted by probabilities.
+
+\item \textbf{Definition of conditional expectation.} Let
+\((\Omega,\mathcal{F},\pr)\) be a probability space, \(\mathcal{G}\subseteq
+\mathcal{F}\) be a \(\sigma\)-algebra on \(\Omega\), and \(X\) be a random
+variable that is nonnegative or integrable. The \defn{conditional expectation
+of \(X\) given \(\mathcal{G}\)}, denoted by \(\expv{X|\mathcal{G}}\), is
+\emph{any} random variable satisfying:
+\begin{enumerate}[label={(\arabic*)}]
+\item \emph{(measurability)} \(\expv{X|\mathcal{G}}\) is \(\mathcal{G}\)-measurable.
+\item \emph{(partial averaging)}
+\[
+\int_{A}^{}\expv{X|\mathcal{G}}(\omega)\odif{\prob{\omega}}=\int_{A}^{}X(\omega)\odif{\prob{\omega}}
+\quad\text{for all \(A\in\mathcal{G}\)}.
+\]
+\end{enumerate}
+\begin{remark}
+\item We require \(\expv{X|\mathcal{G}}\) to be \(\mathcal{G}\)-measurable
+since the information from \(\mathcal{G}\) should be sufficient for
+determining/computing the value of \(\expv{X|\mathcal{G}}(\omega)\), or in
+other words, the computation of such conditional expectation must not utilize
+information that is \emph{unavailable} based on \(\mathcal{G}\).
+\item If we have \(\mathcal{G}=\sigma(W)\) for some random variable \(W\), then
+we usually write \(\expv{X|W}\) in place of \(\expv{X|\sigma(W)}\).
+\end{remark}
+\item\label{it:cond-exp-prop} \textbf{Properties of conditional expectations.} Based on the abstract
+definition of conditional expectation above, we can prove the following
+properties of conditional expectations; some of which are generalizations to
+the properties of conditional expectation you have seen in your first
+probability course.
+
+Let \((\Omega,\mathcal{F},\pr)\) be a probability space and
+\(\mathcal{G}\subseteq \mathcal{F}\) be a \(\sigma\)-algebra on \(\Omega\).
+Capital roman letters like \(X\), \(Y\), and \(Z\) always denote random
+variables below.
+\begin{enumerate}
+\item \emph{(existence and uniqueness)} Given any nonnegative or integrable
+random variable \(X\), there always exists a conditional expectation
+\(\expv{X|\mathcal{G}}\) (i.e., a random variable satisfying both the
+\emph{measurability} and \emph{partial averaging} requirements). Moreover, such
+random variable is unique in \emph{almost sure} sense, i.e., if \(Y\) and \(Z\)
+both qualify to be the conditional expectation of \(X\) given \(\mathcal{G}\),
+then \(Y\eqas Z\).
+
+\begin{note}
+Due to the uniqueness in almost sure sense, formulas for conditional
+expectations below are always understood in the almost sure sense: ``\(=\)''
+refers to ``\(\eqas\)''.
+\end{note}
+\item \emph{(linearity)} If \(X\) and \(Y\) are integrable random variables,
+and \(c_1\) and \(c_2\) are constants, then \(\expv{c_1X+c_2Y|\mathcal{G}}
+=c_1\expv{X|\mathcal{G}}+c_2\expv{Y|\mathcal{G}}\).
+\item \emph{(monotonicity)} If \(X\le Y\) a.s., then
+\(\expv{X|\mathcal{G}}\le\expv{Y|\mathcal{G}}\) a.s.
+\item \emph{(taking out what is known (TOWIK))} If \(X\), \(Y\), and \(XY\) are
+integrable, and \(X\) is \(\mathcal{G}\)-measurable, then
+\(\expv{XY|\mathcal{G}}=X\expv{Y|\mathcal{G}}\).
+\item \emph{(tower property)} If \(\mathcal{H}\subseteq \mathcal{G}\) is a
+\(\sigma\)-algebra on \(\Omega\) and \(X\) is integrable, then
+\(\expv{\expv{X|\mathcal{G}}|\mathcal{H}}=\expv{X|\mathcal{H}}\).
+\item \emph{(iterated conditioning)} If \(X\) is integrable, then
+\(\expv{\expv{X|\mathcal{G}}}=\expv{X}\).
+\item \emph{(independence)} If \(X\) is integrable and is independent of
+\(\mathcal{G}\), then \(\expv{X|\mathcal{G}}=\expv{X}\).
+\item \emph{(conditional Jensen's inequality)} If \(\varphi\) is a convex and
+real-valued function on \(\R\) and \(X\) is integrable, then
+\(\varphi(\expv{X|\mathcal{G}})\le\expv{(\varphi(X)|\mathcal{G}}\).
+\item \label{it:indp-lma} \emph{(independence lemma)} Suppose \(X_1,\dotsc,X_k\) are
+\(\mathcal{G}\)-measurable and each of \(Y_1,\dotsc,Y_{\ell}\) is independent
+of \(\mathcal{G}\). Let \(f(x_1,\dotsc,x_k,y_1,\dotsc,y_{\ell})\) be a
+measurable function and define
+\(g(x_1,\dotsc,x_k):=\expv{f(x_1,\dotsc,x_k,Y_1,\dotsc,Y_{\ell})}\). Then,
+\(\expv{f(X_1,\dotsc,X_k,Y_1,\dotsc,Y_{\ell})|\mathcal{G}}=g(X_1,\dotsc,X_k)\).
+\begin{intuition}
+With \(X_1,\dotsc,X_k\) being \(\mathcal{G}\)-measurable, they may be treated
+as ``constants'' given \(\mathcal{G}\), so they remain in the inputs of \(g\)
+(and are held fixed in the evaluation of the expectation from the function
+\(g\)).  On the other hand, since \(Y_1,\dotsc,Y_{\ell}\) are independent of
+\(\mathcal{G}\), they are ``averaged out'' in the (ordinary) expectation
+\(\expv{\cdot}\) (see the definition of \(g\)).
+\end{intuition}
+\end{enumerate}
+\begin{pf}
+\begin{enumerate}
+\item We shall omit the proof for the existence part and prove only the
+uniqueness part. Assume \(Y\) and \(Z\) both satisfy the measurability and
+partial averaging requirements. With \(Y\) and \(Z\) both being
+\(\mathcal{G}\)-measurable, it can be shown that \(Y-Z\) is
+\(\mathcal{G}\)-measurable also.
+\begin{intuition}
+If the information contained in \(\mathcal{G}\) is sufficient for determining
+the values of \(Y(\omega)\) and \(Z(\omega)\), then it should also be
+sufficient for determining the value of \(Y(\omega)-Z(\omega)\).
+\end{intuition}
+
+Now, consider the set
+\(A=\{\omega\in\Omega:Y(\omega)-Z(\omega)>0\}\in\mathcal{G}\) (it is in
+\(\mathcal{G}\) since \(Y-Z\) is \(\mathcal{G}\)-measurable). By the partial
+averaging property, we have
+\[
+\int_{A}^{}Y(\omega)\odif{\prob{\omega}}=\int_{A}^{}X(\omega)\odif{\prob{\omega}}
+=\int_{A}^{}Z(\omega)\odif{\prob{\omega}},
+\]
+which implies \(\int_{A}^{}(Y(\omega)-Z(\omega))\odif{\prob{\omega}}=0\). By
+construction of \(A\), the integrand is always positive, forcing that
+\(\prob{A}=\prob{Y>Z}=0\). Using the same argument with the roles of \(Y\) and
+\(Z\) reversed, we can similarly get \(\prob{Y<Z}=0\). Hence, we must have
+\(\prob{Y=Z}=1\), i.e., \(Y\eqas Z\).
+\item With \(\expv{X|\mathcal{G}}\) and \(\expv{Y|\mathcal{G}}\) being
+\(\mathcal{G}\)-measurable, \(c_1\expv{X|\mathcal{G}}+c_2\expv{Y|\mathcal{G}}\)
+is also \(\mathcal{G}\)-measurable. Next, for all \(A\in\mathcal{G}\), we have
+\begin{align*}
+\int_{A}^{}(c_1\expv{X|\mathcal{G}}+c_2\expv{Y|\mathcal{G}})\odif{\pr}
+&=c_1\int_{A}^{}\expv{X|\mathcal{G}}\odif{\pr}
++c_2\int_{A}^{}\expv{Y|\mathcal{G}}\odif{\pr} \\
+\overset{\text{(partial averaging)}}&{=}
+c_1\int_{A}^{}X\odif{\pr}
++c_2\int_{A}^{}Y\odif{\pr} \\
+\overset{\text{(linearity)}}&{=}
+\int_{A}^{}(c_1X+c_2Y)\odif{\pr},
+\end{align*}
+thus \(c_1\expv{X|\mathcal{G}}+c_2\expv{Y|\mathcal{G}}\) also satisfies the
+partial averaging property. This then equals the conditional expectation
+\(\expv{c_1X+c_2Y|\mathcal{G}}\) almost surely, by the uniqueness of
+conditional expectation.
+\item Consider the set
+\(A=\{\omega\in\Omega:\expv{Y|\mathcal{G}}(\omega)-\expv{X|\mathcal{G}}(\omega)<0\}
+\in\mathcal{G}\).
+By the partial averaging property and linearity, we have
+\[
+\int_{A}^{}\left(\expv{Y|\mathcal{G}}(\omega)-\expv{X|\mathcal{G}}(\omega)\right)\odif{\prob{\omega}}
+=\int_{A}^{}Y(\omega)\odif{\prob{\omega}}-\int_{A}^{}X(\omega)\odif{\prob{\omega}}
+\overset{(X\le Y\text{ a.s.})}{\ge} 0.
+\]
+By construction of \(A\), the integrand is always positive. Hence, we have
+\(\prob{A}=\prob{\expv{X|\mathcal{G}}>\expv{Y|\mathcal{G}}}=0\), and thus
+\(\expv{X|\mathcal{G}}\le\expv{Y|\mathcal{G}}\) a.s.
+\item As \(X\) and \(\expv{Y|\mathcal{G}}\) are \(\mathcal{G}\)-measurable,
+\(X\expv{Y|\mathcal{G}}\) is also \(\mathcal{G}\)-measurable. To show the
+partial averaging property, we utilize the 4-step \emph{standard machine}.
+
+\emph{Step 1: Indicator functions.} Fix any \(B\in\mathcal{G}\), and consider
+the indicator function \(\indic_{B}\). For all \(A\in\mathcal{G}\), we have
+\begin{align*}
+\int_{A}^{}\vc{\indic_{B}}\expv{Y|\mathcal{G}}\odif{\pr}
+&=\int_{\Omega}^{}\indic_{A}\vc{\indic_{B}}\expv{Y|\mathcal{G}}\odif{\pr}
+=\int_{\Omega}^{}\indic_{A\cap B}\expv{Y|\mathcal{G}}\odif{\pr} \\
+&=\int_{A\cap B}^{}\expv{Y|\mathcal{G}}\odif{\pr}
+\overset{\text{(partial averaging)}}{=}\int_{A\cap B}^{}Y\odif{\pr} \\
+&=\int_{A}^{}\vc{\indic_{B}}Y\odif{\pr}.
+\end{align*}
+\emph{Step 2: Simple random variables.} Fix any pairwise disjoint
+\(B_1,\dotsc,B_n\in\mathcal{G}\), and any constants \(c_1,\dotsc,c_n\in\R\).
+For all \(A\in\mathcal{G}\), we have
+\begin{align*}
+\int_{A}^{}\left(\vc{\sum_{i=1}^{n}c_i\indic_{B_i}}\right)\expv{Y|\mathcal{G}}\odif{\pr}
+\overset{\text{(linearity)}}&{=}
+\sum_{i=1}^{n}c_i\int_{A}^{}\indic_{B_i}\expv{Y|\mathcal{G}}\odif{\pr}
+\overset{\text{(step 1)}}{=}
+\sum_{i=1}^{n}c_i\int_{A}^{}\indic_{B_i}Y\odif{\pr}\\
+\overset{\text{(linearity)}}&{=}
+\int_{A}^{}\vc{\sum_{i=1}^{n}c_i\indic_{B_i}}Y\odif{\pr}
+\end{align*}
+\emph{Step 3: Nonnegative random variables.} Let \(X\) be any nonnegative
+random variable, and \(\{X_n\}\) be a sequence of nonnegative simple functions
+such that \(0\le X_1\le X_2\le\dotsb\le X\) a.s.\ and
+\(\lim_{n\to\infty}X_n=X\) a.s.
+
+First consider the special case where \(Y\) is nonnegative, which implies by
+monotonicity that \(\expv{Y|\mathcal{G}}\ge 0\) a.s., to ensure the
+applicability of monotone convergence theorem. In this case, for all
+\(A\in\mathcal{G}\), we have
+\begin{align*}
+\int_{A}^{}X\expv{Y|\mathcal{G}}\odif{\pr}
+&=\int_{A}^{}\lim_{n\to\infty}X_n\expv{Y|\mathcal{G}}\odif{\pr}
+\overset{\text{(MCT)}}{=}\lim_{n\to\infty}\int_{A}^{}X_n\expv{Y|\mathcal{G}}\odif{\pr} \\
+\overset{\text{(partial averaging)}}&{=}\lim_{n\to\infty}\int_{A}^{}X_nY\odif{\pr}
+\overset{\text{(MCT)}}{=}\int_{A}^{}\left(\lim_{n\to\infty}X_n\right)Y\odif{\pr}
+=\int_{A}^{}XY\odif{\pr}.
+\end{align*}
+Next, consider the general case where \(Y\) is integrable. In this case we
+write \(Y=Y^+-Y^-\). Of course, the positive and negative parts themselves are
+integrable random variables also, so applying the linearity of conditional
+expectation gives
+\(\expv{Y|\mathcal{G}}=\expv{Y^+|\mathcal{G}}-\expv{Y^-|\mathcal{G}}\).
+
+With \(XY\) being integrable, for all \(A\in\mathcal{G}\) we have
+\begin{align*}
+\int_{A}^{}X\expv{Y|\mathcal{G}}\odif{\pr}
+&=\int_{A}^{}X\expv{Y^+|\mathcal{G}}\odif{\pr}
+-\int_{A}^{}X\expv{Y^-|\mathcal{G}}\odif{\pr}
+\overset{\text{(above)}}{=}
+\int_{A}^{}XY^+\odif{\pr}
+-\int_{A}^{}XY^-\odif{\pr} \\
+\overset{\text{(linearity)}}&{=}
+\int_{A}^{}X(Y^+-Y^-)\odif{\pr}
+=\int_{A}^{}XY\odif{\pr}.
+\end{align*}
+\emph{Step 4: General random variables.} Let \(X\) be an integrable random
+variable in general. Then we write \(X=X^{+}-X^{-}\). After that, for all
+\(A\in\mathcal{G}\) we have
+\begin{align*}
+\int_{A}^{}X\expv{Y|\mathcal{G}}\odif{\pr}
+&=\int_{A}^{}X^{+}\expv{Y|\mathcal{G}}\odif{\pr}
+-\int_{A}^{}X^{-}\expv{Y|\mathcal{G}}\odif{\pr}
+\overset{\text{(step 3)}}{=}
+\int_{A}^{}X^{+}Y\odif{\pr}
+-\int_{A}^{}X^{-}Y\odif{\pr} \\
+&=\int_{A}^{}(X^{+}-X^{-})Y\odif{\pr}
+=\int_{A}^{}XY\odif{\pr}.
+\end{align*}
+This completes the standard machine and we have established the partial
+averaging property. The result then follows from the uniqueness of conditional
+expectation.
+\item First, \(\expv{\expv{X|\mathcal{G}}|\mathcal{H}}\) is \(\mathcal{H}\)-measurable,
+as it is a conditional expectation given \(\mathcal{H}\). Next, for all
+\(A\in\mathcal{H}\mgc{\subseteq \mathcal{G}}\),
+\[
+\int_{A}^{}\expv{\vc{\expv{X|\mathcal{G}}}|\mathcal{H}}\odif{\pr}
+\overset{\text{(partial averaging)}}{=}
+\int_{A}^{}\vc{\expv{X|\mathcal{G}}}\odif{\pr}
+\overset{\mgc{\text{(partial averaging)}}}{=}
+\int_{A}^{}X\odif{\pr}.
+\]
+Hence, \(\expv{\expv{X|\mathcal{G}}|\mathcal{H}}\eqas \expv{X|\mathcal{H}}\).
+\item Consider the set \(A=\Omega\in\mathcal{G}\). By the partial averaging
+property, we have
+\[
+\expv{\expv{X|\mathcal{G}}}
+=\int_{\Omega}^{}\expv{X|\mathcal{G}}\odif{\pr}
+\overset{\text{(partial averaging)}}{=}\int_{\Omega}^{}X\odif{\pr}
+=\expv{X}.
+\]
+\item Firstly, \(\expv{X}\) is \(\mathcal{G}\)-measurable, as a deterministic constant.
+Then, for all \(A\in\mathcal{G}\), we have
+\[
+\int_{A}^{}\expv{X}\odif{\pr}
+=\expv{X}\prob{A}
+=\expv{X}\expv{\indic_{A}}
+\overset{(X\indp \mathcal{G}\implies X\indp\indic_{A})}{=}
+\expv{X\indic_{A}}
+=\int_{\Omega}^{}X\indic_{A}\odif{\pr}
+=\int_{A}^{}X\odif{\pr}.
+\]
+Thus \(\expv{X|\mathcal{G}}\eqas\expv{X}\).
+\item Omitted.
+\item Omitted.
+\end{enumerate}
+\end{pf}
+\item \textbf{Martingales and Markov processes.} We close \Cref{sect:info-cond}
+by introducing some terminologies that relate \emph{conditioning} and
+\emph{stochastic processes}, which will be revisited in later sections.
+
+Let \((\Omega,\mathcal{F},\{\mathcal{F}_t\}_{t\in[0,T]},\pr)\) be a filtered
+probability space, and let \(\{X_t\}_{t\in[0,T]}\) be a stochastic
+process adapted to \(\{\mathcal{F}_t\}\).
+
+\begin{itemize}
+\item \emph{Martingale/submartingale/supermartingale:} The process \(\{X_t\}\) is
+said to be:
+\begin{itemize}
+\item a \defn{martingale} if \(X_s=\expv{X_t|\mathcal{F}_s}\) for all \(0\le s\le t\le T\).
+\item a \defn{submartingale} if \(X_s\le\expv{X_t|\mathcal{F}_s}\) for all \(0\le s\le t\le T\).
+\item a \defn{supermartingale} if \(X_s\ge\expv{X_t|\mathcal{F}_s}\) for all \(0\le s\le t\le T\).
+\end{itemize}
+\begin{intuition}
+A \emph{martingale} has \underline{no} tendency to rise \faIcon{arrow-up} or fall
+\faIcon{arrow-down}; a \emph{submartingale} has \underline{no} tendency to fall \faIcon{arrow-down};
+a \emph{supermartingale} has \underline{no} tendency to rise \faIcon{arrow-up}.
+\end{intuition}
+\item \emph{Markov process:} The process \(\{X_t\}\) is said to be a
+\defn{Markov process} if for all \(0\le s\le t\le T\) and all nonnegative
+measurable functions \(f\), there exists a measurable function \(g\) such that
+\(\expv{f(X_t)|\mathcal{F}_s}=g(X_s)\).
+\begin{intuition}
+This suggests that the conditional expectation \(\expv{f(X_t)|\mathcal{F}_s}\)
+about a ``future'' quantity \(f(X_t)\) given the ``current information''
+\(\mathcal{F}_s\) can always be evaluated based on \emph{only} the ``current'' process
+value (as a function of \(X_s\)) and not the past! This indeed generalizes the
+concept with the same name from STAT3903.
+\end{intuition}
+
+The independence lemma from \labelcref{it:indp-lma} is often helpful for
+showing that a stochastic process is a Markov process; see \Cref{sect:brownian-motions}.
+\end{itemize}
+\end{enumerate}

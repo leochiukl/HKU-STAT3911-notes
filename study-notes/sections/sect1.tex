@@ -89,7 +89,7 @@ Name&Notation&Definition \\
 \item \textbf{Further set properties.} Here we will discuss some results about
 the less familiar set terminologies from \labelcref{it:further-set-term}:
 \begin{enumerate}
-\item \label{it:liminfsup-interpet} \emph{(Interpreting limit inferior and limit superior)}
+\item \label{it:liminfsup-interpret} \emph{(Interpreting limit inferior and limit superior)}
 \begin{enumerate}
 \item \(\liminf_{n\to \infty}A_n=\{\omega\in\Omega:\omega\in A_n\text{ for
 \underline{a}ll \underline{b}ut \underline{f}initely \underline{m}any \(n\)}\}
@@ -221,8 +221,11 @@ great use here, so let us review it a bit.
 Indicator function can be applied for describing \(\limsup_{n\to \infty}A_n\)
 and \(\liminf_{n\to \infty}A_n\):
 \[
-\limsup_{n\to \infty}A_n=,\quad
-\liminf_{n\to \infty}A_n=.
+\limsup_{n\to \infty}A_n
+=\left\{\omega\in\Omega:\sum_{n=1}^{\infty}\indic_{A_n}(\omega)=\infty\right\}
+,\quad
+\liminf_{n\to \infty}A_n
+=\left\{\omega\in\Omega:\sum_{n=1}^{\infty}\indic_{A_{n}^{\rc{c}}}(\omega)<\infty\right\}.
 \]
 This is because when \(\omega\in A_n\) infinitely often, infinitely many
 \(\indic_{A_n}(\omega)\) would equal one; when \(\omega\in A_n\) for all but
@@ -297,7 +300,11 @@ probability, like \emph{Vitali set} \warn{} (see STAT7610 for more details), so
 in general we cannot just blindly choose the whole power set of sample space as
 the domain of the probability measure \(\pr\) (though it is quite tempting!),
 and we need to exclude those ``pathological'' sets by restricting the domain
-\warn{}.
+\warn{}. \begin{note}
+However, such issues only arise when the sample space \(\Omega\) is
+uncountable. If \(\Omega\) is countable, then we can define \(\pr\) on the
+power set \(\mathcal{P}(\Omega)\) without issues.
+\end{note}
 
 There are multiple systems of sets here,
 but they all share a common theme, which is about constructing a family of
@@ -496,9 +503,9 @@ measure you have seen previously is perhaps informal). Let \(\Omega\) be a
 sample space and \(\mathcal{F}\) be a \(\sigma\)-algebra on \(\Omega\). Then, a
 \defn{probability measure} \(\pr\) on \(\mathcal{F}\) (or on
 \((\Omega,\mathcal{F})\), which is known as a \defn{measurable space}) is a
-function satisfying:
+real-valued function on \(\mathcal{F}\) satisfying:
 \begin{enumerate}[label={(\arabic*)}]
-\item \(\pr\) is a function from \(\mathcal{F}\) to \([0,1]\).
+\item \emph{(nonnegativity)} \(\prob{A}\ge 0\) for all \(A\in\mathcal{F}\).
 \item \emph{(unitarity)} \(\prob{\Omega}=1\).
 \item \emph{(countable additivity)}
 \(A_1,A_2,\dotsc\in\mathcal{F}\text{ pairwise disjoint}
@@ -615,6 +622,7 @@ By (iii), we have \(\bigcup_{i=1}^{\infty}A_i
 \end{pf}
 \end{enumerate}
 \subsection{Random Variables}
+\label{subsect:random-var}
 \begin{enumerate}
 \item In your first course in probability, you should have learnt that a random
 variable is a function from the sample space \(\Omega\) to \(\R\): It
@@ -660,7 +668,7 @@ the default \(\sigma\)-algebra on \(\R\) is always chosen to be
 \]
 We can verify that \(\mu_X\) is a probability measure as follows:
 \begin{enumerate}[label={(\arabic*)}]
-\item \(\mu_X\) is a function from \(\mathcal{B}\) to \([0,1]\). \cmark
+\item The nonnegativity of \(\mu_X\) follows from the nonnegativity of \(\pr\). \cmark
 \item \(\mu_X(\R)=\prob{X\in\R}=\prob{\Omega}=1\). \cmark
 \item Fix any pairwise disjoint events \(A_1,A_2,\dotsc\in\mathcal{B}\). Then,
 \(\mu_X(\bigcup_{i=1}^{\infty}A_i)
@@ -672,7 +680,7 @@ We can verify that \(\mu_X\) is a probability measure as follows:
 \). \cmark
 \end{enumerate}
 
-\item \textbf{Properties of random variables.}
+\item \label{it:rv-prop}\textbf{Properties of random variables.}
 With the formal definition of random variable, we can discuss the following
 theoretical properties of random variables.
 \begin{enumerate}
@@ -998,7 +1006,7 @@ then \(\int_{\Omega}^{}(\alpha X(\omega)+\beta Y(\omega))\odif{\prob{\omega}}
 Due to the lack of formal definition of Lebesgue integral here, we shall omit
 the proof; see STAT7610 for more details.
 \end{pf}
-\item \textbf{Definition and properties of expectation.} With the knowledge of
+\item\label{it:expv-prop} \textbf{Definition and properties of expectation.} With the knowledge of
 Lebesgue integral, it is straightforward to define the concept of expectation.
 Let \(X\) be a random variable on a probability space
 \((\Omega,\mathcal{F},\pr)\). Then the \defn{expectation} of \(X\) is defined by
@@ -1205,10 +1213,10 @@ function \(f\) such that \(\mu_X(B)=\prob{X\in B}=\int_{B}^{}f(x)\odif{x}\) for 
 \subsection{Change of Measure}
 \begin{enumerate}
 \item We have now reached the last subsection in \Cref{sect:prob-theory}, which
-is also perhaps the most important one here, due to its foundational role for
+is perhaps the most important one here also, due to its foundational role for
 justifying the technique of \emph{risk-neutral pricing} that is heavily used in
 financial economics (there we are changing the probability measure to the
-so-called \emph{risk-neutral measure}).
+\emph{risk-neutral measure}).
 
 \item \label{it:change-meas-rv-z}\textbf{Changing measure through a random variable \(Z\).} The basic idea
 of \emph{change of measure} is to introduce a random variable \(Z\) for
@@ -1244,12 +1252,8 @@ Then \(\tpr\) is a probability measure on \(\mathcal{F}\).
 \end{proposition}
 \begin{pf}
 \begin{enumerate}[label={(\arabic*)}]
-\item Since we have \(\indic_{A}Z\ge 0\) almost surely, by
-\labelcref{it:lebesgue-int-prop} we have \(\tprob{A}\ge 0\). Also, we have
-\(\indic_{A}Z\le Z\), thus \(\tprob{A}=\int_{\Omega}^{}\indic_{A}Z(\omega)\odif{\prob{\omega}}
-\le\int_{\Omega}^{}Z(\omega)\odif{\prob{\omega}}
-=\expv{Z}=1
-\) by \labelcref{it:lebesgue-int-prop}. \cmark
+\item For all \(A\in\mathcal{F}\), since we have \(\indic_{A}Z\ge 0\) almost
+surely, by \labelcref{it:lebesgue-int-prop} we have \(\tprob{A}\ge 0\). \cmark
 \item We have
 \(\tprob{\Omega}=\int_{\Omega}^{}Z(\omega)\odif{\prob{\omega}}=\expv{Z}=1\).
 \cmark \item Fix any pairwise disjoint events \(A_1,A_2,\dotsc\in\mathcal{F}\).
@@ -1305,9 +1309,9 @@ We will utilize a proof strategy known as the \emph{standard machine}, which is
 a standard argument for proving results in measure theory. The \defn{standard
 machine} takes four steps, which show the desired result holds for larger and
 larger classes of functions: (1) indicator functions \faIcon{arrow-right} (2)
-\defn{simple functions} (i.e., linear combinations of finitely many indicator
+\defn{simple random variables} (i.e., linear combinations of finitely many indicator
 functions of pairwise disjoint sets) \faIcon{arrow-right} (3) nonnegative
-measurable functions \faIcon{arrow-right} (4) general measurable functions.
+random variables \faIcon{arrow-right} (4) general random variables.
 As the results here are for nonnegative random variables, we only need to
 perform the first three steps here. (We can also perform the step 4 to extend
 the results to general random variables; see the remark afterwards.)
@@ -1317,7 +1321,7 @@ the results to general random variables; see the remark afterwards.)
 \texpv{\vc{\indic_{A}}}=\tprob{A}=\int_{\Omega}^{}\indic_{A}(\omega)Z(\omega)\odif{\omega}
 =\expv{\vc{\indic_{A}}Z}.
 \]
-\emph{Step 2: Simple functions.} Fix any pairwise disjoint events
+\emph{Step 2: Simple random variables.} Fix any pairwise disjoint events
 \(A_1,\dotsc,A_n\in\mathcal{F}\), and any constants \(c_1,\dotsc,c_n\in\R\). Then
 \[
 \texpv{\vc{\sum_{i=1}^{n}c_i\indic_{A_i}}}
@@ -1327,7 +1331,7 @@ the results to general random variables; see the remark afterwards.)
 \]
 \emph{Step 3: Nonnegative random variables.} We will use the fact that, given
 any nonnegative random variable \(X\), there exists a sequence of nonnegative
-simple functions \(\{X_n\}\) such that \(0\le X_1\le X_2\le\dotsb\le X\) and
+simple random variables \(\{X_n\}\) such that \(0\le X_1\le X_2\le\dotsb\le X\) a.s.\ and
 \(\lim_{n\to\infty}X_n=X\) a.s. (loosely speaking, they are approaching to
 \(X\) ``from below''). By monotone convergence theorem, we have
 \[
@@ -1392,6 +1396,10 @@ space \((\Omega,\mathcal{F})\). Then there exists an almost surely
 \tpr(A)=\int_{A}^{}Z(\omega)\odif{\prob{\omega}}\quad\text{for every \(A\in\mathcal{F}\)}.
 \]
 \end{theorem}
+\begin{pf}
+Omitted.
+\end{pf}
+
 Inspired by
 \(\tpr(A)=\int_{\Omega}^{}\indic_{A}\odif{\tprob{\omega}}=\int_{A}^{}1\odif{\tprob{\omega}}\)
 and the Radon-Nikodym theorem, we may write \(\displaystyle
