@@ -7,14 +7,14 @@ are handling some ``dynamic'' random variables. An important topic to be
 studied here is \emph{hedging}, which is about adjusting our portfolio
 positions in response to the changes in the economic variables over time.
 Of course, when we are constructing our portfolio position at time \(t\), we
-would only have access to \emph{information} available as of time \(t\); we
+would only have access to the \emph{information} available as of time \(t\); we
 cannot look into the future! In view of this, it is crucial to investigate the
 \emph{accrual of information} over time, to ensure that our hedging strategy
-would not ``accidentally'' use some information that cannot be accessed.
+would not ``accidentally'' use some information that cannot be accessed in reality.
 
 Therefore, in \Cref{sect:info-cond}, we will establish a rigorous framework for
 studying the concepts of \emph{information} and \emph{conditioning}
-(``incorporating information on hand''), which are fundamental for our later
+(``incorporating the information on hand''), which are fundamental for our later
 discussions on the stochastic processes appearing in financial economics.
 \end{enumerate}
 \subsection{Information and \(\sigma\)-algebras}
@@ -93,15 +93,16 @@ Now, let us introduce some terminologies for describing information. Let
 \((\Omega,\mathcal{F},\pr)\) be a probability space, and
 \(\mathcal{F}_t\subseteq \mathcal{F}\) be a \(\sigma\)-algebra on \(\Omega\)
 (such \(\sigma\)-algebra \(\mathcal{F}_t\) is sometimes said to be a
-\defn{sub-\(\sigma\)-algebra} of \(\mathcal{F}\)) for all \(t\in[0,T]\), where
-\(T>0\) is a constant.  If we have \(\mathcal{F}_s\subseteq \mathcal{F}_t\) for
-all \(0\le s\le t\le T\), then the collection \(\{\mathcal{F}_t\}\) (or
-\(\{\mathcal{F}_{t}\}_{t\in[0,T]}\) to be more specific) is said to be a
-\defn{filtration}.  In such case, the quadruple
+\defn{sub-\(\sigma\)-algebra} of \(\mathcal{F}\)) for all \(t\in I\), where
+\(I\subseteq [0,\infty)\) is an index set for the time points in consideration
+(e.g., \(I=[0,T]\) where \(T>0\) is a fixed constant).  If we have
+\(\mathcal{F}_s\subseteq \mathcal{F}_t\) for all \(s\le t\), then the
+collection \(\{\mathcal{F}_t\}\) (or \(\{\mathcal{F}_{t}\}_{t\in I}\) to be
+more specific) is said to be a \defn{filtration}.  In such case, the quadruple
 \((\Omega,\mathcal{F},\{\mathcal{F}_t\},\pr)\) is called a \defn{filtered
 probability space}.
 
-At time \(t\in[0,T]\), we would know for each set in \(\mathcal{F}_t\) whether
+At time \(t\in I\), we would know for each set in \(\mathcal{F}_t\) whether
 the true \(\omega\) lies in that set, so \(\mathcal{F}_t\) effectively
 ``\underline{filters}'' out impossible candidates for the true
 \(\omega\). For instance, in the coin tossing example from
@@ -252,18 +253,22 @@ value.
 
 \item \textbf{Adapted stochastic processes.} In the discussion of hedging, we
 will work in a filtered probability space where the filtration
-\(\{\mathcal{F}_t\}_{t\in [0,T]}\) would be treated as a model of the accrual
+\(\{\mathcal{F}_t\}_{t\in I}\) would be treated as a model of the accrual
 of public information available in the market. For our time-\(t\) hedging
 strategy to be sensible, the portfolio position taken \(\Delta_{t}(\omega)\) at
 time \(t\) should be determinable from the information available at time \(t\),
 i.e., \(\sigma(\Delta_{t})\subseteq \mathcal{F}_t\). It means that
 \(\Delta_t\) should be \(\mathcal{F}_t\)-measurable for all time \(t\in
-[0,T]\). This gives rise to the definition of \emph{adapted stochastic process}.
+  I\). This gives rise to the definition of \emph{adapted stochastic process}.
 
-Let \((\Omega,\mathcal{F},\{\mathcal{F}_t\}_{t\in[0,T]},\pr)\) be a filtered probability
-space. Then a stochastic process \(\{X_t\}_{t\in[0,T]}\) is said to be
-\defn{adapted (to the filtration \(\{\mathcal{F}_t\}_{t\in[0,T]}\))} if \(X_t\) is
-\(\mathcal{F}_t\)-measurable for all time \(t\in[0,T]\).
+Let \((\Omega,\mathcal{F},\{\mathcal{F}_t\}_{t\in I},\pr)\) be a filtered probability
+space. Then a stochastic process \(\{X_t\}_{t\in I}\) is said to be
+\defn{adapted (to the filtration \(\{\mathcal{F}_t\}_{t\in I}\))} if \(X_t\) is
+\(\mathcal{F}_t\)-measurable for all time \(t\in I\).
+\begin{note}
+\(\{X_t\}_{t\in I}\) is a \defn{stochastic process} if \(X_t\) is a
+\(\mathcal{F}\)-random variable for all \(t\in I\).
+\end{note}
 \end{enumerate}
 \subsection{Independence}
 \label{subsect:independence}
@@ -286,7 +291,7 @@ concept is about \emph{exactness}: whether we can determine the value
 hand, independence requires the information to be of \emph{no use} for
 inferring the value \(X(\omega)\), so we need to ensure that the information
 would not ``indirectly'' help inferring the value \(X(\omega)\) by making some
-impacts on the \emph{probabilities} about \(X\).
+impacts on the \emph{probability assessments} about \(X\).
 \item \textbf{Independence of \(\sigma\)-algebras.} In your first probability
 course, you should have learnt the concept of independence for \emph{events}:
 Given a probability space \((\Omega,\mathcal{F},\pr)\), the events
@@ -391,7 +396,7 @@ if the \(n\) \(\sigma\)-algebras \(\mathcal{G}_1,\dotsc,\mathcal{G}_n\) are
 independent for every \(n\in\N\).
 
 Let \(X_1,X_2,\dotsc\) be random variables. The random variables
-\(X_1,\dotsc,X_n\) are said to be independent if \(\prob{X_1\in B_1\cap\dotsb
+\(X_1,\dotsc,X_n\) are said to be independent if \(\prob{X_1\in B_1\cap\dotsb\cap
 X_n\in B_n}=\prob{X_1\in B_1}\dotsb\prob{X_n\in B_n}\) for all \emph{Borel
 subsets} \(B_1,\dotsc,B_n\) of \(\R\). Also, the sequence of random variable
 \(X_1,X_2,\dotsc\) is called independent if the \(n\) random variables
@@ -412,6 +417,13 @@ Sometimes we also talk about independence of a random variable and a
 \(X\) and \(Y\) be independent random variables, and \(f\) and \(g\) be
 measurable real-valued functions on \(\R\). Then \(f(X)\) and \(g(Y)\) are
 independent random variables.
+
+\begin{note}
+More generally, if \(X_1,X_2,\dotsc\) are independent random variables and
+\(f_1,f_2,\dotsc\) are measurable real-valued functions on \(\R\), then for all
+\(1\le r<s<t<\dotsb\), \(f_1(X_1,\dotsc,X_r)\), \(f_2(X_{r+1},\dotsc,X_{s})\),
+\(f_3(X_{s+1},\dotsc,X_{t}),\dotsc\) are independent random variables.
+\end{note}
 
 \begin{pf}
 From \labelcref{it:rv-prop} we know that \(f(X)\) and \(g(Y)\) are random
@@ -506,8 +518,8 @@ similarly the conditional probability of having \((H,H,T)\) is \(1-p\). Hence,
 the conditional expectation would take the value
 \(\expv{S_3|\mathcal{F}_2}(\omega)=pS_3(H,H,H)+(1-p)S_3(H,H,T)\).
 
-Multiplying the probabilities of each of the events
-\(A_{HH},A_{HT},A_{TH},A_{TT}\) in the corresponding cases from the formula
+Multiplying the probability of each of the events
+\(A_{HH},A_{HT},A_{TH},A_{TT}\) in the corresponding case from the formula
 above gives
 \begin{align*}
 \expv{S_3|\mathcal{F}_2}(\omega)\prob{A_{HH}}&=
@@ -586,7 +598,7 @@ random variable \(X\), there always exists a conditional expectation
 \(\expv{X|\mathcal{G}}\) (i.e., a random variable satisfying both the
 \emph{measurability} and \emph{partial averaging} requirements). Moreover, such
 random variable is unique in \emph{almost sure} sense, i.e., if \(Y\) and \(Z\)
-both qualify to be the conditional expectation of \(X\) given \(\mathcal{G}\),
+both qualify to be a conditional expectation of \(X\) given \(\mathcal{G}\),
 then \(Y\eqas Z\).
 
 \begin{note}
@@ -602,22 +614,43 @@ and \(c_1\) and \(c_2\) are constants, then \(\expv{c_1X+c_2Y|\mathcal{G}}
 \item \emph{(taking out what is known (TOWIK))} If \(X\), \(Y\), and \(XY\) are
 integrable, and \(X\) is \(\mathcal{G}\)-measurable, then
 \(\expv{XY|\mathcal{G}}=X\expv{Y|\mathcal{G}}\).
+\begin{note}
+Particularly, we have \(\expv{X|\mathcal{G}}=X\) by letting \(Y\equiv 1\).
+\end{note}
+\item \emph{(independence)} If \(X\) is integrable and is independent of
+\(\mathcal{G}\), then \(\expv{X|\mathcal{G}}=\expv{X}\).
 \item \emph{(tower property)} If \(\mathcal{H}\subseteq \mathcal{G}\) is a
 \(\sigma\)-algebra on \(\Omega\) and \(X\) is integrable, then
 \(\expv{\expv{X|\mathcal{G}}|\mathcal{H}}=\expv{X|\mathcal{H}}\).
+\begin{note}
+In fact, we also have
+\(\expv{\expv{X|\mathcal{H}}|\mathcal{G}}=\expv{X|\mathcal{H}}\), but this is
+just a simple corollary of the TOWIK property: Since
+\(\sigma(\expv{X|\mathcal{H}})\subseteq \mathcal{H}\subseteq \mathcal{G}\),
+\(\expv{X|\mathcal{H}}\) is \(\mathcal{G}\)-measurable and thus
+\(\expv{\vc{\expv{X|\mathcal{H}}}|\mathcal{G}}=\vc{\expv{X|\mathcal{H}}}\).
+\end{note}
 \item \emph{(iterated conditioning)} If \(X\) is integrable, then
 \(\expv{\expv{X|\mathcal{G}}}=\expv{X}\).
-\item \emph{(independence)} If \(X\) is integrable and is independent of
-\(\mathcal{G}\), then \(\expv{X|\mathcal{G}}=\expv{X}\).
+
+\begin{note}
+Both \(\expv{\expv{X|\mathcal{G}}}\) and \(\expv{X}\) are non-random values, so
+the equality is exact rather than in the almost sure sense.
+\end{note}
 \item \emph{(conditional Jensen's inequality)} If \(\varphi\) is a convex and
 real-valued function on \(\R\) and \(X\) is integrable, then
-\(\varphi(\expv{X|\mathcal{G}})\le\expv{(\varphi(X)|\mathcal{G}}\).
-\item \label{it:indp-lma} \emph{(independence lemma)} Suppose \(X_1,\dotsc,X_k\) are
-\(\mathcal{G}\)-measurable and each of \(Y_1,\dotsc,Y_{\ell}\) is independent
-of \(\mathcal{G}\). Let \(f(x_1,\dotsc,x_k,y_1,\dotsc,y_{\ell})\) be a
-measurable function and define
-\(g(x_1,\dotsc,x_k):=\expv{f(x_1,\dotsc,x_k,Y_1,\dotsc,Y_{\ell})}\). Then,
-\(\expv{f(X_1,\dotsc,X_k,Y_1,\dotsc,Y_{\ell})|\mathcal{G}}=g(X_1,\dotsc,X_k)\).
+\(\varphi(\expv{X|\mathcal{G}})\le\expv{\varphi(X)|\mathcal{G}}\) a.s.
+\item \label{it:indp-lma} \emph{(independence lemma)} Suppose
+\vc{\(X_1,\dotsc,X_k\)} are \(\mathcal{G}\)-measurable and each of
+\orc{\(Y_1,\dotsc,Y_{\ell}\)} is independent of \(\mathcal{G}\). Let
+\(f(\vc{x_1,\dotsc,x_k},\orc{y_1,\dotsc,y_{\ell}})\) be a measurable\footnote{Here,
+``measurable'' refers to \(\mathcal{B}(\R^{k+\ell})\)-measurable, where
+\(\mathcal{B}(\R^{k+\ell})\) is the Borel \(\sigma\)-algebra on
+\(\R^{k+\ell}\); here we will delve into the details about it.} function and
+define \(g(\vc{x_1,\dotsc,x_k}):=\expv{f(\vc{x_1,\dotsc,x_k},\orc{Y_1,\dotsc,Y_{\ell}})}\).
+Then,
+\(\expv{f(\vc{X_1,\dotsc,X_k},\orc{Y_1,\dotsc,Y_{\ell}})|\mathcal{G}}=g(\vc{X_1,\dotsc,X_k})\).
+
 \begin{intuition}
 With \(X_1,\dotsc,X_k\) being \(\mathcal{G}\)-measurable, they may be treated
 as ``constants'' given \(\mathcal{G}\), so they remain in the inputs of \(g\)
@@ -759,6 +792,18 @@ variable in general. Then we write \(X=X^{+}-X^{-}\). After that, for all
 This completes the standard machine and we have established the partial
 averaging property. The result then follows from the uniqueness of conditional
 expectation.
+\item First, \(\expv{X}\) is \(\mathcal{G}\)-measurable, as a deterministic
+constant.  Next, for all \(A\in\mathcal{G}\), we have
+\[
+\int_{A}^{}\expv{X}\odif{\pr}
+=\expv{X}\prob{A}
+=\expv{X}\expv{\indic_{A}}
+\overset{(X\indp \mathcal{G}\implies X\indp\indic_{A})}{=}
+\expv{X\indic_{A}}
+=\int_{\Omega}^{}X\indic_{A}\odif{\pr}
+=\int_{A}^{}X\odif{\pr}.
+\]
+Thus \(\expv{X|\mathcal{G}}\eqas\expv{X}\).
 \item First, \(\expv{\expv{X|\mathcal{G}}|\mathcal{H}}\) is \(\mathcal{H}\)-measurable,
 as it is a conditional expectation given \(\mathcal{H}\). Next, for all
 \(A\in\mathcal{H}\mgc{\subseteq \mathcal{G}}\),
@@ -770,64 +815,120 @@ as it is a conditional expectation given \(\mathcal{H}\). Next, for all
 \int_{A}^{}X\odif{\pr}.
 \]
 Hence, \(\expv{\expv{X|\mathcal{G}}|\mathcal{H}}\eqas \expv{X|\mathcal{H}}\).
-\item Consider the set \(A=\Omega\in\mathcal{G}\). By the partial averaging
-property, we have
+\item Take \(A=\Omega\in\mathcal{G}\). Then,
 \[
 \expv{\expv{X|\mathcal{G}}}
-=\int_{\Omega}^{}\expv{X|\mathcal{G}}\odif{\pr}
-\overset{\text{(partial averaging)}}{=}\int_{\Omega}^{}X\odif{\pr}
+=\int_{A}^{}\expv{X|\mathcal{G}}\odif{\pr}
+\overset{\text{(partial averaging)}}{=}\int_{A}^{}X\odif{\pr}
 =\expv{X}.
 \]
-\item Firstly, \(\expv{X}\) is \(\mathcal{G}\)-measurable, as a deterministic constant.
-Then, for all \(A\in\mathcal{G}\), we have
-\[
-\int_{A}^{}\expv{X}\odif{\pr}
-=\expv{X}\prob{A}
-=\expv{X}\expv{\indic_{A}}
-\overset{(X\indp \mathcal{G}\implies X\indp\indic_{A})}{=}
-\expv{X\indic_{A}}
-=\int_{\Omega}^{}X\indic_{A}\odif{\pr}
-=\int_{A}^{}X\odif{\pr}.
-\]
-Thus \(\expv{X|\mathcal{G}}\eqas\expv{X}\).
+
 \item Omitted.
 \item Omitted.
 \end{enumerate}
 \end{pf}
-\item \textbf{Martingales and Markov processes.} We close \Cref{sect:info-cond}
-by introducing some terminologies that relate \emph{conditioning} and
-\emph{stochastic processes}, which will be revisited in later sections.
+\item\label{it:mart-markov} \textbf{Martingales and Markov processes.} We close
+\Cref{sect:info-cond} by introducing some terminologies that relate
+\emph{conditioning} and \emph{stochastic processes}, which will be revisited in
+later sections.
 
-Let \((\Omega,\mathcal{F},\{\mathcal{F}_t\}_{t\in[0,T]},\pr)\) be a filtered
-probability space, and let \(\{X_t\}_{t\in[0,T]}\) be a stochastic
-process adapted to \(\{\mathcal{F}_t\}\).
+Let \((\Omega,\mathcal{F},\{\mathcal{F}_t\}_{t\in I},\pr)\) be a filtered
+probability space. A stochastic process \(\{X_t\}_{t\in I}\) is said to be a
+\defn{(\(\{\mathcal{F}_t\}\)-)martingale} if:
+\begin{enumerate}[label={(\arabic*)}]
+\item \emph{(adaptivity)} \(\{X_t\}\) is adapted to \(\{\mathcal{F}_t\}\).
+\item \emph{(integrability)} \(X_t\) is integrable for all \(t\in I\).
+\item\label{it:mart-no-tendency} \emph{(no tendency to rise or fall)} \(X_s=\expv{X_t|\mathcal{F}_s}\) for all \(s\le t\).
+\end{enumerate}
+\begin{itemize}
+\item If we replace \labelcref{it:mart-no-tendency} by
+``\(X_s\le\expv{X_t|\mathcal{F}_s}\) for all \(s\le t\)'' \emph{(no tendency to fall)}, then \(\{X_t\}\) is
+called a \defn{(\(\{\mathcal{F}_t\}\)-)submartingale}.
+\item If we replace \labelcref{it:mart-no-tendency} by
+``\(X_s\ge\expv{X_t|\mathcal{F}_s}\) for all \(s\le t\)'' \emph{(no tendency to
+rise)}, then \(\{X_t\}\) is called a \defn{(\(\{\mathcal{F}_t\}\)-)supermartingale}.
+\item If we replace \labelcref{it:mart-no-tendency} by ``For all \(s\le t\) and
+all nonnegative measurable functions \(f\), there exists a measurable function
+\(g\) such that \(\expv{f(X_t)|\mathcal{F}_s}=g(X_s)\)'' \emph{(\defn{Markov
+property})}, then \(\{X_t\}\) is called a \defn{(\(\{\mathcal{F}_t\}\)-)Markov
+process}.
 
-\begin{itemize}
-\item \emph{Martingale/submartingale/supermartingale:} The process \(\{X_t\}\) is
-said to be:
-\begin{itemize}
-\item a \defn{martingale} if \(X_s=\expv{X_t|\mathcal{F}_s}\) for all \(0\le s\le t\le T\).
-\item a \defn{submartingale} if \(X_s\le\expv{X_t|\mathcal{F}_s}\) for all \(0\le s\le t\le T\).
-\item a \defn{supermartingale} if \(X_s\ge\expv{X_t|\mathcal{F}_s}\) for all \(0\le s\le t\le T\).
-\end{itemize}
-\begin{intuition}
-A \emph{martingale} has \underline{no} tendency to rise \faIcon{arrow-up} or fall
-\faIcon{arrow-down}; a \emph{submartingale} has \underline{no} tendency to fall \faIcon{arrow-down};
-a \emph{supermartingale} has \underline{no} tendency to rise \faIcon{arrow-up}.
-\end{intuition}
-\item \emph{Markov process:} The process \(\{X_t\}\) is said to be a
-\defn{Markov process} if for all \(0\le s\le t\le T\) and all nonnegative
-measurable functions \(f\), there exists a measurable function \(g\) such that
-\(\expv{f(X_t)|\mathcal{F}_s}=g(X_s)\).
 \begin{intuition}
 This suggests that the conditional expectation \(\expv{f(X_t)|\mathcal{F}_s}\)
 about a ``future'' quantity \(f(X_t)\) given the ``current information''
 \(\mathcal{F}_s\) can always be evaluated based on \emph{only} the ``current'' process
-value (as a function of \(X_s\)) and not the past! This indeed generalizes the
+value (as a function of \(X_s\)) and not the past. This indeed generalizes the
 concept with the same name from STAT3903.
 \end{intuition}
 
 The independence lemma from \labelcref{it:indp-lma} is often helpful for
-showing that a stochastic process is a Markov process; see \Cref{sect:brownian-motions}.
+showing that a stochastic process is a Markov process; see, e.g.,
+\Cref{prp:bm-markov}.
 \end{itemize}
+\item \textbf{Doob martingale.} A notable example of martingale is called
+\emph{Doob martingale}, which is the process of conditional expectations of a
+fixed random variable. Let \((\Omega,\mathcal{F},\{\mathcal{F}_t\}_{t\in
+I},\pr)\) be a filtered probability space and \(X\) be an integrable random
+variable. Then the \defn{Doob martingale} is a stochastic process
+\(\{X_t\}_{t\in I}\) defined by \(X_t=\expv{X|\mathcal{F}_t}\) for all \(t\in
+I\). Let us verify that \(\{X_t\}\) is indeed a
+\(\{\mathcal{F}_t\}\)-martingale:
+
+\begin{pf}
+\begin{enumerate}[label={(\arabic*)}]
+\item By the definition of conditional expectation,
+\(X_t=\expv{X|\mathcal{F}_t}\) is \(\mathcal{F}_t\)-measurable for all \(t\in
+I\). Thus \(\{X_t\}\) is adapted to \(\{\mathcal{F}_t\}\).
+\item For all \(t\in I\), we have
+\begin{align*}
+\expv{|X_t|}&=\expv{\big|\expv{X|\mathcal{F}_t}\big|}
+\overset{\text{(conditional Jensen's inequality)}}{\le}
+\expv{\expv{\big|X\big||\mathcal{F}_t}} \\
+\overset{\text{(iterated conditioning)}}&{=}\expv{|X|}
+\overset{\text{(\(X\) integrable)}}{<}\infty,
+\end{align*}
+so \(X_t\) is integrable.
+\item For all \(s\le t\), we have \(\mathcal{F}_s\subseteq \mathcal{F}_t\), thus
+\[
+\expv{X_t|\mathcal{F}_s}
+=\expv{\expv{X|\mathcal{F}_t}|\mathcal{F}_s}
+\overset{\text{(tower property)}}{=}\expv{X|\mathcal{F}_s}
+=X_s.
+\]
 \end{enumerate}
+\end{pf}
+\item \textbf{Linear combinations of martingales is a martingale.}
+Due to the linearity of conditional expectations, linear combination of
+martingales remains as a martingale.
+\begin{proposition}
+\label{prp:lin-comb-mart-is-mart}
+Let \((\Omega,\mathcal{F},\{\mathcal{F}_t\}_{t\in I},\pr)\) be a filtered
+probability space. If \(\{X_t\}\) and \(\{Y_t\}\) are
+\(\{\mathcal{F}_t\}\)-martingales, then \(\{\alpha X_t+\beta Y_t\}\) is also a
+\(\{\mathcal{F}_t\}\)-martingale for all \(\alpha,\beta\in\R\).
+\end{proposition}
+\begin{pf}
+\begin{enumerate}[label={(\arabic*)}]
+\item Since \(\{X_t\}\) and \(\{Y_t\}\) are both adapted to \(\{\mathcal{F}_t\}\),
+\(X_t\) and \(Y_t\) are \(\mathcal{F}_t\)-measurable for all \(t\in I\). Hence,
+\(\alpha X_t+\beta Y_t\) is \(\mathcal{F}_t\)-measurable for all \(t\in I\),
+meaning that \(\{\alpha X_t+\beta Y_t\}\) is adapted to \(\{\mathcal{F}_t\}\).
+\item With \(X_t\) and \(Y_t\) being integrable for all \(t\in I\), by triangle
+inequality we have for all \(t\in I\),
+\[
+\expv{|\alpha X_t+\beta Y_t|}
+\le|\alpha|\underbrace{\expv{|X_t|}}_{<\infty}+|\beta|\underbrace{\expv{|Y_t|}}_{<\infty}
+<\infty,
+\]
+thus \(\alpha X_t+\beta Y_t\) is integrable.
+\item By the linearity of conditional expectation, for all \(s\le t\) we have
+\[
+\alpha X_s+\beta Y_s
+\overset{\text{(\(\{X_t\}\), \(\{Y_t\}\) martingales)}}{=}\alpha\expv{X_t|\mathcal{F}_s}
++\beta\expv{Y_t|\mathcal{F}_s}
+=\expv{\alpha X_t+\beta Y_t|\mathcal{F}_s}.
+\]
+\end{enumerate}
+\end{pf}
+\end{enumerate}
+

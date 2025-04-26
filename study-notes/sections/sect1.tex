@@ -458,7 +458,7 @@ In general, let \(\mathcal{A}\) be a family of sets in \(\Omega\). Then the
 \(\sigma(\mathcal{A})\), is the \emph{smallest} \(\sigma\)-algebra that
 contains every set in the family \(\mathcal{A}\), i.e., (i)
 \(\sigma(\mathcal{A})\) is a \(\sigma\)-algebra on \(\Omega\) that contains
-\(\mathcal{A}\), and (ii) for any \(\sigma\)-algebra \(\mathcal{F}'\) on
+\(\mathcal{A}\), and (ii) for every \(\sigma\)-algebra \(\mathcal{F}'\) on
 \(\Omega\) with \(\vc{\mathcal{A}}\subseteq \mathcal{F}'\), we have
 \(\sigma(\vc{\mathcal{A}})\subseteq \mathcal{F}'\).
 We consider the smallest one here so
@@ -635,9 +635,9 @@ if \(X^{-1}(\mathcal{B})=\{X^{-1}(B):B\in\mathcal{B}\}\subseteq
 \vc{\mathcal{F}}\), where \(\mathcal{B}\) is the Borel \(\sigma\)-algebra on
 \(\R\).
 \begin{note}
-Sometimes, in the definition of random variable, we may be allowed to
-replace \(\R\) by \(\eR=[-\infty,\infty]\), the set of extended real numbers.
-In respond to this change, we would change \(\mathcal{B}\) to the Borel
+In some contexts, we may implicitly adapt the definition a bit by replacing
+\(\R\) by \(\eR=[-\infty,\infty]\), the set of extended real numbers.  In
+respond to this change, we would change \(\mathcal{B}\) to the Borel
 \(\sigma\)-algebra on \(\eR\), which is given by \(\{B\cup E:B\in\mathcal{B},
 E\in\{-\infty,\infty\}\}\).
 \end{note}
@@ -651,18 +651,19 @@ sets \(B\), \(X^{-1}(B)\) would not fall outside the \(\sigma\)-algebra
 \(\mathcal{F}\), avoiding the probability \(\prob{X\in B}\) to be undefined.
 
 We sometimes call such extra condition as being
-\defn{\(\mathcal{F}\)-measurable}. So we can say that a random variable is a
-\(\mathcal{F}\)-measurable function. For a generic function \(f:\R\to\R\), we
-can define measurability in a similar fashion: It is \defn{(Borel-)measurable}
-if \(f^{-1}(\mathcal{B})\subseteq \mathcal{B}\) where \(\mathcal{B}\) is the
-Borel \(\sigma\)-algebra on \(\R\). Here we do not have ``\(\mathcal{F}\)'' as
-the default \(\sigma\)-algebra on \(\R\) is always chosen to be
-\(\mathcal{B}\).
+\defn{\(\mathcal{F}\)-measurable}. So we can say that a random variable \(X\)
+is a \(\mathcal{F}\)-measurable function. \begin{note} This is sometimes
+denoted by the shorthand ``\(X\in\mathcal{F}\)''.  \end{note} For a generic
+function \(f:\R\to\R\), we can define measurability in a similar fashion: It is
+\defn{(Borel-)measurable} if \(f^{-1}(\mathcal{B})\subseteq \mathcal{B}\) where
+\(\mathcal{B}\) is the Borel \(\sigma\)-algebra on \(\R\). Here we do not have
+``\(\mathcal{F}\)'' as the default \(\sigma\)-algebra on \(\R\) is always
+chosen to be \(\mathcal{B}\).
 
 \item \textbf{Distribution measure.} Indeed, a random variable \(X\) would
 \emph{induce} a probability measure on \(\R\) (equipped with the Borel
-\(\sigma\)-algebra \(\mathcal{B}\)), called the \defn{distribution measure} of
-\(X\), which is given by
+\(\sigma\)-algebra \(\mathcal{B}\)), called the \defn{distribution (measure)} of
+\(X\), denoted by \(\mu_X\) or \(\pr_{X}\), which is given by
 \[
 \mu_{X}(B):=\prob{X\in B}=\prob{X^{-1}(B)}\text{ for all \(B\in\mathcal{B}\)}.
 \]
@@ -696,7 +697,7 @@ Then \(X\) is a random variable iff \(X^{-1}(\{x_i\})\in\mathcal{F}\) for all
 remains to prove for the case where \(B\) contains some of \(x_1,\dotsc,x_n\),
 say \(x_{i_1},\dotsc,x_{i_j}\). Then, we have
 \(X^{-1}(B)=X^{-1}(\{x_{i_1}\}\cup\dotsb\cup\{x_{i_j}\})
-=X^{-1}(\{x_{i_1}\}\cup\dotsb X^{-1}(\{x_{i_j}\})
+=X^{-1}(\{x_{i_1}\})\cup\dotsb\cup X^{-1}(\{x_{i_j}\})
 \in\mathcal{F}
 \)
 due to the closedness under unions for \(\mathcal{F}\).
@@ -706,10 +707,16 @@ If \(X\) is a \(\mathcal{F}\)-random variable and \(f\) is a \emph{measurable} f
 \(f\circ X=f(X)\) is also a \(\mathcal{F}\)-random variable.
 
 \begin{pf}
-Fix any \(B\in\mathcal{B}\). Then, \(\vc{f^{-1}(B)}\in\mathcal{B}\) as \(f\) is
-measurable. Since \(X\) is a \(\mathcal{F}\)-random variable,
-\(X^{-1}(\vc{f^{-1}(B)})\in\mathcal{F}\). The result then follows from the fact that
-\((f\circ X)^{-1}(B)=X^{-1}(f^{-1}(B))\).
+Fix any \(B\in\mathcal{B}\). Then, we have
+\begin{align*}
+(f\circ X)^{-1}(B)&=\{\omega\in\Omega:f(X(\omega))\in B\}
+=\{\omega\in\Omega:X(\omega)\in f^{-1}(B)\} \\
+&=\{\omega\in\Omega:\omega\in X^{-1}(f^{-1}(B))\}
+=X^{-1}(f^{-1}(B)).
+\end{align*}
+Since \(f\) is measurable, we have \(f^{-1}(B)\in\mathcal{B}\). With \(X\)
+being a \(\mathcal{F}\)-random variable, we have \((f\circ
+X)^{-1}(B)=X^{-1}(f^{-1}(B))\in\mathcal{F}\), as desired.
 \end{pf}
 \end{enumerate}
 \end{enumerate}
@@ -833,7 +840,7 @@ ytick={1,5,10,14,18}, yticklabels={\(y_1\), \(y_2\), \(y_3\), \(y_4\), \(y_5\)}]
 \end{tikzpicture}
 \end{center}
 \end{itemize}
-\item \textbf{Definition of Lebesgue integral.}
+\item \label{it:lebesgue-int-def}\textbf{Definition of Lebesgue integral.}
 As we are primarily discussing expectations here, we will focus on defining
 Lebesgue integral of a \emph{random variable} \(X\) on a probability space
 \((\Omega,\mathcal{F},\pr)\) (although it can be similarly defined for
@@ -975,6 +982,34 @@ discussed above, we can also define the \defn{Lebesgue integral over a set
 \int_{A}^{}X(\omega)\odif{\prob{\omega}}=\int_{\Omega}^{}\indic_{A}(\omega)X(\omega)\odif{\prob{\omega}},
 \]
 where \(\indic_{A}\) denotes the indicator function.
+\begin{note}
+In a similar manner, the Lebesgue integral can be defined for measures other
+than \(\pr\), e.g., the Lebesgue measure \(\lambda\), and similar notations
+apply; see STAT7610 for more details.
+\end{note}
+\item \textbf{Relationship between Riemann and Lebesgue integral.} The Lebesgue
+integral can indeed be viewed as a generalization to the Riemann integral, as
+suggested by the following result.
+\begin{proposition}[Comparison of Riemann and Lebesgue integrals]
+\label{prp:compare-riemann-lebesgue-int}
+Let \(f\) be a bounded function on \([a,b]\) with \(a<b\). Then:
+\begin{enumerate}
+\item The Riemann integral \(\int_{a}^{b}f(x)\odif{x}\) is defined (i.e., \(f\)
+is \emph{Riemann integrable}) iff the set \(\{x\in [a,b]:\text{\(f\) is not
+continuous at \(x\)}\}\) has Lebesgue measure zero (or in short: \(f\) is
+continuous \emph{almost everywhere}; see \labelcref{it:ae-as-terms}).
+\item If the Riemann integral \(\int_{a}^{b}f(x)\odif{x}\) is defined, then
+\(f\) is Borel measurable and the Lebesgue integral
+\(\int_{[a,b]}^{}f(x)\odif{\lambda(x)}\) is also defined. Furthermore, the
+Riemann and Lebesgue integrals agree. \begin{note}
+In view of this, sometimes we write \(\int_{[a,b]}^{}f(x)\odif{x}\) to denote
+the common value of the Riemann and Lebesgue integrals.
+\end{note}
+\end{enumerate}
+\end{proposition}
+\begin{pf}
+Omitted.
+\end{pf}
 \item \label{it:lebesgue-int-prop} \textbf{Properties of Lebesgue integral.}
 The Lebesgue integral turns out to possess similar properties as the Riemann
 integral. Let \(X\) and \(Y\) be random variables on a probability space
@@ -1075,7 +1110,7 @@ passes through \((\expv{X},\varphi(\expv{X}))\), we have
 \subsection{Convergence Theorems}
 \label{subsect:conv-thm}
 \begin{enumerate}
-\item \textbf{Preliminary terms.} In \Cref{subsect:conv-thm}, we are going to
+\item\label{it:ae-as-terms} \textbf{Preliminary terms.} In \Cref{subsect:conv-thm}, we are going to
 discuss several \emph{convergence theorems}, which give us conditions under
 which we can ``interchange limit and integral''. We first introduce some
 terminologies for describing the types of convergence to be investigated here.
@@ -1159,10 +1194,11 @@ function/random variable.
 \hfill
 \begin{enumerate}
 \item \emph{(for functions on \(\R\))}
-Let \(\{f_n\}\) be a sequence of measurable real-valued functions on \(\R\) converging almost everywhere to
-another measurable real-valued function \(f\) on \(\R\). If we have \(|f_n|\le g\) almost
-everywhere for every \(n\in\N\), where \(g\) is a function such that \(
-\int_{-\infty}^{\infty}g(x)\odif{x}<\infty\), then
+Let \(\{f_n\}\) be a sequence of measurable real-valued functions on \(\R\)
+converging almost everywhere to another measurable real-valued function \(f\)
+on \(\R\). If we have \(|f_n|\le g\) almost everywhere for every \(n\in\N\),
+where \(g\) is a function such that
+\vc{\(\int_{-\infty}^{\infty}g(x)\odif{x}<\infty\)}, then
 \[\lim_{n\to\infty}\int_{-\infty}^{\infty}f_n(x)\odif{x}
 =\int_{-\infty}^{\infty}\lim_{n\to\infty}f_n(x)\odif{x}
 =\int_{-\infty}^{\infty}f(x)\odif{x}.\]
@@ -1170,7 +1206,7 @@ everywhere for every \(n\in\N\), where \(g\) is a function such that \(
 Let \(\{X_n\}\) be a sequence of random variables converging almost surely to
 another random variable \(X\). If we have \(|X_n|\le Y\) almost surely for
 every \(n\in\N\), where \(Y\) is a random variable (defined on the same
-probability space as others) with \(\expv{Y}<\infty\), then
+probability space as others) with \vc{\(\expv{Y}<\infty\)}, then
 \[\lim_{n\to\infty}\expv{X_n}=\expv{\lim_{n\to\infty}X_n}=\expv{X}.\]
 \end{enumerate}
 \end{theorem}
@@ -1207,7 +1243,8 @@ the mass function. This allows us to reduce the expression
 more familiar to us. For the case where \(X\) is continuous, there is a density
 function \(f\) such that \(\mu_X(B)=\prob{X\in B}=\int_{B}^{}f(x)\odif{x}\) for all
 \(B\in\mathcal{B}\). Based on this, it can be shown that
-\(\int_{\R}^{}g(x)\odif{\mu_X(x)}=\int_{-\infty}^{\infty}g(x)f(x)\odif{x}\)
+\(\int_{\R}^{}g(x)\odif{\mu_X(x)}
+=\int_{-\infty}^{\infty}g(x)f(x)\odif{x}\)
 (details omitted).
 \end{enumerate}
 \subsection{Change of Measure}
@@ -1220,7 +1257,7 @@ financial economics (there we are changing the probability measure to the
 
 \item \label{it:change-meas-rv-z}\textbf{Changing measure through a random variable \(Z\).} The basic idea
 of \emph{change of measure} is to introduce a random variable \(Z\) for
-``distorting'' the probability measure. For illustration purpose consider the
+``distorting'' the probability measure. For illustration purpose, consider the
 case where \(\Omega\) is countable with \(\prob{\{\omega\}}>0\) for every
 \(\omega\in\Omega\). Suppose we would like to change the probability measure
 \(\pr\) to a new probability measure \(\tpr\) via an introduction of a random
@@ -1228,11 +1265,11 @@ variable \(Z\). One natural way to do that is to define \(Z\) by
 \(Z(\omega)=\tprob{\{\omega\}}/\prob{\{\omega\}}\) for all \(\omega\in\Omega\),
 such that multiplying \(\prob{\{\omega\}}\) by \(Z(\omega)\) gives us the
 ``distorted'' probability \(\tprob{\{\omega\}}\), i.e.,
-\(Z(\omega)\prob{\{\omega\}}=\tpr{\{\omega\}}\), for all \(\omega\in\Omega\).
+\(Z(\omega)\prob{\{\omega\}}=\tprob{\{\omega\}}\), for all \(\omega\in\Omega\).
 
 However, difficult arises when \(\Omega\) is uncountable and
 \(\prob{\{\omega\}}=\tprob{\{\omega\}}=0\) for all \(\omega\in\Omega\). In such
-case, \emph{any} random variable \(Z\) would satisfy \(Z(\omega)\prob{\{\omega\}}=\tpr{\{\omega\}}\)
+case, \emph{any} random variable \(Z\) would satisfy \(Z(\omega)\prob{\{\omega\}}=\tprob{\{\omega\}}\)
 for all \(\omega\in\Omega\), since the equation is just saying
 ``\(0=0\)'', which is not meaningful and not what we want for describing how
 the probability ``distortion'' should take place. Hence, instead of describing
@@ -1246,7 +1283,7 @@ almost surely nonnegative random variable with \(\expv{Z}=1\). Consider a
 function \(\tpr\) defined by
 \begin{equation}
 \label{eq:change-of-measure}
-\tpr(A)=\int_{A}^{}Z(\omega)\odif{\prob{\omega}}\quad\text{for every \(A\in\mathcal{F}\)}.
+\tprob{A}=\int_{A}^{}Z(\omega)\odif{\prob{\omega}}\quad\text{for every \(A\in\mathcal{F}\)}.
 \end{equation}
 Then \(\tpr\) is a probability measure on \(\mathcal{F}\).
 \end{proposition}
@@ -1349,7 +1386,7 @@ write \(X=X^{+}-X^{-}\) and apply (a) by \(\texpv{X}
 =\texpv{X^{+}}-\texpv{X^{-}}
 \overset{\text{(a)}}{=}\expv{X^{+}Z}-\expv{X^{-}Z}\), as long as it does not
 result in ``\(\infty-\infty\)''.
-\item Similarly for (b), we can apply it for any general random variable \(Y\)
+\item Similarly for (b), we can apply it for every general random variable \(Y\)
 through writing \(Y=Y^+-Y^-\): \(\expv{Y}=\texpv{Y^{+}/Z}-\texpv{Y^{-}/Z}\),
 again as long as it does not result in ``\(\infty-\infty\)''.
 \end{remark}
@@ -1357,7 +1394,8 @@ again as long as it does not result in ``\(\infty-\infty\)''.
 \(\mathcal{F}\) be a \(\sigma\)-algebra on \(\Omega\). Then two probability
 measures \(\pr\) and \(\tpr\) on \((\Omega,\mathcal{F})\) are called
 \defn{equivalent} if we have \(\prob{A}=0\) iff \(\tprob{A}=0\), i.e., they
-assign zero probability to the same collection of events in \(\mathcal{F}\).
+assign zero probability to \emph{exactly} the same collection of events in
+\(\mathcal{F}\).
 \begin{note}
 While equivalent probability measures agree on which events in \(\mathcal{F}\)
 have zero probability, they can still differ a lot on the probability
@@ -1402,12 +1440,12 @@ Omitted.
 
 Inspired by
 \(\tpr(A)=\int_{\Omega}^{}\indic_{A}\odif{\tprob{\omega}}=\int_{A}^{}1\odif{\tprob{\omega}}\)
-and the Radon-Nikodym theorem, we may write \(\displaystyle
-Z(\omega)=:\frac{\odif{\tprob{\omega}}}{\odif{\prob{\omega}}}\) for all
+and the Radon-Nikodym theorem, we may write \(
+Z(\omega)=:\odif{\tprob{\omega}}/\odif{\prob{\omega}}\) for all
 \(\omega\in\Omega\), as a mnemonic device. (This looks somewhat similar to the
-equation ``\(Z(\omega)=\tprob{\{\omega\}}/\prob{\{\omega\}}\)'' in
+equation ``\( Z(\omega)=\tprob{\{\omega\}}/\prob{\{\omega\}}\)'' in
 \labelcref{it:change-meas-rv-z}.) Indeed, such random variable \(Z\) in the
 Radon-Nikodym theorem is known as the \defn{Radon-Nikodym derivative of
-\(\tpr\) with respect to \(\pr\)}, which is often denoted by \(\displaystyle
-\frac{\odif{\tpr}}{\odif{\pr}}\).
+\(\tpr\) with respect to \(\pr\)}, which is often denoted by \(
+\odif{\tpr}/\odif{\pr}\).
 \end{enumerate}
