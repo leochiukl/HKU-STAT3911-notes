@@ -246,6 +246,9 @@ Brownian motion.
 \item \(\{W_t\}\) possesses the \emph{joint moment generating functions} as in \labelcref{it:bm-mult-norm}.
 \end{enumerate}
 \end{proposition}
+\begin{pf}
+Omitted.
+\end{pf}
 \end{enumerate}
 \subsection{First-Order and Quadratic Variations}
 \begin{enumerate}
@@ -350,11 +353,12 @@ times \(0\) and \(T\):
 \begin{proposition}
 \label{prp:bm-unit-rate-quad-var}
 Let \(\{W_t\}\) be a Brownian motion on \((\Omega,\mathcal{F},\pr)\), and
-consider the function \(t\mapsto W_t(\omega)\) for each fixed
-\(\omega\in\Omega\) (call it \(W\)). Then, we have \([W,W]_T\eqas T\) for all \(T>
-0\).\footnote{To have the almost sure equality, the limit is
-supposed to be taken with respect to a sequence of partitions whose norms
-converge to zero ``sufficiently fast''.}
+let \(W\) denote the function \(t\mapsto W_t\). Then, we have \([W,W]_T\eqas T\) for all \(T>
+0\).\footnote{To have the almost sure equality, the limit is supposed to be
+taken with respect to a sequence of partitions whose norms converge to zero
+``sufficiently fast''. Here we shall not delve into these technical details and
+we will assume throughout that this is done, so that we have the almost sure
+equality always.}
 \end{proposition}
 \begin{pf}
 Let \(\Pi=\{t_0,t_1,\dotsc,t_n\}\) be a partition of \([0,T]\) and write
@@ -427,7 +431,7 @@ contradiction. Thus, we must have \(\lim_{\|\Pi\|\to
 \(t\mapsto W_t(\omega)\) with \(\omega\in\Omega\) fixed is generally not
 differentiable, there are still some \emph{informal} \warn{} ``differential
 rules'' available for the Brownian motion, which will be helpful for handling
-\emph{stochastic calculus} (see \Cref{sect:stochatic-calc}):
+\emph{stochastic calculus} (see \Cref{sect:stochastic-calculus}):
 \begin{enumerate}[label={(\arabic*)}]
 \item \(\boxed{\odif{W_t}\odif{W_t}=\odif{t}}\).
 

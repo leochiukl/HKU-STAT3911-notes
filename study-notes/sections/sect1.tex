@@ -2,11 +2,11 @@
 \label{sect:prob-theory}
 \begin{enumerate}
 \item Many topics in modern financial economics are built on \emph{stochastic
-calculus}, which is touched upon in STAT3911. As suggested by its name, it is a
-new type of calculus ``with randomness''; for instance, rather than
-differentiating with respect to a deterministic time variable, we differentiate
-with respect to a \emph{random variable} (you will learn how to make sense of
-this in STAT3911).
+calculus}, which is touched upon in \Cref{sect:stochastic-calculus}. As
+suggested by its name, it is a new type of calculus ``with randomness''; for
+instance, rather than differentiating with respect to a deterministic time
+variable, we differentiate with respect to a \emph{random variable} (you will
+learn how to make sense of this in STAT3911).
 
 Due to the probabilistic nature of stochastic calculus, having a solid
 foundation in probability theory is critical for studying stochastic calculus
@@ -1346,7 +1346,7 @@ We will utilize a proof strategy known as the \emph{standard machine}, which is
 a standard argument for proving results in measure theory. The \defn{standard
 machine} takes four steps, which show the desired result holds for larger and
 larger classes of functions: (1) indicator functions \faIcon{arrow-right} (2)
-\defn{simple random variables} (i.e., linear combinations of finitely many indicator
+\defn{simple functions} (i.e., linear combinations of finitely many indicator
 functions of pairwise disjoint sets) \faIcon{arrow-right} (3) nonnegative
 random variables \faIcon{arrow-right} (4) general random variables.
 As the results here are for nonnegative random variables, we only need to
@@ -1358,7 +1358,7 @@ the results to general random variables; see the remark afterwards.)
 \texpv{\vc{\indic_{A}}}=\tprob{A}=\int_{\Omega}^{}\indic_{A}(\omega)Z(\omega)\odif{\omega}
 =\expv{\vc{\indic_{A}}Z}.
 \]
-\emph{Step 2: Simple random variables.} Fix any pairwise disjoint events
+\emph{Step 2: Simple functions.} Fix any pairwise disjoint events
 \(A_1,\dotsc,A_n\in\mathcal{F}\), and any constants \(c_1,\dotsc,c_n\in\R\). Then
 \[
 \texpv{\vc{\sum_{i=1}^{n}c_i\indic_{A_i}}}
@@ -1368,7 +1368,7 @@ the results to general random variables; see the remark afterwards.)
 \]
 \emph{Step 3: Nonnegative random variables.} We will use the fact that, given
 any nonnegative random variable \(X\), there exists a sequence of nonnegative
-simple random variables \(\{X_n\}\) such that \(0\le X_1\le X_2\le\dotsb\le X\) a.s.\ and
+simple functions \(\{X_n\}\) such that \(0\le X_1\le X_2\le\dotsb\le X\) a.s.\ and
 \(\lim_{n\to\infty}X_n=X\) a.s. (loosely speaking, they are approaching to
 \(X\) ``from below''). By monotone convergence theorem, we have
 \[

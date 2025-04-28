@@ -1,0 +1,1681 @@
+\section{Stochastic Calculus}
+\label{sect:stochastic-calculus}
+\begin{enumerate}
+\item Equipped with the knowledge from
+\Cref{sect:prob-theory,sect:info-cond,sect:brownian-motions}, we are now ready
+to study the first major topic of this course, namely \emph{stochastic
+calculus}. Here, we will be developing a ``new kind of calculus'', with
+``rules'' that you should have never seen before in the previous calculus
+classes. In modern financial economics, stochastic calculus plays a fundamental
+role and it is involved in many results. The major notion within stochastic
+calculus is the \emph{It\^o's integral} (another type of new integral, apart from
+the Lebesgue integral in \Cref{sect:prob-theory}), so let us start by
+constructing such integral and studying its properties.
+\end{enumerate}
+\subsection{Construction of It\^o integral}
+\begin{enumerate}
+\item \textbf{Idea of It\^o integral.} Like the construction of Lebesgue integral (not covered
+here; see STAT7610 if interested), the construction of It\^o integral starts
+with defining the integral for \emph{simple} integrands only, and then
+extending the definition for \emph{general integrands} through taking limits on
+some ``approximating sequences of simple integrands'' that would get ``closer
+and closer'' to the desired general integrands.
+
+Before going into the construction, it is instructive to have some intuitive
+idea about the It\^o integral in mind. Our main goal here is to develop a more
+definition of integral looking like \(\int_{0}^{T}\Delta_t\odif{W_t}\) with a fixed
+\(T>0\). Here, we have a Brownian motion \(\{W_t\}\) and we suppose that
+\(\{\Delta_t\}\) is a stochastic process adapted to a filtration
+\(\{\mathcal{F}_t\}\) for the Brownian motion. To have a better intuition, we
+may interpret \(\Delta_t\) as the position taken for an asset at time \(t\),
+and interpret \(W_t\)  as the time-\(t\) ``price'' of that
+asset (not so properly as it can be negative). Then, loosely speaking, the
+integral \(\int_{0}^{T}\Delta_t\odif{W_t}\) is the ``sum'' of profits
+(positive/negative) earned over the period \([0,T]\) based on the ``continuous
+evolution'' of our positions taken and ``continuous trading'' in such period:
+For small time increment \(h>0\), the profit gained over \([t,t+h]\) would be
+(approximately) \(\Delta_t\times \underbrace{(W_{t+h}-W_{t})}_{\text{loosely:
+\(\odif{W_t}\)}}\). We are going to formalize this idea in the following.
+\item \textbf{It\^o integral for simple integrands.}
+Let \(\Pi=\{t_0,t_1,\dotsc,t_n\}\) be a partition of \([0,T]\), with
+\(0=t_0\le t_1\le\dotsb\le t_n=T\). A process \(\{\Delta_t\}\) is called a
+\defn{simple process} if \(\Delta_t\) is constant in \(t\) on each subinterval
+\([t_{j},t_{j+1})\). It is not hard to see that every path of a simple process
+(with \(\omega\) fixed) is a simple function in \(t\), so in short, a \underline{simple}
+process is a process with \underline{simple} paths.
+
+Now, let \(\{W_t\}\) be a Brownian motion and \(\{\mathcal{F}_t\}\) be a
+filtration for the Brownian motion. Here, we shall consider a simple process
+\(\{\Delta_t\}\) that is adapted to \(\{\mathcal{F}_t\}\). For every
+\(k=0,1,\dotsc,n-1\) and every \(t\in [t_{k},t_{k+1}]\), define
+\[
+I(t):=\sum_{j=0}^{k-1}\Delta_{t_j}(W_{t_{j+1}}-W_{t_j})+\Delta_{t_k}(W_{t}-W_{t_k}),
+\]
+which gives the total profit from taking the positions as instructed in the
+simple process (until time \(t\)) and selling all the positions at time \(t\).
+\begin{note}
+For example, take \(t_1=1\), \(t_2=3\), and \(t_3=6\), and suppose that
+\(\Delta_0=5\), \(\Delta_1=7\), \(\Delta_3=2\),
+\(W_{1}=5\), \(W_{3}=1\), and \(W_{4}=7\). Then,
+\(I(4)=\Delta_0(W_1-W_0)+\Delta_1(W_3-W_1)+\Delta_3(W_4-W_3)
+=5(5-0)+7(1-5)+2(7-1)=9\).
+\end{note}
+
+
+It is precisely the \defn{It\^o integral of the simple process
+\(\{\Delta_t\}\)}, and the notation for the It\^o integral is:
+\[
+I_{\vc{t}}=\int_{0}^{\vc{t}}\Delta_u\odif{W_u}.
+\]
+\emph{Differential form.} In stochastic calculus, it is often handy to express
+formulas involving It\^o integral in the \emph{differential form} (as a
+shorthand), which involves some ``differentials''. For example, we would write
+\(\odif{I_t}=\Delta_t\odif{W_t}\) (or \(\odif{I_u}=\Delta_u\odif{W_u}\)) as a
+shorthand for \( \int_{0}^{t}\mgc{\odif{I_u}}\overset{\text{(notation)}}{=}
+I_{t}\vc{-I_0}=\int_{0}^{t}\mgc{\Delta_u\odif{W_u}}\). So, here the definition
+of It\^o integral can be expressed in differential form as
+\(\odif{I_t}=\Delta_t\odif{W_t}\) with \(I_0=0\). This kind of differential
+equation that has ``differential of stochastic process'' is known as
+\defn{stochastic differential equation} (SDE).
+
+While the SDE \(\odif{I_t}=\Delta_t\odif{W_t}\) may be intuitively interpreted
+as after moving ``a little'' forward in time from time \(t\), the change in the
+It\^o integral \(I\) would be approximately \(\Delta_t\) times the change in
+the Brownian motion \(W\), such interpretation is imprecise since the terms
+``a little'' and ``approximately'' do not have clear meanings.
+Mathematically, the SDE should always be understood to carry the (well-defined)
+meaning from the integral form (the corresponding formula with It\^o
+integrals).
+\begin{note}
+To ``derive'' such intuitive interpretation, we may take a small \(h>0\), and
+then we would have \(I_{t+h}-I_{t}
+=\int_{0}^{t+h}\Delta_u\odif{W_u}-\int_{0}^{t}\Delta_u\odif{W_u}
+\overset{\text{(consider definition)}}{\approx} \Delta_t(W_{t+h}-W_{t})\).
+\end{note}
+\item\label{it:ito-int-simple-prop} \textbf{Properties of It\^o integral for simple integrands.}
+The It\^o integral for simple integrands carries fairly nice properties,
+and they are helpful for establishing analogous properties for the later It\^o
+integral for \emph{general} integrands.
+
+Let \(\{\Delta_t\}\) be a simple process adapted to a filtration
+\(\{\mathcal{F}_t\}\) for a Brownian motion \(\{W_t\}\). Let \(
+I_{\vc{t}}=\int_{0}^{\vc{t}}\Delta_u\odif{W_u}\) denote the It\^o integral.
+\begin{enumerate}
+\item \emph{(Martingale)} The process \(\{I_t\}\) is a \(\{\mathcal{F}_t\}\)-martingale.
+Particularly, we have \(\expv{I_t}=0\) for all \(t\).
+\item \emph{(It\^o isometry)} \(\expv{I_t^{2}}=\expv{\int_{0}^{t}\Delta^{2}_{u}\odif{u}}\).
+\item \emph{(Quadratic variation)} The quadratic variation of \(I\) (as a
+function of time) up to time \(t\) is
+\([I,I]_{t}=\int_{0}^{t}\Delta^{2}_{u}\odif{u}\).
+
+\begin{note}
+Recall the definition of quadratic variation: \([I,I]_{t}=
+\lim_{\|\Pi\|\to 0}\sum_{j=0}^{n-1}(I_{t_{j+1}}-I_{t_{j}})^{2}\). Here, the
+quadratic variation is still a random variable. With \(\omega\in\Omega\)
+realized, the value of quadratic variation can be computed
+by using the It\^o integrals evaluated at \(\omega\) in the expression:
+\([I,I]_{t}(\omega)=\lim_{\|\Pi\|\to
+0}\sum_{j=0}^{n-1}(I_{t_{j+1}}(\omega)-I_{t_{j}}(\omega))^{2}\).
+\end{note}
+\end{enumerate}
+\begin{pf}
+\begin{enumerate}
+\item We first show that \(\{I_t\}\) is a \(\{\mathcal{F}_t\}\)-martingale:
+\begin{enumerate}[label={(\arabic*)}]
+\item For every \(t\in [t_{k},t_{k+1}]\), we have
+\(I(t)=\sum_{j=0}^{k-1}\Delta_{t_j}(W_{t_{j+1}}-W_{t_j})+\Delta_{t_k}(W_{t}-W_{t_k})\).
+With \(t_0\le t_1\le\dotsb\le t_k\le t\), all \(\Delta\)'s and \(W\)'s here are
+\(\mathcal{F}_t\)-measurable. Hence, \(\{I_t\}\) is adapted to
+\(\{\mathcal{F}_t\}\).
+\item Since the simple process \(\{\Delta_t\}\) can only take finitely many
+different values, we know that there is a constant \(M>0\) such that
+\(|\Delta_t|\le M\) for all \(t\). Hence, for every \(t\in [t_{k},t_{k+1}]\), we have
+\begin{align*}
+\expv{|I_t|}
+\overset{\text{(triangle)}}&{\le}
+\sum_{j=0}^{k-1}\expv{|\Delta_{t_j}|\cdot |W_{t_{j+1}}-W_{t_j}|}+
+\expv{|\Delta_{t_k}|\cdot |W_{t}-W_{t_k}|} \\
+&\le\sum_{j=0}^{k-1}M\expv{|W_{t_{j+1}}-W_{t_j}|}+
+M\expv{|W_{t}-W_{t_k}|} \\
+\overset{(|x|\le 1+x^{2})}&{\le}
+\sum_{j=0}^{k-1}M\left(1+\expv{(W_{t_{j+1}}-W_{t_j})^{2}}\right)+M\left(1+\expv{(W_{t}-W_{t_k})^{2}}\right)
+<\infty.
+\end{align*}
+\item Fix any \(0\le s\le t\le T\). We know that \(s\in [t_{\ell},t_{\ell}+1)\)
+and \(t\in [t_{k},t_{k}+1)\) for some \(\ell\le k\) with \(t_{\ell}\le t_{k}\).
+We then write
+\[
+I_t=\sum_{j=0}^{\ell-1}\Delta_{t_j}(W_{t_{j+1}}-W_{t_j})
++\Delta_{t_{\ell}}(W_{t_{\ell+1}}-W_{t_{\ell}})
++\sum_{j=\ell+1}^{k-1}\Delta_{t_j}(W_{t_{j+1}}-W_{t_j})
++\Delta_{t_k}(W_{t}-W_{t_k}).
+\]
+Consider first the case where \(t_{\ell}=t_{k}\). We can then simplify the
+expression above to \(I_t=\sum_{j=0}^{\ell-1}\Delta_{t_j}(W_{t_{j+1}}-W_{t_j})
++\Delta_{t_\ell}(W_{t}-W_{t_\ell})\), and hence
+\begin{align*}
+\expv{I_t|\mathcal{F}_s}&=
+\sum_{j=0}^{\ell-1}\expv{\Delta_{t_j}(W_{t_{j+1}}-W_{t_j})|\mathcal{F}_s}
++\expv{\Delta_{t_\ell}(W_{t}-W_{t_\ell})|\mathcal{F}_s} \\
+\overset{\text{(TOWIK)}}&{=}
+\sum_{j=0}^{\ell-1}\Delta_{t_j}(W_{t_{j+1}}-W_{t_j})
++\Delta_{t_\ell}(\expv{W_{t}|\mathcal{F}_s}-W_{t_\ell}) \\
+\overset{\text{(\(\{W_t\}\) is martingale)}}&{=}
+\sum_{j=0}^{\ell-1}\Delta_{t_j}(W_{t_{j+1}}-W_{t_j})
++\Delta_{t_\ell}(W_s-W_{t_\ell})
+=I_s.
+\end{align*}
+Next, consider the case where \(t_{\ell}<t_{k}\). From above, we know that
+\[
+\expv{\left.
+\sum_{j=0}^{\ell-1}\Delta_{t_j}(W_{t_{j+1}}-W_{t_j})
++\Delta_{t_{\ell}}(W_{t_{\ell+1}}-W_{t_{\ell}})
+\right|\mathcal{F}_s}=I_s.
+\]
+Now, consider the rest of the terms in \(I_t\):
+\begin{align*}
+\expv{\left.
+\sum_{j=\ell+1}^{k-1}\Delta_{t_j}(W_{t_{j+1}}-W_{t_j})
+\right|\mathcal{F}_s}
+&=\sum_{j=\ell+1}^{k-1}\expv{\Delta_{t_j}(W_{t_{j+1}}-W_{t_j})|\mathcal{F}_s} \\
+\overset{\text{(tower)}}&{=}
+\sum_{j=\ell+1}^{k-1}\expv{\expv{
+\Delta_{t_j}(W_{t_{j+1}}-W_{t_j})|\mathcal{F}_{t_j}}|\mathcal{F}_s} \\
+\overset{\text{(TOWIK)}}&{=}
+\sum_{j=\ell+1}^{k-1}\expv{\Delta_{t_j}\expv{
+(W_{t_{j+1}}-W_{t_j})|\mathcal{F}_{t_j}}|\mathcal{F}_s} \\
+\overset{\text{(independence)}}&{=}
+\sum_{j=\ell+1}^{k-1}\expv{\Delta_{t_j}\expv{W_{t_{j+1}}-W_{t_j}}|\mathcal{F}_s}
+=\sum_{j=\ell+1}^{k-1}\expv{\Delta_{t_j}\cdot 0|\mathcal{F}_s}
+=0,
+\end{align*}
+and
+\begin{align*}
+\expv{\Delta_{t_k}(W_{t}-W_{t_k})|\mathcal{F}_s}
+\overset{\text{(tower)}}&{=}
+\expv{\expv{\Delta_{t_k}(W_{t}-W_{t_k})|\mathcal{F}_{t_k}}|\mathcal{F}_s}
+\overset{\text{(TOWIK)}}{=}
+\expv{\Delta_{t_k}\expv{W_{t}-W_{t_k}|\mathcal{F}_{t_k}}|\mathcal{F}_s} \\
+\overset{\text{(independence)}}&{=}
+\expv{\Delta_{t_k}\expv{W_{t}-W_{t_k}}|\mathcal{F}_s}
+=0.
+\end{align*}
+Therefore, we have \(\expv{I_t|\mathcal{F}_s}=I_s\) in this case also.
+\end{enumerate}
+Knowing that \(\{I_t\}\) is a \(\{\mathcal{F}_t\}\)-martingale, we have
+\[
+\expv{I_t}=\expv{\expv{I_t|\mathcal{F}_0}}
+\overset{\text{(martingale)}}{=}\expv{I_0}\overset{\text{(definition)}}{=}\expv{0}
+=0
+\]
+for every \(t\).
+\item Let \(D_j:=W_{t_{j+1}}-W_{t_j}\) for every \(j=0,1,\dotsc,k-1\) and \(D_k:=W_{t}-W_{t_k}\).
+With these notations, we can simplify the It\^o integral to \(I_t=\sum_{j=0}^{k}\Delta_{t_j}D_j\).
+Then, direct expansion gives
+\(I_t^{2}=\sum_{j=0}^{k}\Delta_{t_j}^{2}D_j^{2}+2\sum_{0\le i<j\le k}^{}
+\Delta_{t_i}\Delta_{t_j}D_iD_j\). We consider these two terms one by one.
+
+First, for every \(j=0,1,\dotsc,k\), we know that \(\Delta_{t_j}^{2}\) is
+\(\mathcal{F}_{t_j}\)-measurable while \(D_j^{2}\) is independent of
+\(\mathcal{F}_{t_j}\) by the independent increments property. Hence,
+\(\Delta_{t_j}^{2}\) and \(D_{j}^{2}\) are independent, thus
+\begin{align*}
+\expv{\sum_{j=0}^{k}\Delta_{t_j}^{2}D_j^{2}}
+&=\sum_{j=0}^{k}\expv{\Delta_{t_j}^{2}}\expv{D_j^{2}}
+=\sum_{j=0}^{k-1}\expv{\Delta_{t_j}^{2}}(t_{j+1}-t_{j})+\expv{\Delta_{t_k}^{2}}(t-t_k) \\
+\overset{\text{(simple process)}}&{=}
+\sum_{j=0}^{k-1}\expv{\int_{t_j}^{t_{j+1}}\Delta_{u}^{2}\odif{u}}
++\expv{\int_{t_k}^{t}\Delta_{u}^{2}\odif{u}}
+=\expv{\int_{0}^{t}\Delta_{u}^{2}\odif{u}}.
+\end{align*}
+Second, for every \(i<j\), \(\Delta_{t_i}\Delta_{t_j}D_{i}\) is \(\mathcal{F}_{t_j}\)-measurable,
+while \(D_j\) is independent of \(\mathcal{F}_j\). So,
+\(\Delta_{t_i}\Delta_{t_j}D_{i}\) and \(D_j\) are independent. Therefore,
+\[
+\expv{2\sum_{0\le i<j\le k}^{}\Delta_{t_i}\Delta_{t_j}D_iD_j}
+=2\sum_{0\le i<j\le k}^{}\expv{\Delta_{t_i}\Delta_{t_j}D_i}\underbrace{\expv{D_j}}_{0}
+=0.
+\]
+It follows that \(\expv{I_t^{2}}=\expv{\int_{0}^{t}\Delta_{u}^{2}\odif{u}}\),
+as desired.  \item With \(t\in [t_{k},t_{k+1}]\), fix any subinterval
+\([t_{j},t_{j+1}]\subseteq [0,t]\) on which \(\Delta_u\) is constant (so
+\(j\in\{0,1,\dotsc,k-1\}\)). Let \(\Pi_j=\{s_0,s_1,\dotsc,s_m\}\) be a
+partition of \([t_{j},t_{j+1}]\), with \(t_j=s_0<s_1<\dotsb<s_m=t_{j+1}\).
+Consider
+\[
+\sum_{i=0}^{m-1}(I_{s_{i+1}}-I_{s_i})^{2}
+=\sum_{i=0}^{m-1}(\Delta_{t_j}(W_{s_{i+1}}-W_{s_i}))^{2}
+=\Delta_{t_j}^{2}\sum_{i=0}^{m-1}(W_{s_{i+1}}-W_{s_i})^{2}.
+\]
+From this, we know that
+\begin{align*}
+\lim_{\|\Pi_j\|\to 0}\sum_{i=0}^{m-1}(I_{s_{i+1}}-I_{s_i})^{2}
+&=\Delta^{2}_{t_j}\lim_{\|\Pi_j\|\to 0}
+\sum_{i=0}^{m-1}(W_{s_{i+1}}-W_{s_i})^{2}
+=\Delta_{t_j}^{2}([W,W]_{t_{j+1}}-[W,W]_{t_{j}}) \\
+\overset{\text{(\Cref{prp:bm-unit-rate-quad-var})}}&{=}
+\Delta_{t_j}^{2}(t_{j+1}-t_{j})
+=\int_{t_j}^{t_{j+1}}\Delta_{u}^{2}\odif{u}
+\end{align*}
+In words, this means that the quadratic variation accumulated by the It\^o
+integral between times \(t_j\) and \(t_{j+1}\) is \(\int_{t_j}^{t_{j+1}}\Delta_{u}^{2}\odif{u}
+\). In a similar way, one can show that the quadratic variation accumulated
+between times \(t_{k}\) and \(t\) is \(\int_{t_k}^{t}\Delta_{u}^{2}\odif{u}\).
+Hence, the quadratic variation of \(I\) up to time \(t\) is
+\[
+[I,I]_{t}=\sum_{j=0}^{k-1}\int_{t_j}^{t_{j+1}}\Delta_{u}^{2}\odif{u}
++\int_{t_k}^{t}\Delta_{u}^{2}\odif{u}
+=\int_{0}^{t}\Delta_{u}^{2}\odif{u}
+\]
+(when the norm of partition of the whole interval \([0,t]\) goes to zero,
+the norms of partitions of subintervals must go to zero as well).
+\end{enumerate}
+\end{pf}
+
+\begin{note}
+One can also ``derive'' (informally) the quadratic variation of It\^o integral
+through ``differential rules'':
+\[
+\odif{I_t}\odif{I_t}
+=(\Delta_t\odif{W_t})(\Delta_t\odif{W_t})
+=\Delta_t^{2}\odif{W_t}\odif{W_t}
+\overset{\text{(differential rule)}}{=}\Delta_t^{2}\odif{t}.
+\]
+Quite often, manipulating the differentials based on ``differential rules''
+would indeed yield correct results. While it may not be completely formal, it
+serves as a very practically useful method for ``quick derivations'' or
+``making guesses''.
+\end{note}
+\item \textbf{It\^o integral for general integrands.} Let \(\{\Delta_t\}_{t\in
+[0,T]}\) be a stochastic process that is adapted to a filtration
+\(\{\mathcal{F}_t\}_{t\in [0,T]}\) for a Brownian motion \(\{W_t\}_{t\in
+[0,T]}\), and is also \defn{square-integrable}, i.e.,
+\(\expv{\int_{0}^{T}\Delta_t^{2}\odif{t}}<\infty\). The It\^o integral of such
+general process \(\{\Delta_t\}\) is then defined through approximating
+\(\{\Delta_t\}\) by a sequence of simple processes, for which the It\^o
+integral has been defined already. More precisely, the following result
+asserts the existence of  such approximating sequence:
+\begin{proposition}
+\label{prp:ito-int-apx-seq}
+For such adapted and square-integrable stochastic process \(\{\Delta_t\}_{t\in
+[0,T]}\), there exists a sequence \(\{\{\Delta_{t,n}\}_{t\in
+[0,T]}\}_{n\in\N}\) of simple processes such that
+\[
+\lim_{n\to\infty}\expv{\int_{0}^{T}|\Delta_{t,n}-\Delta_{t}|^{2}\odif{t}}=0.
+\]
+\end{proposition}
+\begin{pf}
+Omitted.
+\end{pf}
+
+With such approximating sequence, we can define the \defn{It\^o integral of the
+adapted and square-integrable process \(\{\Delta_t\}\)} by
+\[
+I_t:=\int_{0}^{t}\Delta_{u}\odif{W_u}:=\lim_{n\to\infty}\int_{0}^{t}\Delta_{u,n}\odif{W_u}
+\]
+for every \(t\in [0,T]\). \begin{note}
+It can be shown that such limit always exists and so the It\^o integral is
+well-defined. But we shall omit the technical details here.
+\end{note}
+\item\label{it:ito-int-gen-prop} \textbf{Properties of It\^o integral for general integrands.}
+Since the It\^o integral for general integrands is defined as a limit of
+It\^o integrals for simple integrands, one may naturally expect it to carry
+similar properties as the It\^o integral for simple integrand. This is indeed
+the case, and its properties are collected below:
+\begin{enumerate}
+\item \emph{(Continuity)} For every fixed \(\omega\in\Omega\), the function
+(path) \(t\mapsto I_t(\omega)\) is continuous.
+\item \emph{(Adaptivity)} \(\{I_t\}\) is adapted to \(\{\mathcal{F}_t\}\).
+\item \emph{(Linearity)} If \(I_t=\int_{0}^{t}\Delta_u\odif{W_u}\) and \(J_t=
+\int_{0}^{t}\Gamma_{u}\odif{W_u}\), then \(I_t\pm J_t
+=\int_{0}^{t}(\Delta_{u}\pm\Gamma_{u})\odif{W_u}\). Also, for every constant
+\(c\), we have \(cI_t=\int_{0}^{t}c\Delta_u\odif{W_u}\).
+\item \emph{(Martingale)} \(\{I_t\}\) is a \(\{\mathcal{F}_t\}\)-martingale.
+Particularly, we have \(\expv{I_t}=0\) for all \(t\).
+\item \emph{(It\^o isometry)} \(\expv{I^{2}_{t}}=\expv{\int_{0}^{t}\Delta_{u}^{2}\odif{u}}\).
+\item \emph{(Quadratic variation)} \([I,I]_{t}=\int_{0}^{t}\Delta^{2}_{u}\odif{u}\).
+\end{enumerate}
+\end{enumerate}
+\subsection{It\^o Formula and It\^o Processes}
+\begin{enumerate}
+\item \textbf{It\^o formula for Brownian motion.} To work with stochastic
+calculus \emph{efficiently}, the \emph{It\^o formula} (or \emph{It\^o lemma})
+is an indispensable tool and is perhaps the most frequently used formula in
+STAT3911 (so make sure that you are familiar with it)! Intuitively, the It\^o
+formula serves as a ``stochastic version'' of chain rule in multivariable
+calculus --- Due to the extra ``roughness'' from the
+stochastic processes we are dealing with, there are some extra terms compared
+with the chain rule formula.
+
+There are several versions of It\^o formula, depending on the level of
+generality. We first consider the least general one (but still very important),
+which is for \emph{Brownian motion}.
+
+\begin{theorem}[It\^o formula for Brownian motion]
+\label{thm:ito-fmla-bm}
+Let \(f(t,x)\) be a function of class \(C^2\) (i.e., with continuous partial
+derivatives up to order \(2\)) and let \(\{W_t\}\) be a Brownian motion. For
+every \(T\ge 0\), we have
+\[
+f(T,W_T)=f(0,W_0)+\int_{0}^{T}f_{t}(t,W_t)\odif{t}+\int_{0}^{T}f_{x}(t,W_t)\odif{W_t}
++\frac{1}{2}\int_{0}^{T}f_{xx}(t,W_t)\odif{t}.
+\]
+\end{theorem}
+\begin{pf}
+Consider any partition \(\Pi=\{t_0,t_1,\dotsc,t_n\}\) of \([0,T]\), with
+\(0=t_0\le t_1\le\dotsb\le t_n=T\). The main idea in the proof is to express
+the difference \(f(T,W_T)-f(0,W_0)\) in terms of \emph{Taylor series} of
+approximated differences within subintervals that involve partial derivatives.
+By Taylor's theorem, we have
+\begin{align*}
+f(T,W_T)-f(0,W_0)&=\sum_{j=0}^{n-1}\left(f(t_{j+1},W_{t_{j+1}})-f(t_{j},W_{t_j})\right) \\
+\overset{\text{(Taylor)}}&{=}\sum_{j=0}^{n-1}f_{t}(t_j,W_{t_j})(t_{j+1}-t_{j})
++\sum_{j=0}^{n-1}f_{x}(t_j,W_{t_j})(W_{t_{j+1}}-W_{t_{j}}) \\
+&\quad+\frac{1}{2}\sum_{j=0}^{n-1}f_{xx}(t_j,W_{t_j})(W_{t_{j+1}}-W_{t_j})^{2}
++\sum_{j=0}^{n-1}f_{tx}(t_j,W_{t_j})(t_{j+1}-t_{j})(W_{t_{j+1}}-W_{t_j}) \\
+&\quad+\frac{1}{2}\sum_{j=0}^{n-1}f_{tt}(t_j,W_{t_j})(t_{j+1}-t_{j})^{2}
++\text{higher order remainder term}.
+\end{align*}
+We now consider the limit as \(\|\Pi\|\to 0\) and consider the six terms on the
+right-hand side one by one:
+\begin{itemize}
+\item \(\lim_{\|\Pi\|\to 0}\sum_{j=0}^{n-1}f_{t}(t_j,W_{t_j})(t_{j+1}-t_{j})
+=\int_{0}^{T}f_{t}(t,W_{t})\odif{t}\) (by definition).
+\item \(\lim_{\|\Pi\|\to 0}\sum_{j=0}^{n-1}f_{x}(t_j,W_{t_j})(W_{t_{j+1}}-W_{t_{j}})
+=\int_{0}^{T}f_{x}(t_j,W_{t_j})\odif{W_t}\) (by definition).
+\item \textbf{Claim:} \(\lim_{\|\Pi\|\to 0}\frac{1}{2}\sum_{j=0}^{n-1}
+f_{xx}(t_j,W_{t_j})(W_{t_{j+1}}-W_{t_j})^{2}=\frac{1}{2}\int_{0}^{T}f_{xx}(t,W_t)\odif{t}\).
+
+\begin{pf}
+Here we use a similar technique as in the proof of
+\Cref{prp:bm-unit-rate-quad-var}. For notational convenience, we let \(\Delta
+W_j:=W_{t_{j+1}}-W_{t_j}\) and \(\Delta t_j=t_{j+1}-t_{j}\) for every
+\(j=0,1,\dotsc,n-1\). First,
+\begin{align*}
+&\quad\expv{\vc{\frac{1}{2}\sum_{j=0}^{n-1}f_{xx}
+\left(t_j,W_{t_j}\right)(\Delta W_j^{2}-\Delta t_j)}} \\
+&=\frac{1}{2}\sum_{j=0}^{n-1}\expv{\expv{\left.f_{xx}
+\left(t_j,W_{t_j}\right)(\Delta W_j^{2}-\Delta t_j)
+\right|\mathcal{F}_{t_j}}}
+\overset{\text{(TOWIK)}}{=}
+\frac{1}{2}\sum_{j=0}^{n-1}\expv{f_{xx}\left(t_j,W_{t_j}\right)
+\expv{\left.(\Delta W_j^{2}-\Delta t_j)
+\right|\mathcal{F}_{t_j}}} \\
+\overset{\text{(independence)}}&{=}
+\frac{1}{2}\sum_{j=0}^{n-1}\expv{f_{xx}\left(t_j,W_{t_j}\right)
+\expv{(\Delta W_j^{2}-\Delta t_j)}}
+=\frac{1}{2}\sum_{j=0}^{n-1}\expv{f_{xx}\left(t_j,W_{t_j}\right)\cdot 0}
+=0.
+\end{align*}
+Second,
+\begin{align*}
+&\quad\vari{\vc{\sum_{j=0}^{n-1}f_{xx}(t_j,W_{t_j})(\Delta W_j^{2}-\Delta t_j)}}
+\overset{\text{(zero mean)}}{=}
+\expv{\left(\sum_{j=0}^{n-1}f_{xx}(t_j,W_{t_j})(\Delta W_j^{2}-\Delta t_j)\right)^{2}} \\
+&=\expv{\sum_{j=0}^{n-1}f_{xx}(t_j,W_{t_j})^{2}(\Delta W_j^{2}-\Delta t_j)^{2}} \\
+&\quad+2\expv{\sum_{0\le i<j\le n-1}^{}f_{xx}(t_{i},W_{t_i})f_{xx}(t_{j},W_{t_j})
+(\Delta W_i^{2}-\Delta t_i)(\Delta W_j^{2}-\Delta t_j)} \\
+&=\sum_{j=0}^{n-1}\expv{\expv{f_{xx}(t_j,W_{t_j})^{2}(\Delta W_j^{2}-\Delta t_j)^{2}
+|\mathcal{F}_{t_j}}} \\
+&\quad+2\sum_{0\le i<j\le n-1}^{}\expv{\expv{
+f_{xx}(t_{i},W_{t_i})f_{xx}(t_{j},W_{t_j})(\Delta W_i^{2}-\Delta t_i)(\Delta W_j^{2}-\Delta t_j)
+|\mathcal{F}_{t_j}}} \\
+\overset{\text{(TOWIK)}}&{=}
+\sum_{j=0}^{n-1}\expv{f_{xx}(t_j,W_{t_j})^{2}\expv{(\Delta W_j^{2}-\Delta t_j)^{2}|\mathcal{F}_{t_j}}} \\
+&\quad+2\sum_{0\le i<j\le n-1}^{}\expv{f_{xx}(t_{i},W_{t_i})f_{xx}(t_{j},W_{t_j})
+(\Delta W_i^{2}-\Delta t_i)\expv{\Delta W_j^{2}-\Delta t_j|\mathcal{F}_{t_j}}} \\
+\overset{\text{(independence)}}&{=}
+\sum_{j=0}^{n-1}\expv{f_{xx}(t_j,W_{t_j})^{2}\expv{(\Delta W_j^{2}-\Delta t_j)^{2}}} \\
+&\quad+2\sum_{0\le i<j\le n-1}^{}\expv{f_{xx}(t_{i},W_{t_i})f_{xx}(t_{j},W_{t_j})
+(\Delta W_i^{2}-\Delta t_i)\expv{\Delta W_j^{2}-\Delta t_j}} \\
+\overset{(\expv{\Delta W_j^{2}-\Delta t_j}=0)}&{=}
+\sum_{j=0}^{n-1}\expv{f_{xx}(t_j,W_{t_j})^{2}}\vari{\Delta W_j^{2}-\Delta t_j}
+=\sum_{j=0}^{n-1}\expv{f_{xx}(t_j,W_{t_j})^{2}}\vari{\Delta W_j^{2}} \\
+\overset{\left(X\sim\ndist{0,\sigma^2}\Rightarrow \expv{X^4}=3(\sigma^2)^{2}\right)}&{=}
+\sum_{j=0}^{n-1}\expv{f_{xx}(t_j,W_{t_j})^{2}}(3\Delta t_j^{2}-\Delta t_j^{2})
+\le 2\|\Pi\|\expv{\sum_{j=0}^{n-1}f_{xx}(t_j,W_{t_j})^{2}\Delta t_j}.
+\end{align*}
+Since \(\lim_{\|\Pi\|\to
+0}2\|\Pi\|\expv{\sum_{j=0}^{n-1}f_{xx}(t_j,W_{t_j})^{2}\Delta t_j}
+=0\)\footnote{Some work is actually needed for establishing this (particularly,
+we need to ensure that \(\expv{\sum_{j=0}^{n-1}f_{xx}(t_j,W_{t_j})^{2}\Delta
+t_j} \) would not ``explode'' as \(\|\Pi\|\to 0\)); see
+\textcite[Theorem~4.3.1]{etheridge2002course} for more details.}, we know that
+\[\lim_{\|\Pi\|\to 0}\vari{\frac{1}{2}\sum_{j=0}^{n-1}f_{xx}
+(t_j,W_{t_j})(\Delta W_j^{2}-\Delta t_j)}=0.
+\]
+Therefore, we have
+\begin{align*}
+\lim_{\|\Pi\|\to 0}\vc{\frac{1}{2}\sum_{j=0}^{n-1}
+f_{xx}\left(t_j,W_{t_j}\right)(\Delta W_j^{2}-\Delta t_j)}&=0 \\
+\implies \lim_{\|\Pi\|\to 0}\frac{1}{2}\sum_{j=0}^{n-1}f_{xx}\left(t_j,W_{t_j}\right)(W_{t_{j+1}}-W_{t_j})^{2}
+&=\frac{1}{2}\lim_{\|\Pi\|\to 0}\sum_{j=0}^{n-1}f_{xx}\left(t_j,W_{t_j}\right)\Delta t_j
+=\frac{1}{2}\int_{0}^{T}f_{xx}(t,W_t)\odif{t}.
+\end{align*}
+\end{pf}
+\item \textbf{Claim:} \(\lim_{\|\Pi\|\to 0}
+\sum_{j=0}^{n-1}f_{tx}(t_j,W_{t_j})(t_{j+1}-t_{j})(W_{t_{j+1}}-W_{t_j})=0\).
+
+\begin{pf}
+Note that
+\begin{align*}
+&\quad\lim_{\|\Pi\|\to 0}
+\left|\sum_{j=0}^{n-1}f_{tx}(t_j,W_{t_j})(t_{j+1}-t_{j})(W_{t_{j+1}}-W_{t_j})\right| \\
+\overset{\text{(triangle)}}&{\le}
+\lim_{\|\Pi\|\to 0}
+\sum_{j=0}^{n-1}|f_{tx}(t_j,W_{t_j})|(t_{j+1}-t_{j})|W_{t_{j+1}}-W_{t_j}| \\
+&\le \lim_{\|\Pi\|\to 0}\left(\max_{0\le j\le n-1}|W_{t_{j+1}}-W_{t_j}|\right)
+\sum_{j=0}^{n-1}|f_{tx}(t_j,W_{t_j})|(t_{j+1}-t_{j})
+\overset{\text{(continuity)}}&{=}
+0\cdot\underbrace{\int_{0}^{T}|f_{tx}(t,W_t)|\odif{t}}_{<\infty}
+=0.
+\end{align*}
+\end{pf}
+\item \textbf{Claim:} \(\lim_{\|\Pi\|\to 0}
+\frac{1}{2}\sum_{j=0}^{n-1}f_{tt}(t_j,W_{t_j})(t_{j+1}-t_{j})^{2}=0\).
+
+\begin{pf}
+Note that
+\begin{align*}
+&\quad\lim_{\|\Pi\|\to 0}
+\left|\frac{1}{2}\sum_{j=0}^{n-1}f_{tx}(t_j,W_{t_j})(t_{j+1}-t_{j})^{2}\right| \\
+\overset{\text{(triangle)}}&{\le}
+\lim_{\|\Pi\|\to 0}
+\frac{1}{2}\sum_{j=0}^{n-1}|f_{tt}(t_j,W_{t_j})|(t_{j+1}-t_{j})^{2} \\
+&\le \frac{1}{2}\lim_{\|\Pi\|\to 0}\|\Pi\|
+\sum_{j=0}^{n-1}|f_{tx}(t_j,W_{t_j})|(t_{j+1}-t_{j})
+=\frac{1}{2}\cdot 0\cdot\underbrace{\int_{0}^{T}|f_{tt}(t,W_t)|\odif{t}}_{<\infty}
+=0.
+\end{align*}
+\end{pf}
+\item \textbf{Claim:} The higher order remainder term also converges to \(0\)
+as \(\|\Pi\|\to 0\).
+
+\begin{pf}
+Similar to the two proofs above.
+\end{pf}
+
+\end{itemize}
+With all these (tedious) arguments, we can finally establish that
+\[
+f(T,W_T)-f(0,W_0)
+=\lim_{\|\Pi\|\to 0}f(T,W_T)-f(0,W_0)
+=\int_{0}^{T}f_{t}(t,W_t)\odif{t}+\int_{0}^{T}f_{x}(t,W_t)\odif{W_t}
++\frac{1}{2}\int_{0}^{T}f_{xx}(t,W_t)\odif{t},
+\]
+as desired.
+\end{pf}
+
+\emph{Differential form of It\^o formula.} While the proof of the It\^o formula
+above is mathematically ``correct'', it is rather lengthy and not so
+insightful.  A much more intuitive and insightful (but a bit informal)
+``derivation'' of the It\^o formula is based on the idea of \emph{differential
+form} (again). The differential form of the It\^o formula is
+\[
+\boxed{\odif{{f(t,W_t)}}=f_{t}(t,W_t)\odif{t}+f_{x}(t,W_t)\odif{W_t}
++\frac{1}{2}f_{xx}(t,W_t)\odif{t}}.
+\]
+By writing it as
+\[\odv{{f(t,W_t)}}{t}=f_{t}(t,W_t)\odv{t}{t}+f_{x}(t,W_t)\odv{W_t}{t}
++\frac{1}{2}f_{xx}(t,W_t)\odv{t}{t},\]
+we can see that it takes a similar form as the chain rule in multivariable
+calculus, with the exception that there is an extra
+``\(\frac{1}{2}f_{xx}(t,W_t)\odv{t}{t}\)''. Intuitively, such extra
+term appears since we have the differential rule
+\(\odif{W_t}\odif{W_t}=\odif{t}\). Consequently, by performing ``Taylor expansion on
+the differential'' we would get
+\begin{align*}
+\odif{{f(t,W_t)}}&=f_{t}(t,W_t)\odif{t}+f_{x}(t,W_t)\odif{W_t}
++\frac{1}{2}f_{xx}(t,W_t)\underbrace{\odif{W_t}\odif{W_t}}_{\odif{t}} \\
+&\quad+f_{xt}(t,W_t)\underbrace{\odif{t}\odif{W_t}}_{0}
++\frac{1}{2}f_{tt}(t,W_t)\underbrace{\odif{t}\odif{t}}_{0}
++\underbrace{\text{higher order term}}_{0} \\
+&=f_{t}(t,W_t)\odif{t}+f_{x}(t,W_t)\odif{W_t}
++\frac{1}{2}f_{xx}(t,W_t)\odif{t}.
+\end{align*}
+Although this kind of ``derivation'' is informal, it often serves as an useful
+way for deriving (and memorizing) formulas about It\^o integrals efficiently.
+\item \textbf{Examples of applications of It\^o formula.}
+\begin{enumerate}
+\item Let \(f(t,x)=x^{2}\). Then by It\^o formula we have
+\[
+\odif{W_t^{2}}=\underbrace{f_{t}(t,W_t)}_{0}\odif{t}
++\underbrace{f_{x}(t,W_t)}_{2x|_{x=W_t}=2W_t}\odif{W_t}
++\frac{1}{2}\underbrace{f_{xx}(t,W_t)}_{2}\odif{t}
+=2W_t\odif{W_t}+\odif{t}.
+\]
+Expressing this in integral form, we have
+\[
+W_T^{2}-\underbrace{W_{0}^{2}}_{0}=\int_{0}^{T}2W_t\odif{W_t}+\int_{0}^{T}\odif{t},
+\]
+which implies that
+\[
+\int_{0}^{T}W_t\odif{W_t}=\frac{1}{2}W_T^{2}-\frac{T}{2}.
+\]
+\begin{note}
+For deterministic function \(g(t)\) with \(g(0)=0\), we would have
+\(\int_{0}^{T}g(t)\odif{g(t)}=\frac{1}{2}g(T)^{2}\). The extra term \(-T/2\)
+appearing above comes from the ``roughness'' of the Brownian motion
+\(\{W_t\}\).
+\end{note}
+\item \emph{(Geometric Brownian motion)} Let
+\(f(t,x)=S_0e^{(\mu-\sigma^{2}/2)t+\sigma x}\), and let \(S_t:=f(t,W_t)
+=S_0e^{(\mu-\sigma^{2}/2)t+\sigma W_t}\), with nonrandom \(S_0>0\) and
+parameters \(\mu\in\R, \sigma>0\). By It\^o formula, we get
+\[
+\odif{S_t}=\underbrace{f_{t}(t,W_t)}_{S_t(\mu-\sigma^{2}/2)}
+\odif{t}+\underbrace{f_{x}(t,W_t)}_{S_t\sigma}
+\odif{W_t}+\frac{1}{2}\underbrace{f_{xx}(t,W_t)}_{S_t\sigma^{2}}\odif{t}
+=\mu S_t\odif{t}+\sigma S_t\odif{W_t}.
+\]
+Here the process \(\{S_t\}\) follows the \defn{geometric Brownian motion} (the
+one studied in STAT3910!), and this SDE representation is a common way to
+describe this process.
+
+The coefficient of \(\odif{t}\) (namely \(\mu S_t\) here) is sometimes known as
+the \defn{drift term}, and the coefficient of \(\odif{W_t}\) (namely \(\sigma
+S_t\) here) is sometimes known as the \defn{volatility term}. Intuitively, the
+SDE suggests that after moving ``a little'' forward in time from time \(t\),
+the movement in \(S\) (e.g., stock price) would be approximately the sum of (i)
+the drift term (\(\mu S_t\) here) times the length of time elapsed and (ii) the
+volatility term (\(\sigma S_t\) here) times the change in the Brownian motion
+\(W\). The geometric Brownian motion is often seen as a nice and ``simple''
+model for capturing the dynamics of stock price movements since historically
+stock price generally exhibits an ``exponential growth'' (corresponding
+to the \emph{drift term}) but with volatilities in between (corresponding to
+the \emph{volatility term}).
+\end{enumerate}
+\item \textbf{It\^o processes.} Previously we have defined the It\^o integral
+\(I_t= \int_{0}^{t}\Delta_u\odif{W_u}\) for adapted and square-integrable
+process \(\{\Delta_t\}\). The process \(\{I_t\}\) of such It\^o integrals only
+captures a limited amount of stochastic processes we are interested in. To
+generalize this, we will develop the concept \emph{It\^o process}, which
+includes almost all stochastic processes of interest, except those with jumps.
+
+Let \(\{W_t\}\) be a Brownian motion and \(\{\mathcal{F}_t\}\) be a filtration
+for the Brownian motion. An \defn{It\^o process} is a
+\(\{\mathcal{F}_t\}\)-adapted stochastic process \(\{X_t\}\) given by
+\[
+X_t=X_0+\int_{0}^{t}\Delta_u\odif{W_u}+\int_{0}^{t}\Theta_u\odif{u}\quad\text{for every \(t\),}
+\]
+where \(X_0\) is nonrandom, and both \(\{\Delta_u\}\) and \(\{\Theta_u\}\) are
+adapted to \(\{\mathcal{F}_t\}\) with integrability conditions satisfied:
+(i) \(\expv{\int_{0}^{t}\Delta^{2}_{u}\odif{u}}<\infty\) and (ii)
+\(\int_{0}^{t}|\Theta_u|\odif{u}<\infty\), for every \(t\).
+
+In differential form, we write \(\odif{X_t}=\Delta_t\odif{W_t}+\Theta_t\odif{t}\).
+
+\begin{note}
+By taking \(\Theta_u\equiv 0\), \(\Delta_{u}\equiv 1\), and \(X_0=W_0\), the
+It\^o process would be reduced to simply a Brownian motion
+(as \(\int_{0}^{t}1\odif{W_u}=W_t-W_0\) by considering the definition).
+\end{note}
+\item \textbf{Quadratic variation of It\^o process.} While an It\^o process
+\(\{X_t\}\) is much more general than a process of It\^o integrals \(\{I_t\}\),
+they turn out to accumulate quadratic variation at the same rate. Intuitively,
+this happens because the only ``source'' of quadratic variation for \(X_t\) is
+the \(I_t\) term: \(\int_{0}^{t}\Delta_u\odif{W_u}\). It can be more formally
+proven as follows.
+\begin{proposition}
+\label{prp:ito-process-quad-var}
+Let \(\{X_t\}\) be an It\^o process. Then, its quadratic variation is
+\([X,X]_{t}=\int_{0}^{t}\Delta_u^{2}\odif{u}\) for every \(t\).
+\end{proposition}
+\begin{pf}
+Let \(I_t=\int_{0}^{t}\Delta_u\odif{W_u}\) and \(R_t=\int_{0}^{t}\Theta_u\odif{u}\),
+and \(\Pi=\{t_0,t_1,\dotsc,t_n\}\) be a partition of \([0,t]\) with \(0=t_0\le
+t_1\le\dotsb\le t_n=t\). By \labelcref{it:ito-int-gen-prop} and the fundamental
+theorem of calculus, both \(I_t\) and \(R_t\) are continuous in \(t\). Next, write
+\[
+\sum_{j=0}^{n-1}(X_{t_{j+1}}-X_{t_j})^{2}
+=\sum_{j=0}^{n-1}(I_{t_{j+1}}-I_{t_j})^{2}
++\sum_{j=0}^{n-1}(R_{t_{j+1}}-R_{t_j})^{2}
++2\sum_{j=0}^{n-1}(I_{t_{j+1}}-I_{t_j})(R_{t_{j+1}}-R_{t_j}).
+\]
+Now, consider the limit as \(\|\Pi\|\to 0\) and consider the three terms on the
+right-hand side one by one:
+\begin{itemize}
+\item \(\lim_{\|\Pi\|\to 0}\sum_{j=0}^{n-1}(I_{t_{j+1}}-I_{t_j})^{2}
+\overset{\text{(definition)}}{=}[I,I]_{t}
+\overset{\text{\labelcref{it:ito-int-gen-prop}}}{=}\int_{0}^{t}\Delta_u^{2}\odif{u}
+\).
+\item \textbf{Claim:} \(\lim_{\|\Pi\|\to 0}\sum_{j=0}^{n-1}(R_{t_{j+1}}-R_{t_j})^{2}=0\).
+
+\begin{pf}
+Note that
+\begin{align*}
+\lim_{\|\Pi\|\to 0}\sum_{j=0}^{n-1}(R_{t_{j+1}}-R_{t_j})^{2}
+&\le \lim_{\|\Pi\|\to 0}\left(\max_{0\le j\le n-1}|R_{t_{j+1}}-R_{t_j}|\right)
+\sum_{j=0}^{n-1}|R_{t_{j+1}}-R_{t_j}| \\
+&=\lim_{\|\Pi\|\to 0}\left(\max_{0\le j\le n-1}|R_{t_{j+1}}-R_{t_j}|\right)
+\sum_{j=0}^{n-1}\left|\int_{t_j}^{t_{j+1}}\Theta_u\odif{u}\right| \\
+\overset{\text{(triangle)}}&{\le}
+\lim_{\|\Pi\|\to 0}\left(\max_{0\le j\le n-1}|R_{t_{j+1}}-R_{t_j}|\right)
+\sum_{j=0}^{n-1}\int_{t_j}^{t_{j+1}}|\Theta_u|\odif{u} \\
+&=\lim_{\|\Pi\|\to 0}\left(\max_{0\le j\le n-1}|R_{t_{j+1}}-R_{t_j}|\right)
+\underbrace{\int_{0}^{t}|\Theta_u|\odif{u}}_{<\infty} \\
+\overset{\text{(continuity)}}&{=}0.
+\end{align*}
+\end{pf}
+\item \textbf{Claim:}
+\(\lim_{\|\Pi\|\to 0}2\sum_{j=0}^{n-1}(I_{t_{j+1}}-I_{t_j})(R_{t_{j+1}}-R_{t_j})=0\).
+
+\begin{pf}
+Note that
+\begin{align*}
+\lim_{\|\Pi\|\to 0}2\sum_{j=0}^{n-1}(I_{t_{j+1}}-I_{t_j})(R_{t_{j+1}}-R_{t_j})
+&\le 2\lim_{\|\Pi\|\to 0}\left(\max_{0\le j\le n-1}|I_{t_{j+1}}-I_{t_j}|\right)
+\sum_{j=0}^{n-1}|R_{t_{j+1}}-R_{t_j}| \\
+&\le\lim_{\|\Pi\|\to 0}\left(\max_{0\le j\le n-1}|I_{t_{j+1}}-I_{t_j}|\right)
+\underbrace{\int_{0}^{t}|\Theta_u|\odif{u}}_{<\infty} \\
+\overset{\text{(continuity)}}&{=}0.
+\end{align*}
+\end{pf}
+\end{itemize}
+Therefore,
+\[
+[X,X]_{t}=\lim_{\|\Pi\|\to 0}\sum_{j=0}^{n-1}(X_{t_{j+1}}-X_{t_j})^{2}
+=\int_{0}^{t}\Delta_u^{2}\odif{u}.
+\]
+\end{pf}
+
+\emph{Differential form.} \Cref{prp:ito-process-quad-var} can again be
+expressed in the differential form: \(\odif{X_t}\odif{X_t}=\Delta^{2}_t\odif{t}\).
+Here we can also have a quick ``derivation'' of this result by manipulating the
+differentials:
+\[
+\odif{X_t}\odif{X_t}=(\Delta_t\odif{W_t}+\Theta_t\odif{t})(\Delta_t\odif{W_t}+\Theta_t\odif{t})
+\overset{\text{(expansion)}}{=}
+\Delta_t^{2}\underbrace{\odif{W_t}\odif{W_t}}_{\odif{t}}
++2\Delta_t\Theta_t\underbrace{\odif{W_t}\odif{t}}_{0}
++\Theta_t^{2}\underbrace{\odif{t}\odif{t}}_{0}
+=\Delta_t^{2}\odif{t}.
+\]
+\item \textbf{It\^o integral with respect to It\^o process.} Previously, we
+have discussed the It\^o integral with respect to a Brownian motion:
+\(\int_{0}^{t}\Delta_u\odif{W_u}\). We can generalize it to allow taking
+integral with respect to an \emph{It\^o process}. Let \(\{X_t\}\) be an It\^o
+process associated with a filtration \(\{\mathcal{F}_t\}\), and \(\{\Gamma_t\}\) be
+a \(\{\mathcal{F}_t\}\)-adapted process. Then, we define the \defn{integral
+with respect to an It\^o process} by
+\[
+\int_{0}^{t}\Gamma_{u}\odif{X_u}:=
+\int_{0}^{t}\Gamma_{u}\Delta_u\odif{W_u}
++\int_{0}^{t}\Gamma_{u}\Theta_{u}\odif{u}\quad\text{for every \(t\)},
+\]
+provided that the integrability conditions are satisfied: (i)
+\(\expv{\int_{0}^{t}\Gamma_{u}^{2}\Delta_{u}^{2}\odif{u}}<\infty\) and (ii)
+\(\int_{0}^{t}|\Gamma_{u}\Theta_{u}|\odif{u}<\infty\), for every \(t\).
+
+In differential form, we can write
+\(\Gamma_{t}\odif{X_t}=\Gamma_{t}\Delta_{t}\odif{W_t}+\Gamma_{t}\Theta_{t}\odif{t}
+\). So, this definition basically permits us to ``distribute'' \(\Gamma_t\) in
+the differential form: \(\Gamma_{t}\odif{X_t}=\Gamma_{t}(\Delta_t\odif{W_t}+\Theta_t\odif{t})
+=\Gamma_{t}\Delta_{t}\odif{W_t}+\Gamma_{t}\Theta_{t}\odif{t}\).
+\item \textbf{It\^o formula for It\^o process.} With the It\^o integral with
+respect to It\^o process defined, we can also generalize the It\^o formula before,
+to the case where It\^o process is considered rather than Brownian motion.
+
+\begin{theorem}[It\^o formula for It\^o process]
+\label{thm:ito-fmla-ito-process}
+Let \(\{X_t\}\) be an It\^o process, and let \(f(t,x)\) be a function of class \(C^{2}\).
+Then, for every \(T\ge 0\), we have
+\[
+f(T,X_{T})=f(0,X_{0})+\int_{0}^{T}f_{t}(t,X_t)\odif{t}
++\int_{0}^{T}f_{x}(t,X_t)\odif{X_t}
++\frac{1}{2}\int_{0}^{T}f_{xx}(t,X_t)\Delta^{2}_{t}\odif{t}.
+\]
+\begin{note}
+Sometimes, one may abuse notations slightly and write the last term as
+``\(\frac{1}{2}\int_{0}^{T}f_{xx}(t,X_t)\odif{X_t}\odif{X_t}\)'', which is
+perhaps more intuitive but it should be understood to carry the meaning above.
+\end{note}
+\end{theorem}
+\begin{pf}
+Consider any partition \(\Pi=\{t_0,t_1,\dotsc,t_n\}\) of \([0,T]\), with
+\(0=t_0\le t_1\le\dotsb\le t_n=T\). Similar to the proof of
+\Cref{thm:ito-fmla-bm}, we first apply Taylor's theorem to get
+\begin{align*}
+f(T,X_T)-f(0,X_0)&=\sum_{j=0}^{n-1}\left(f(t_{j+1},X_{t_{j+1}})-f(t_{j},X_{t_j})\right) \\
+\overset{\text{(Taylor)}}&{=}\sum_{j=0}^{n-1}f_{t}(t_j,X_{t_j})(t_{j+1}-t_{j})
++\sum_{j=0}^{n-1}f_{x}(t_j,X_{t_j})(X_{t_{j+1}}-X_{t_{j}}) \\
+&\quad+\frac{1}{2}\sum_{j=0}^{n-1}f_{xx}(t_j,X_{t_j})(X_{t_{j+1}}-X_{t_j})^{2}
++\sum_{j=0}^{n-1}f_{tx}(t_j,X_{t_j})(t_{j+1}-t_{j})(X_{t_{j+1}}-X_{t_j}) \\
+&\quad+\frac{1}{2}\sum_{j=0}^{n-1}f_{tt}(t_j,X_{t_j})(t_{j+1}-t_{j})^{2}
++\text{higher order remainder term}.
+\end{align*}
+Like before, consider the limit as \(\|\Pi\|\to 0\) and consider the six terms
+on the right-hand side one by one.  Let \(I_t=\int_{0}^{t}\Delta_u\odif{W_u}\)
+and \(R_t=\int_{0}^{t}\Theta_u\odif{u}\).
+\begin{itemize}
+\item \(\lim_{\|\Pi\|\to
+0}\sum_{j=0}^{n-1}f_{t}(t_j,X_{t_j})(t_{j+1}-t_{j})=\int_{0}^{T}f_{t}(t,X_t)\odif{t}\) (by definition).
+\item We have
+\begin{align*}
+&\quad\lim_{\|\Pi\|\to 0}\sum_{j=0}^{n-1}f_{x}(t_j,X_{t_j})(X_{t_{j+1}}-X_{t_{j}}) \\
+&=\lim_{\|\Pi\|\to 0}\sum_{j=0}^{n-1}f_{x}(t_j,X_{t_j})(I_{t_{j+1}}-I_{t_j}+R_{t_{j+1}}-R_{t_j}) \\
+&=\lim_{\|\Pi\|\to 0}\sum_{j=0}^{n-1}f_{x}(t_j,X_{t_j})(I_{t_{j+1}}-I_{t_j})
++\lim_{\|\Pi\|\to 0}\sum_{j=0}^{n-1}f_{x}(t_j,X_{t_j})(R_{t_{j+1}}-R_{t_j}) \\
+\overset{\text{(limiting argument)}}&{=}
+\lim_{\|\Pi\|\to 0}\sum_{j=0}^{n-1}f_{x}(t_j,X_{t_j})(\Delta_{t_j}\cdot (W_{t_{j+1}}-W_{t_j}))
++\lim_{\|\Pi\|\to 0}\sum_{j=0}^{n-1}f_{x}(t_j,X_{t_j})(\Theta_{t_j}\cdot (t_{j+1}-t_j)) \\
+&=\int_{0}^{T}f_{x}(t,X_t)\Delta_t\odif{W_t}+\int_{0}^{T}f_{x}(t,X_t)\Theta_t\odif{t}
+\overset{\text{(definition)}}{=}\int_{0}^{T}f_{x}(t,X_t)\odif{X_t}.
+\end{align*}
+\item We have
+\begin{align*}
+\quad\lim_{\|\Pi\|\to 0}\frac{1}{2}\sum_{j=0}^{n-1}f_{xx}(t_j,X_{t_j})(X_{t_{j+1}}-X_{t_j})^{2}
+\underset{\text{(limiting argument)}}{\overset{\text{(\Cref{prp:ito-process-quad-var})}}{=}}
+\frac{1}{2}\int_{0}^{T}f_{xx}(t,W_t)\Delta_{t}^{2}\odif{t}.
+\end{align*}
+\item Similar to \Cref{thm:ito-fmla-bm}, the rest of the terms all converge to
+\(0\) as \(\|\Pi\|\to 0\).
+\end{itemize}
+\end{pf}
+
+\emph{Differential form.} Again, more insights can be gained by expressing the
+It\^o formula in differential form:
+\[
+\boxed{\odif{{f(t,X_t)}}=f_{t}(t,X_t)\odif{t}+f_{x}(t,X_t)\odif{X_t}
++\frac{1}{2}f_{xx}(t,X_t)\Delta^{2}_{t}\odif{t}}
+\]
+It again has a similar form as the chain rule in multivariable calculus, and
+can be informally ``derived'' through the following manipulations of
+differentials:
+\begin{align*}
+\odif{{f(t,X_t)}}&=f_{t}(t,X_t)\odif{t}+f_{x}(t,X_t)\odif{X_t}
++\frac{1}{2}f_{xx}(t,X_t)\underbrace{\odif{X_t}\odif{X_t}}_{\mgc{\Delta_t^{2}}\odif{t}} \\
+&\quad+f_{xt}(t,X_t)\underbrace{
+\odif{t}\odif{X_t}}_{\mathclap{\odif{t}(\Delta_t\odif{W_t}+\Theta_t\odif{t})
+=\Delta_t\odif{t}\odif{W_t}+\Theta_t\odif{t}\odif{t}=0}}
++\frac{1}{2}f_{tt}(t,X_t)\underbrace{\odif{t}\odif{t}}_{0}
++\underbrace{\text{higher order term}}_{0} \\
+&=f_{t}(t,X_t)\odif{t}+f_{x}(t,X_t)\odif{X_t}
++\frac{1}{2}f_{xx}(t,X_t)\mgc{\Delta_{t}^{2}}\odif{t}.
+\end{align*}
+\item \textbf{Generalized geometric Brownian motion.} To illustrate the usage
+of the more general It\^o formula from \Cref{thm:ito-fmla-ito-process}, we
+consider the \emph{generalized geometric Brownian motion}. Let \(\{W_t\}\) be a
+Brownian motion and \(\{\mathcal{F}_t\}\) be a filtration for the Brownian
+motion.  Let \(\{\mu_{t}\}\) and \(\{\sigma_{t}\}\) be
+\(\{\mathcal{F}_t\}\)-adapted processes (such that the relevant integrability
+conditions are satisfied for the following It\^o process), with \(\sigma_t>0\)
+for every \(t\).  Consider an It\^o process \(\{X_t\}\) defined by
+\[
+X_t=\int_{0}^{t}\sigma_u\odif{W_u}
++\int_{0}^{t}\left(\mu_u-\frac{1}{2}\sigma_{u}^{2}\right)\odif{u}\quad
+\text{for every \(t\)}.
+\]
+In differential form, we write
+\(\odif{X_t}=\sigma_t\odif{W_t}+(\mu_t-\sigma_{t}^{2}/2)\odif{t}\).  Also,
+by \Cref{prp:ito-process-quad-var}, we know that
+\(\odif{X_t}\odif{X_t}=\sigma_{t}^{2}\odif{t}\). The \defn{generalized
+geometric Brownian motion} is the process \(\{S_t\}\) defined by
+\[
+S_t=S_0e^{X_t}=
+S_0e^{\int_{0}^{t}\sigma_u\odif{W_u}
++\int_{0}^{t}\left(\mu_u-\frac{1}{2}\sigma_{u}^{2}\right)\odif{u}\quad}
+\quad\text{for every \(t\),}
+\]
+where \(S_0>0\) is nonrandom. Letting \(f(t,x)=S_0e^{x}\), we have
+\(S_t=f(t,X_t)\). Hence, by It\^o formula, we have
+\[
+\odif{S_t}
+=\underbrace{f_{t}(t,X_t)}_{0}\odif{t}
++\underbrace{f_{x}(t,X_t)}_{\mathclap{S_0e^{x}|_{x=X_t}=S_t}}\odif{X_t}
++\frac{1}{2}\underbrace{f_{xx}(t,X_t)}_{\mathclap{S_0e^{x}|_{x=X_t}=S_t}}
+\sigma_{t}^{2}\odif{t}
+=S_t\underbrace{\odif{X_t}}_{\mathclap{\sigma_t\odif{W_t}+(\mu_t-\sigma_{t}^{2}/2)\odif{t}}}
++\frac{1}{2}S_t\sigma_{t}^{2}\odif{t}
+=\mu_tS_t\odif{t}+\sigma_tS_t\odif{W_t}.
+\]
+From this, we can see that the generalized geometric Brownian motion is indeed
+a generalization to the geometric Brownian motion, with the parameters
+\(\mu\) and \(\sigma\) allowed to be time-varying.
+
+\item\label{it:zero-drift-mart} For the geometric Brownian motion, in case the
+drift term (coefficient of \(\odif{t}\)) is always zero, the SDE above would be
+reduced to simply \(\odif{S_t}=\sigma_tS_t\odif{W_t}\).  Expressing this in
+integral form, we have
+\[
+S_t=S_0+\int_{0}^{t}\sigma_uS_u\odif{W_u}
+=:S_0+I_t
+\]
+By \labelcref{it:ito-int-gen-prop}, we know that the process of It\^o integrals
+\(\{I_t\}\) is a martingale. Furthermore, the constant process \(\{S_0\}\) is
+clearly a martingale. Hence, by \Cref{prp:lin-comb-mart-is-mart}, \(\{S_t\}\)
+is also a martingale. This gives a rise to a very useful technique for showing
+that a stochastic process \(\{M_t\}\) is martingale:
+\begin{enumerate}[label={(\arabic*)}]
+\item Write \(M_t=f(t,W_t)\) where \(\{W_t\}\) is a Brownian motion, or
+\(M_t=f(t,X_t)\) where \(\{X_t\}\) is an It\^o process.
+\item Apply the It\^o formula for Brownian motion/It\^o process on \(M_t\) to get
+\[
+\odif{M_t}=Y\odif{t}+Z\odif{W_t}
+\]
+for some (possibly random) \(Y\) and \(Z\).
+\item Show that the drift term \(Y\) equals \(0\) always, and hence conclude that \(\{M_t\}\)
+is a martingale.
+\end{enumerate}
+\item \textbf{Normality of It\^o integral for a nonrandom integrand.} As an
+application of the technique in \labelcref{it:zero-drift-mart}, we will prove a
+result that asserts the normality of It\^o integral for a nonrandom integrand.
+
+\begin{proposition}
+\label{prp:ito-int-nonrandom-norm}
+Let \(\{W_t\}\) be a Brownian motion and \(\Delta_{u}\) be a nonrandom function
+of \(u\). Then, we have
+\[
+I_t=\int_{0}^{t}\Delta_{u}\odif{W_u}\sim\ndist{0,\int_{0}^{t}\Delta_{u}^{2}\odif{u}}.
+\]
+\end{proposition}
+\begin{pf}
+We will show the normality through the moment generating function.
+Fix any \(s\in\R\) and consider
+\[
+\expv{e^{sI_t-\frac{1}{2}s^{2}\int_{0}^{t}\Delta_u\odif{u}}}
+=\expv{e^{\int_{0}^{t}s\Delta_u\odif{u}+\int_{0}^{t}-\frac{1}{2}(s\Delta_{u})^{2}\odif{u}}}
+=:\expv{M_t}.
+\]
+Note that \(\{M_t\}\) follows the geometric Brownian motion with \(S_0=1\),
+\(\mu_t\equiv 0\) and \(\sigma_t=s\Delta_t\). As the drift term is always zero,
+we conclude by \labelcref{it:zero-drift-mart} that \(\{M_t\}\) is a martingale,
+and hence \(\expv{M_t}=\expv{\expv{M_t|\mathcal{F}_0}}=\expv{M_0}=e^{0}=1\).
+Since \(\Delta_u\) is nonrandom, we have
+\(e^{-\frac{1}{2}s^{2}\int_{0}^{t}\Delta_u\odif{u}}\expv{e^{sI_t}}=1\), and thus
+\[
+\expv{e^{sI_t}}=e^{\frac{1}{2}s^{2}\int_{0}^{t}\Delta_u\odif{u}},
+\]
+which is the moment generating function of \(\ndist{0,\int_{0}^{t}\Delta_{u}^{2}\odif{u}}\).
+\end{pf}
+\item \textbf{More examples of applications of It\^o formula: Two interest rate
+models.} To become more familiar with the very important It\^o formula, we will
+analyze two well-known interest rate models via the It\^o formula in the
+following, namely the \emph{Vasicek interest rate model} and the
+\emph{Cox-Ingersoll-Ross (CIR) interest rate model}.
+\begin{enumerate}
+\item \emph{(Vasicek)} Let \(\{W_t\}\) be a Brownian motion. The \defn{Vasicek
+model} for an instantaneous interest rate (or \emph{short rate}) process
+\(\{R_{t}\}\) is described by the SDE
+\[
+\odif{R_t}=(\alpha-\beta R_t)\odif{t}+\sigma\odif{W_t}
+\]
+where \(\alpha\), \(\beta\), and \(\sigma\) are positive parameters, and
+\(R_0\) is nonrandom. A closed-form solution (as an It\^o process) is available
+for the SDE above, and can be derived by the It\^o formula.
+
+\begin{enumerate}[label={(\arabic*)}]
+\item \emph{Idea of solving SDE.} Before working with the mathematics, let us
+provide some ideas on how to solve a SDE in general. Unfortunately, like the
+case for the ordinary differential equation (ODE), there is not a general
+``rule'' for solving \emph{any} SDE. However, a typical approach would be
+collecting the terms and ``guessing'' the potential solutions (like the case
+for ODE). To illustrate this, here we rewrite the SDE above by collecting terms
+involving ``\(R_t\)'' together:
+\[
+\odif{R_t}+\beta R_t\odif{t}=\alpha\odif{t}+\sigma\odif{W_t}.
+\]
+For the expression ``\(\odif{R_t}+\beta R_t\odif{t}\)'', we \emph{guess} that
+the solution would be in exponential form as this kind of expression arises
+from ``differentiating exponentials'': More specifically, applying It\^o
+formula (for It\^o process) with \(f(t,x)=e^{\beta t}x\) gives
+\[
+\odif{e^{\beta t}R_t}=\odif{{f(t,R_t)}}
+=\underbrace{f_{t}(t,R_t)}_{\beta e^{\beta t}R_t}\odif{t}
++\underbrace{f_{x}(t,R_t)}_{e^{\beta t}}\odif{R_t}+0
+=e^{\beta t}(\vc{\beta R_t\odif{t}+\odif{R_t}}),
+\]
+where the expression ``\(\vc{\beta R_t\odif{t}+\odif{R_t}}\)'' appears. This
+observation then inspires us to ``complete the exponential'' as follows.
+\item \emph{Completing the exponential.} Multiplying both sides of the rewritten SDE
+by \(e^{\beta t}\), we get
+\[
+\odif{e^{\beta t}R_t}\overset{\text{(previous)}}{=}
+\mgc{e^{\beta t}}(\odif{R_t}+\beta R_t\odif{t})
+=\alpha \mgc{e^{\beta t}}\odif{t}+\sigma\mgc{e^{\beta t}}\odif{W_t}.
+\]
+Expressing this in integral form, we have
+\[
+e^{\beta t}R_t-e^{0}R_0=\orc{\int_{0}^{t}\alpha e^{\beta u}\odif{u}}
++\int_{0}^{t}\sigma e^{\beta u}\odif{W_u},
+\]
+which implies that
+\[
+R_t=e^{-\beta t}R_0+e^{-\beta t}\orc{\left[\frac{\alpha}{\beta}(e^{\beta t}-1)\right]}
++\sigma e^{-\beta t}\int_{0}^{t}e^{\beta u}\odif{W_u},
+\]
+which forms an It\^o process. This establishes the ``forward implication''
+(i.e., if the SDE holds, then \(R_t\) can only be in the form above), which
+shows that such \(R_t\) is the only \emph{potential} solution to the SDE.
+Mathematically speaking, to solve the SDE completely, we also need to show the
+``backward implication'' (i.e., if \(R_t\) takes the form above, then the SDE
+with such \(R_t\) plugged in would hold), which can ensure that such \(R_t\)
+serves as the actual (and only) solution to the SDE.
+\item \emph{Verifying the ``backward implication''.}
+To establish the ``backward implication'', let
+\(f(t,x)=e^{-\beta t}R_0+\frac{\alpha}{\beta} (1-e^{-\beta t})+\sigma e^{-\beta t}x\).
+Compute:
+\begin{itemize}
+\item \(f_{t}(t,x)=-\beta e^{-\beta t}R_0+\alpha e^{-\beta t}-\sigma \beta
+e^{-\beta t}x =\alpha -\beta f(t,x)\).
+\item \(f_{x}(t,x)=\sigma e^{-\beta t}\).
+\item \(f_{xx}(t,x)=0\).
+\end{itemize}
+Applying the It\^o formula with \(X_t=\int_{0}^{t}e^{\beta u}\odif{W_u}\) (in
+differential form: \(\odif{X}_t=e^{\beta t}\odif{W_t}\), with \(X_0=0\)), we
+have
+\[
+\odif{\vc{f(t,X_t)}}
+=f_{t}(t,X_t)\odif{t}+f_{x}(t,X_t)\underbrace{\odif{X_t}}_{\mathclap{e^{\beta t}\odif{W_t}}}+0
+=(\alpha -\beta \vc{f(t,X_t)})\odif{t}+\sigma \odif{W_t}.
+\]
+Since \(f(t,X_t)=e^{-\beta t}R_0+e^{-\beta
+t}\left[\frac{\alpha}{\beta}(e^{\beta t}-1)\right] +\sigma e^{-\beta
+t}\int_{0}^{t}e^{\beta u}\odif{W_u}\), the SDE indeed holds with such form of
+\(R_t\) plugged in.
+\end{enumerate}
+Therefore, the closed-form solution \(\{R_t\}\) to the Vasicek SDE is given by
+\[
+R_t=e^{-\beta t}R_0+e^{-\beta t}\left[\frac{\alpha}{\beta}(e^{\beta t}-1)\right]
++\sigma e^{-\beta t}\int_{0}^{t}e^{\beta u}\odif{W_u}.
+\]
+\emph{Properties of the Vasicek model.}
+\begin{itemize}
+\item \emph{(normality)} By \Cref{prp:ito-int-nonrandom-norm},
+we know \(\int_{0}^{t}e^{\beta u}\odif{W_u}\sim \ndist{0,\int_{0}^{t}e^{2\beta
+u}\odif{u}}=\ndist{0,\frac{1}{2\beta}(e^{2\beta t}-1)}\). Hence,
+\[
+R_t\sim\ndist{e^{-\beta t}R_0+e^{-\beta t}\left[\frac{\alpha}{\beta}(e^{\beta t}-1)\right],
+\frac{\sigma^{2}}{2\beta}(1-e^{-2\beta t}).
+}
+\]
+\begin{note}
+The normality reveals a potential issue \warn{} of the Vasicek model, namely
+that \(R_t\) can take negative values. While it has recently been observed that
+interest rates can indeed get negative (e.g., in Japan), it is seldom the case.
+So, one should be careful in assessing whether the potential negativity of
+interest rates implied by the Vasicek model is sensible.
+\end{note}
+\item \emph{(mean-reverting)}
+\begin{itemize}
+\item When \(R_t=\alpha/\beta\), the drift term is zero, and so there is not a
+``tendency'' for the interest rate movement.
+\item When \(R_t>\alpha/\beta\), the drift term is negative, and so there is a
+\emph{downward} ``tendency'' for the interest rate movement (pushing it back
+towards \(\alpha/\beta\)).
+\item When \(R_t<\alpha/\beta\), the drift term is positive, and so there is an
+\emph{upward} ``tendency'' for the interest rate movement (pushing it back
+towards \(\alpha/\beta\)).
+\end{itemize}
+Furthermore, we note that if \(R_0=\alpha/\beta\), then we have
+\(\expv{R_t}=\alpha/\beta\) for every \(t\). Even if \(R_0\ne\alpha/\beta\),
+we also have \(\lim_{t\to\infty}\expv{R_t}=\alpha/\beta\) in this case. These
+suggest that the Vasicek model exhibits a \emph{mean-reverting} behaviour,
+in the sense that the interest rate level \(R_t\) would always tend to
+``revert'' back to its (long-term) mean level \(\alpha/\beta\). The larger the
+deviation from its (long-term) mean level, the ``stronger'' the reverting power.
+\end{itemize}
+\item \emph{(CIR)} Let \(\{W_t\}\) be a Brownian motion. The
+\defn{Cox-Ingersoll-Ross (CIR) model} for an instantaneous interest rate
+process \(\{R_t\}\) is described by the SDE
+\[
+\odif{R_t}=(\alpha-\beta R_t)\odif{t}+\sigma\sqrt{R_t}\odif{W}_t
+\]
+where \(\alpha\), \(\beta\), and \(\sigma\) are positive constants, and
+\(R_0\ge 0\) is nonrandom. While this SDE does not admit a closed-form
+solution, it avoids the potential issue of negative interest rate existing in
+the Vasicek model (but may not necessarily be a good thing as negative interest
+rate is indeed possible). Intuitively, negative interest rate is avoided since
+as \(R_t\to 0^{+}\), the volatility term would go to \(0\) while the drift term
+would go to \(\alpha>0\), forcing \(R_t\) to rise and take positive values,
+thereby eliminating the possibility for \(R_t\) to be negative.
+
+Moreover, since the drift term in the CIR model is the same as the one for
+Vasicek model, the CIR model has the mean-reverting property also.
+
+Due to the lack of closed-form solution, here  we will just derive the
+expectation and variance of \(R_t\). We start by rearranging the SDE as
+\[
+\odif{R_t}+\beta R_t\odif{t}=\alpha \odif{t}+\sigma\sqrt{R_t}\odif{W_t}.
+\]
+Then, we ``complete the exponential'' by multiplying both sides by \(e^{\beta t}\) like before:
+\[
+\odif{e^{\beta t}R_t}
+=\mgc{e^{\beta t}}(\odif{R_t}+\beta R_t\odif{t})
+=\alpha\mgc{e^{\beta t}}\odif{t}+\sigma\mgc{e^{\beta t}}\sqrt{R_t}\odif{W_t}.
+\]
+Expressing this in integral form, we have
+\[
+e^{\beta t}R_t=R_0+\int_{0}^{t}\alpha e^{\beta u}\odif{u}
++\int_{0}^{t}\vc{\sigma e^{\beta u}\sqrt{R_u}}\odif{W_u}
+=R_0+\frac{\alpha}{\beta}(e^{\beta t}-1)+\sigma\int_{0}^{t}e^{\beta u}\sqrt{R_u}\odif{W_u},
+\]
+which implies that \(\expv{e^{\beta t}R_t}=R_0+\frac{\alpha}{\beta}(e^{\beta
+t}-1)\) (as the It\^o integral \(\int_{0}^{t}e^{\beta u}\sqrt{R_u}\odif{W_u}\) has zero mean).
+Thus,
+\[
+\expv{R_t}=e^{-\beta t}R_0+\frac{\alpha}{\beta}(1-e^{-\beta t}).
+\]
+To derive the variance, we let \(X_t=e^{\beta t}R_t\). Then, we have
+\begin{itemize}
+\item \(\odif{X_t}=\alpha e^{\beta t}\odif{t}+\sigma e^{\beta t}\sqrt{R_t}\odif{W_t}
+=\alpha e^{\beta t}\odif{t}+\sigma e^{\beta t/2}\sqrt{X_t}\odif{W_t}\).
+\item\(\expv{X_t}=R_0+(\alpha/\beta)(e^{\beta t}-1)\).
+\end{itemize}
+Now, applying the It\^o formula for It\^o process \(\{X_t\}\) with
+\(f(t,x)=x^{2}\) gives
+\begin{align*}
+\odif{X_t^{2}}&=\underbrace{f_{t}(t,X_t)}_{0}\odif{t}
++\underbrace{f_{x}(t,X_t)}_{\mathclap{2x|_{x=X_t}=2X_t}}\odif{X_t}
++\frac{1}{2}\underbrace{f_{xx}(t,X_t)}_{2}\odif{X_t}\odif{X_t} \\
+&=2X_t\odif{X_t}+(\vc{\sigma e^{\beta t}\sqrt{R_t}})^{2}\odif{t}
+=2X_t\odif{X_t}+\sigma^{2} e^{2\beta t}R_t\odif{t}
+=2X_t\odif{X_t}+\sigma^{2} e^{\beta t}X_t\odif{t} \\
+&=2X_t(\alpha e^{\beta t}\odif{t}+\sigma e^{\beta t}\sqrt{R_t}\odif{W_t})
++\sigma^{2} e^{\beta t}X_t\odif{t}
+=2X_t(\alpha e^{\beta t}\odif{t}+\sigma e^{\beta t/2}\sqrt{X_t}\odif{W_t})
++\sigma^{2} e^{\beta t}X_t\odif{t} \\
+&=(2\alpha+\sigma^{2})e^{\beta t}X_t\odif{t}+2\sigma e^{\beta t/2}X_t^{3/2}\odif{W_t}.
+\end{align*}
+Expressing this in integral form, we get
+\[
+X_t^{2}=X_0^{2}+(2\alpha+\sigma^{2})\int_{0}^{t}e^{\beta u}X_u\odif{u}
++2\sigma\int_{0}^{t}e^{\beta u/2}X_u^{3/2}\odif{W_u}.
+\]
+Since the mean of It\^o integral is zero, taking expectation then yields
+\begin{align*}
+\expv{X^{2}_t}
+&=X_{0}^{2}+(2\alpha+\sigma^{2})\expv{\int_{0}^{t}e^{\beta u}X_u\odif{u}}
+\overset{\text{(Tonelli)}}{=}
+X_{0}^{2}+(2\alpha+\sigma^{2})\int_{0}^{t}e^{\beta u}\expv{X_u}\odif{u} \\
+&=X_0^{2}+(2\alpha+\sigma^{2})\int_{0}^{t}e^{\beta u}
+\left(R_0+\frac{\alpha}{\beta}(e^{\beta u}-1)\right)\odif{u} \\
+&=X_0^{2}+(2\alpha+\sigma^{2})\int_{0}^{t}
+\left(R_0-\frac{\alpha}{\beta}\right)e^{\beta u}
++\frac{\alpha}{\beta}e^{2\beta u}\odif{u} \\
+&=R_0^{2}+\frac{2\alpha+\sigma^{2}}{\beta}\left(R_0-\frac{\alpha}{\beta}\right)(e^{\beta t}-1)
++\frac{2\alpha+\sigma^{2}}{2\beta}\frac{\alpha}{\beta}(e^{2\beta t}-1).
+\end{align*}
+Hence,
+\[
+\expv{R_t^{2}}\overset{(X_t^{2}=e^{2\beta t}R_{t}^{2})}{=}
+e^{-2\beta t}\expv{X_{t}^{2}}
+=e^{-2\beta t}R_0^{2}
++\frac{2\alpha+\sigma^{2}}{\beta}\left(R_0-\frac{\alpha}{\beta}\right)(e^{-\beta t}-e^{-2\beta t})
++\frac{\alpha(2\alpha+\sigma^{2})}{2\beta^{2}}(1-e^{-2\beta t}).
+\]
+Thus,
+\begin{align*}
+\vari{R_t}&=\expv{R_t^{2}}-\expv{R_t}^{2} \\
+&=e^{-2\beta t}R_0^{2}
++\frac{2\alpha+\sigma^{2}}{\beta}\left(R_0-\frac{\alpha}{\beta}\right)(e^{-\beta t}-e^{-2\beta t})
++\frac{\alpha(2\alpha+\sigma^{2})}{2\beta^{2}}(1-e^{-2\beta t})
+-\left(e^{-\beta t}R_0+\frac{\alpha}{\beta}(1-e^{-\beta t})\right)^{2}\\
+&=\frac{\sigma^{2}}{\beta}R_0(e^{-\beta t}-e^{-2\beta t})+\frac{\alpha\sigma^{2}}{2\beta^{2}}
+(1-2e^{-\beta t}+e^{-2\beta t}).
+\end{align*}
+Particularly, we have \(\lim_{t\to\infty}\vari{R_t}=\alpha\sigma^{2}/(2\beta^{2})\).
+\end{enumerate}
+\end{enumerate}
+\subsection{Black-Scholes Equation}
+\begin{enumerate}
+\item In STAT3910, we have studied option pricing under the Black-Scholes
+model, via the \emph{Black-Scholes formula}. Here, we will explore the
+mathematical details underlying the Black-Scholes model and derive an important
+partial differential equation that describes the dynamics of option prices
+under the Black-Scholes model. Its derivation is based on a replication argument.
+\item \textbf{Black-Scholes model.} Under the \defn{Black-Scholes model}, we
+assume that the market is arbitrage-free, with a stock and a (risk-free) bond
+which can be freely bought or (short) sold in any amount without transaction
+cost. We suppose that the bond earns a continuously compounded risk-free rate \(r\),
+and the stock price process \(\{S_t\}\) follows a \emph{geometric
+Brownian motion}:
+\[
+\odif{S_t}=\alpha S_t\odif{t}+\sigma S_t\odif{W_t}
+\]
+where \(\alpha\in\R\) and \(\sigma>0\) are constants. Also, 
+\item \textbf{Constructing a self-financing portfolio.} In the derivation of
+Black-Scholes equation, a \emph{self-financing} portfolio is utilized for
+replicating the option payoffs. So, we will first develop such portfolio here
+as a preparation. At each time \(t\), let \(X_t\) denote the investor's
+portfolio value and \(\Delta_t\) denote the number of shares of stock held by
+the investor. Here, we suppose that \(\{\Delta_t\}\) is adapted to a filtration
+\(\{\mathcal{F}_t\}\) for the Brownian motion \(\{W_t\}\), and at each time
+\(t\), the non-stock component of the portfolio, with value \(X_t-\Delta_t
+S_t\), is all invested in the bond.
+
+Due to  the self-financing property of the portfolio, the ``change''
+\(\odif{X_t}\) for the investor's portfolio at time \(t\) would source from the
+following two factors: (i) the gain \(\Delta_t\odif{S_t}\) on the stock
+position and (ii) the interest earning \(r(X_t-\Delta_tS_t)\odif{t}\) on the
+bond position.  Hence, we can write
+\begin{align*}
+\odif{X_t}&=\Delta_t\odif{S_t}+r(X_t-\Delta_tS_t)\odif{t}
+=\Delta_t(\alpha S_t\odif{t}+\sigma S_t\odif{W_t})+r(X_t-\Delta_tS_t)\odif{t} \\
+&=rX_t\odif{t}+(\alpha-r)\Delta_tS_t\odif{t}+\sigma \Delta_tS_t\odif{W_t}.
+\end{align*}
+With the final expression, we can identify three sources for the changes in
+portfolio values, namely: (i) an average underlying rate of return \(r\) on the
+portfolio (\(rX_{t}\odif{t}\)), (ii) a risk premium \(\alpha-r\) for investing
+in the (risky) stock (\((\alpha-r)\Delta_tS_t\odif{t}\)), and (iii) a
+volatility term proportional to the size of stock investment (\(\sigma\Delta_t
+S_t\odif{W_t}\)).
+
+For the purpose of pricing, we often need to consider the \emph{discounted}
+stock price \(\{e^{-rt}S_t\}\) and the \emph{discounted} portfolio value
+\(\{e^{-rt}X_t\}\). Hence, we are interested in deriving SDEs that involve
+these discounted processes. This can be done by using the It\^o formula (for
+It\^o process) with \(f(t,x)=e^{-rt}x\):
+\begin{itemize}
+\item \emph{Discounted stock price:}
+\begin{align*}
+\odif{(e^{-rt}S_t)}&=\odif{f(t,S_t)}
+=\underbrace{f_{t}(t,S_t)}_{-re^{-rt}S_t}\odif{t}
++\underbrace{f_{x}(t,S_t)}_{e^{-rt}}
+\underbrace{\odif{S_t}}_{\alpha S_t\odif{t}+\sigma S_t\odif{W_t}}
++\frac{1}{2}\underbrace{f_{xx}(t,S_t)}_{0}
+\odif{S_t}\odif{S_t} \\
+&=(\alpha-r)e^{-rt}S_t\odif{t}+\sigma e^{-rt}S_t\odif{W_t}.
+\end{align*}
+\item \emph{Discounted portfolio value:}
+\begin{align*}
+\odif{(e^{-rt}X_t)}&=\odif{{f(t,X_t)}}
+=\underbrace{f_{t}(t,X_t)}_{-re^{-rt}X_t}\odif{t}
++\underbrace{f_{x}(t,X_t)}_{e^{-rt}}
+\underbrace{\odif{X_t}}_{rX_t\odif{t}+(\alpha-r)\Delta_tS_t\odif{t}+\sigma \Delta_tS_t\odif{W_t}}
++\frac{1}{2}\underbrace{f_{xx}(t,X_t)}_{0}
+\odif{X_t}\odif{X_t} \\
+&=\Delta_t(\alpha-r)e^{-rt}S_t\odif{t}+\Delta_t\sigma e^{-rt}S_t\odif{W_t}
+=\Delta_t\odif{(e^{-rt}S_t)}.
+\end{align*}
+\end{itemize}
+\item \textbf{Deriving the Black-Scholes equation through a replication argument.}
+\begin{theorem}[Black-Scholes equation]
+\label{thm:bs-eqn}
+Let \(c(t,x)=c(t,S_t)\) denote the time-\(t\) value of a \(T\)-year \(K\)-strike
+European call with the time-\(t\) stock price being \(S_t\). Suppose that the
+function \(c(t,S_t)\) is of class \(C^2\). Then, the function \(c(t,S_t)\)
+satisfies the following \emph{Black-Scholes partial differential equation
+(PDE)}:
+\[
+c_{t}(t,S_t)+rS_t c_{x}(t,S_t)+\frac{1}{2}\sigma^{2}S_t^{2}c_{xx}(t,S_t)
+=rc(t,S_t)\quad\text{for
+all \(t\in [0,T)\),}
+\]
+with the terminal condition \(c(T,S_T)=(S_T-K)_{+}\).
+\end{theorem}
+\begin{pf}
+By the It\^o formula for the It\^o process \(\{S_t\}\), we have
+\begin{align*}
+\odif{{c(t,S_t)}}&=c_{t}(t,S_t)\odif{t}+c_{x}(t,S_t)
+\underbrace{\odif{S_t}}_{\mathclap{\alpha S_t\odif{t}
++\sigma S_t\odif{W_t}}}
++\frac{1}{2}c_{xx}(t,S_{t})(\sigma S_t)^{2}\odif{t} \\
+&=\left[c_{t}(t,S_t)+\alpha S_tc_{x}(t,S_t)+\frac{1}{2}\sigma^{2}S_{t}^{2}c_{xx}(t,S_t)\right]\odif{t}
++\sigma S_{t}c_{x}(t,S_t)\odif{W_t}.
+\end{align*}
+Next, applying the It\^o formula for the It\^o process \(\{c(t,x)\}_{t\in [0,T]}\) with
+\(f(t,x)=e^{-rt}x\), we get
+\begin{align*}
+\odif{{(e^{-rt}c(t,S_t))}}
+&=\underbrace{f_{t}(t,c(t,S_t))}_{-re^{-rt}c(t,S_t)}\odif{t}
++\underbrace{f_{x}(t,c(t,S_t))}_{e^{-rt}}\odif{{c(t,S_t)}}
++\frac{1}{2}\underbrace{f_{xx}(t,c(t,S_t))}_{0}\odif{{c(t,S_t)}}\odif{{c(t,S_t)}} \\
+&=e^{-rt}\left[-rc(t,S_t)+c_{t}(t,S_t)+\alpha S_tc_{x}(t,S_t)
++\frac{1}{2}\sigma^{2}S_{t}^{2}c_{xx}(t,S_t)\right]\odif{t}
++e^{-rt}\sigma S_{t}c_{x}(t,S_t)\odif{W_t}.
+\end{align*}
+Now, we start the replication argument. The key is to construct a replicating
+portfolio with the initial capital \(X_0\), that invests in the stock and bond
+such that \(X_t=c(t,S_t)\) for every time \(t\in [0,T]\) \emph{(replicating the
+call)}. This requirement can be expressed in differential form as, for every
+\(t\in [0,T)\), \(\odif{(e^{-rt}X_t)}=\odif{{(e^{-rt}c(t,S_t))}}\) (meaning
+that \(e^{-rt}X_t-X_0=e^{-rt}c(t,S_t)-c(0,S_0)\)), with \(X_0=c(0,S_0)\); this
+would then imply \(X_t=c(t,S_t)~\forall t\in [0,T)\), and taking the limit
+\(t\to T^{-}\) would also yield \(X_T=c(T,S_T)\) by the continuity of
+\(X_t\)\footnote{\(X_t\) is continuous in \(t\) since both integrals in the
+expression of It\^o process are continuous in the upper limit \(t\), by
+\labelcref{it:ito-int-gen-prop} and the fundamental theorem of calculus.} and
+\(c(t,x)\).
+
+By the SDE above (for discounted call price) and the SDE for discounted
+portfolio price, we can then write
+\begin{align*}
+&\quad\Delta_t(\alpha-r)e^{-rt}S_t\odif{t}+\Delta_t\sigma e^{-rt}S_t\odif{W_t} \\
+&=e^{-rt}\left[-rc(t,S_t)+c_{t}(t,S_t)+\alpha S_tc_{x}(t,S_t)
++\frac{1}{2}\sigma^{2}S_{t}^{2}c_{xx}(t,S_t)\right]\odif{t}
++e^{-rt}\sigma S_{t}c_{x}(t,S_t)\odif{W_t}.
+\end{align*}
+To make such SDE hold, one way to equate the drift and volatility terms
+from both sides. Equating the volatility terms gives
+\[
+\Delta_t=c_{x}(t,S_t)\quad\text{for all \(t\in [0,T)\),}
+\]
+which is known as the \defn{delta-hedging rule} (recall that the partial
+derivative \(c_{x}(t,S_t)\) is known as the \defn{delta} of the call). Next,
+equating the drift terms with \(\Delta_t=c_{x}(t,S_t)~\forall t\in [0,T)\)
+yields, for all \(t\in [0,T)\),
+\begin{align*}
+c_{x}(t,S_t)(\alpha-r)S_t
+&=-rc(t,S_t)+c_{t}(t,S_t)+\alpha S_tc_{x}(t,S_t)
++\frac{1}{2}\sigma^{2}S_{t}^{2}c_{xx}(t,S_t) \\
+\implies rc(t,S_t)&=c_{t}(t,S_t)+rS_{t}c_{x}(t,S_t)+\frac{1}{2}\sigma^{2}S_{t}^{2}c_{xx}(t,S_t),
+\end{align*}
+which gives us the Black-Scholes partial differential equation. Furthermore,
+we know that \(c(T,x)\) is simply the time-\(T\) payoff of the call, which is
+\((S_T-K)_{+}\).
+\end{pf}
+\item \textbf{Solving the Black-Scholes equation.} Here we shall omit the
+details in solving the Black-Scholes PDE. However, its solution is well-known
+and is indeed the \emph{Black-Scholes formula} studied in STAT3910, namely
+\[
+c(t,S_t)=S_t\Phi(d_{+}(T-t,S_t))-Ke^{-r(T-t)}\Phi(d_{-}(T-t,S_t))
+\]
+for every \(t\in [0,T)\), where
+\[
+d_{\pm}(T-t,S_t)=\frac{1}{\sigma\sqrt{T-t}}
+\left[\ln\frac{S_t}{K}+\left(r\pm\frac{\sigma^{2}}{2}\right)(T-t)\right],
+\]
+and \(\Phi\) is the standard normal distribution function.
+\begin{note}
+The function \(c(t,x)\) here is indeed of class \(C^{2}\).
+\end{note}
+\end{enumerate}
+\subsection{Multivariable Stochastic Calculus}
+\begin{enumerate}
+\item Previously, we have studied stochastic calculus with the randomness
+sourcing from a \emph{single} Brownian motion. However, in practice there are
+often multiple sources of randomness driving the dynamics of the stochastic
+process in consideration. In view of this, the \emph{univariate} stochastic
+calculus (involving only a single Brownian motion) discussed before would not
+be enough, and \emph{multivariable} stochastic calculus is needed. Its
+development starts from the concept of higher-dimensional Brownian motion.
+\item \textbf{\(d\)-dimensional Brownian motion.} A \defn{\(d\)-dimensional
+Brownian motion} is a stochastic process \(\{\vect{W}_t\}\) given by
+\(\vect{W}_t=(W_{t,1},\dotsc,W_{t,d})\), satisfying:
+\begin{enumerate}[label={(\arabic*)}]
+\item For every \(i=1,\dotsc,d\), the process \(\{W_{t,i}\}\) is a Brownian motion.
+\item For all \(i\ne j\), the processes \(\{W_{t,i}\}\) and \(\{W_{t,j}\}\) are
+independent.\footnote{TODO: what definition?
+Here, this independence means that for all \(t\), the random variables \(W_{t,i}\)
+and \(W_{t,j}\) are independent.
+%This independence means that for all \(n\in\N\) and
+%\(t_1,\dotsc,t_n\), the random vectors \(\vect{W}_{,i}=(W_{t_1,i},\dotsc,W_{t_n,i})\)
+%and \(\vect{W}_{,j}=(W_{t_1,j},\dotsc,W_{t_n,j})\) are independent, which in turn means
+%that the \(\sigma\)-algebras generated by them, \(\vect{W}_{,i}^{-1}(\mathcal{B}(\R^{n}))\)
+%and \(\vect{W}_{,j}^{-1}(\mathcal{B}(\R^{n}))\), are independent.
+}
+\item There is a filtration \(\{\mathcal{F}_t\}\) such that:
+\begin{enumerate}
+\item \emph{(Adaptivity)} \(\vect{W}_{t}\) is \(\mathcal{F}_t\)-measurable for
+all \(t\).\footnote{ This means that the \(\sigma\)-algebra generated by
+\(\vect{W}_t\), namely \(\vect{W}_t^{-1}(\mathcal{B}(\R^{d}))\), is a subset of
+\(\mathcal{F}_t\), for all \(t\).}
+\item \emph{(Independence of future increments)} For all \(t<u\),
+\(\vect{W}_{u}-\vect{W}_{t}\) is independent of
+\(\{\mathcal{F}_t\}\).\footnote{This means that the \(\sigma\)-algebra
+generated by the increment \(\vect{W}_{u}-\vect{W}_{t}\), which is
+\((\vect{W}_{u}-\vect{W}_{t})^{-1}(\mathcal{B}(\R^{d}))\), and
+\(\{\mathcal{F}_t\}\) are independent.}
+\end{enumerate}
+\begin{note}
+Such \(\{\mathcal{F}_t\}\) is sometimes called a \defn{filtration for the
+\(d\)-dimensional Brownian motion \(\{\vect{W}_t\}\)}.
+\end{note}
+\end{enumerate}
+\item \textbf{Zero cross-variation for \(d\)-dimensional Brownian motion.} By
+\Cref{prp:bm-unit-rate-quad-var}, we know that the quadratic variation of an
+individual Brownian motion \(\{W_{t,i}\}\) is given by
+\[[W_{i},W_{i}]_{T}=\lim_{\|\Pi\|\to
+0}\sum_{k=0}^{n-1}(W_{t_{k+1},i}-W_{t_{k},i})^{2}=T\] for all \(T>0\). With the
+presence of multiple Brownian motions here, we would also like to investigate
+the \defn{cross variation} of the two processes \(\{W_{t,i}\}\) and
+\(\{W_{t,j}\}\), given by \[[W_{i},W_{j}]_{T}= \lim_{\|\Pi\|\to
+0}\sum_{k=0}^{n-1}(W_{t_{k+1},i}-W_{t_{j},i})(W_{t_{k+1},j}-W_{t_{k},j})\] for
+all \(T>0\).  Intuitively, due to the independence of\(\{W_{t,i}\}\) and
+\(\{W_{t,j}\}\), one may expect such cross variation to be zero always
+(somewhat ``similar'' to the result that independence implies uncorrelatedness).
+This is indeed the case, and we will prove it in the following.
+
+\begin{proposition}
+\label{prp:d-dim-bm-zero-cross-var}
+Let \(\{\vect{W}_t\}\) be a \(d\)-dimensional Brownian motion, with
+\(\vect{W}_{t} =(W_{t,1},\dotsc,W_{t,d})\) for all \(t\). Fix any \(i\ne j\)
+and let \(W_i\) and \(W_j\) denote the functions \(t\mapsto W_{t,i}\)
+and \(t\mapsto W_{t,j}\) respectively. Then, we have
+\([W_i,W_j]_{T}\eqas 0\) for all \(T>0\).
+\end{proposition}
+\begin{pf}
+Let \(\Pi=\{t_0,t_1,\dotsc,t_n\}\) be a partition of \([0,T]\) and write \(C_{\Pi}:=
+\sum_{k=0}^{n-1}(W_{t_{k+1},i}-W_{t_{k},i})(W_{t_{k+1},j}-W_{t_{k},j})\). Then,
+\begin{align*}
+\expv{C_{\Pi}}&=\sum_{k=0}^{n-1}\expv{(W_{t_{k+1},i}-W_{t_{k},i})(W_{t_{k+1},j}-W_{t_{k},j})} \\
+\overset{\text{(independence)}}&{=}
+\sum_{k=0}^{n-1}\expv{W_{t_{k+1},i}-W_{t_{k},i}}\expv{W_{t_{k+1},j}-W_{t_{k},j}}
+=0.
+\end{align*}
+Next, consider
+\begin{align*}
+\quad C_{\Pi}^{2}&=\sum_{k=0}^{n-1}(W_{t_{k+1},i}-W_{t_{k},i})^{2}(W_{t_{k+1},j}-W_{t_{k},j})^{2} \\
+&+2\sum_{0\le \ell<k\le n-1}^{}
+\left[(W_{t_{\ell+1},i}-W_{t_{\ell},i})(W_{t_{\ell+1},j}-W_{t_{\ell},j})\right]
+\left[(W_{t_{k+1},i}-W_{t_{k},i})(W_{t_{k+1},j}-W_{t_{k},j})\right].
+\end{align*}
+For all \(0\le \ell<k\le n+1\), we have
+\begin{align*}
+&\quad\expv{(W_{t_{\ell+1},i}-W_{t_{\ell},i})(W_{t_{\ell+1},j}-W_{t_{\ell},j})
+(W_{t_{k+1},i}-W_{t_{k},i})(W_{t_{k+1},j}-W_{t_{k},j})} \\
+\overset{\text{(independent Brownian motions)}}&{=}
+\expv{(W_{t_{\ell+1},i}-W_{t_{\ell},i})(W_{t_{k+1},i}-W_{t_{k},i})}
+\expv{(W_{t_{\ell+1},j}-W_{t_{\ell},j})(W_{t_{k+1},j}-W_{t_{k},j})} \\
+\overset{\text{(independent increments)}}&{=}
+\expv{W_{t_{\ell+1},i}-W_{t_{\ell},i}}\expv{W_{t_{k+1},i}-W_{t_{k},i}}
+\expv{W_{t_{\ell+1},j}-W_{t_{\ell},j}}\expv{W_{t_{k+1},j}-W_{t_{k},j}}
+=0.
+\end{align*}
+Therefore,
+\begin{align*}
+\vari{C_{\Pi}}&=\expv{C_{\Pi}^{2}}=
+\expv{\sum_{k=0}^{n-1}(W_{t_{k+1},i}-W_{t_{k},i})^{2}(W_{t_{k+1},j}-W_{t_{k},j})^{2}} \\
+&=\sum_{k=0}^{n-1}\expv{(W_{t_{k+1},i}-W_{t_{k},i})^{2}(W_{t_{k+1},j}-W_{t_{k},j})^{2}} \\
+\overset{\text{(independence)}}&{=}
+\sum_{k=0}^{n-1}\expv{(W_{t_{k+1},i}-W_{t_{k},i})^{2}}\expv{(W_{t_{k+1},j}-W_{t_{k},j})^{2}} \\
+&=\sum_{k=0}^{n-1}(t_{k+1}-t_{k})^{2}\le \|\Pi\|\sum_{k=0}^{n-1}(t_{k+1}-t_{k})
+=\|\Pi\|T,
+\end{align*}
+and so \(\lim_{\|\Pi\|\to 0}\vari{C_{\Pi}}=0\). Like
+the proof of \Cref{prp:bm-unit-rate-quad-var}, the result then follows.
+\end{pf}
+\emph{Differential rule.} Informally, we can express the result in
+\Cref{prp:d-dim-bm-zero-cross-var} as \(\odif{W_{t,i}}\odif{W_{t,j}}\), which
+gives rise to another differential rule. This differential rule is often
+helpful when dealing with differentials about higher-dimensional Brownian motions.
+\item \textbf{It\^o processes with two Brownian motions.} With the
+higher-dimensional Brownian motion, we can generalize the previous notion of
+It\^o process to incorporate more sources of randomness. To keep things simple,
+here we shall only focus on the case with two-dimensional Brownian motions.
+
+Let \(\{\vect{W}_t\}\) be a two-dimensional Brownian motion with
+\(\vect{W}_t=(W_{t,1},W_{t,2})\) for all \(t\), and \(\{\mathcal{F}_t\}\) be a
+filtration for \(\{\vect{W}_t\}\).  A \defn{(two-dimensional) It\^o process} is
+a \(\{\mathcal{F}_t\}\)-adapted process \(\{X_t\}\) given by
+\[
+X_t=X_0+\int_{0}^{t}\Theta_{u}\odif{u}
++\int_{0}^{t}\sigma_{u,1}\odif{W_{u,1}}
++\int_{0}^{t}\sigma_{u,2}\odif{W_{u,2}}
+\]
+where \(\Theta_{u}\), \(\sigma_{u,1}\), and \(\sigma_{u,2}\) are adapted to
+\(\{\mathcal{F}_t\}\). In differential form, we can write
+\[
+\odif{X_t}=\Theta_{t}\odif{t}+\sigma_{u,1}\odif{W_{t,1}}+\sigma_{u,2}\odif{W_{t,2}}.
+\]
+\begin{note}
+By taking \(\sigma_{u,1}\equiv 0\) or \(\sigma_{u,2}\equiv 0\), the
+two-dimensional It\^o process would be reduced to the It\^o process before.
+\end{note}
+\item\label{it:two-ito-processes-diff-rule} \textbf{A pair of two-dimensional
+It\^o processes.} In the two-dimensional case of multivariable stochastic
+calculus, often we are dealing with two It\^o processes that are
+two-dimensional each: \(\{X_t\}\) and \(\{Y_t\}\) with differential form
+\begin{align*}
+\odif{X_t}&=\Theta_{t,1}\odif{t}+\sigma_{u,1,1}\odif{W_{t,1}}+\sigma_{u,1,2}\odif{W_{t,2}}, \\
+\odif{Y_t}&=\Theta_{t,2}\odif{t}+\sigma_{u,2,1}\odif{W_{t,1}}+\sigma_{u,2,2}\odif{W_{t,2}}.
+\end{align*}
+For example, \(\{X_t\}\) and \(\{Y_t\}\) may represent two stock price
+processes and the Brownian motions \(\{W_{t,1}\}\) and \(\{W_{t,2}\}\) may
+correspond to the ``risk factors'' underlying the two stocks.
+
+With these SDEs, we can derive numerous properties informally by applying
+differential rules, such as:
+\begin{align*}
+\odif{X_t}\odif{X_t}&=(\sigma_{t,1,1}^{2}+\sigma_{t,1,2}^{2})\odif{t}, \\
+\odif{Y_t}\odif{Y_t}&=(\sigma_{t,2,1}^{2}+\sigma_{t,2,2}^{2})\odif{t}, \\
+\odif{X_t}\odif{Y_t}&=(\sigma_{t,1,1}\sigma_{t,2,1}+\sigma_{t,1,2}\sigma_{t,2,2})\odif{t}.
+\end{align*}
+These can be more precisely expressed as:
+\begin{align*}
+[X,X]_{T}&=\int_{0}^{T}(\sigma_{t,1,1}^{2}+\sigma_{t,1,2}^{2})\odif{t}, \\
+[Y,Y]_{T}&=\int_{0}^{T}(\sigma_{t,2,1}^{2}+\sigma_{t,2,2}^{2})\odif{t}, \\
+[X,Y]_{T}&=\int_{0}^{T}(\sigma_{t,1,1}\sigma_{t,2,1}+\sigma_{t,1,2}\sigma_{t,2,2})\odif{t}.
+\end{align*}
+Their proofs are somewhat similar to the one for
+\Cref{prp:ito-process-quad-var}, so we will omit them here.
+\item \textbf{Two-dimensional It\^o formula.} The It\^o formula for an It\^o
+process studied in \Cref{thm:ito-fmla-ito-process} can be further generalized
+to the one for a pair of two-dimensional It\^o processes as follows.
+\begin{theorem}[Two-dimensional It\^o formula]
+\label{thm:two-dim-ito-fmla}
+Let \(\{X_t\}\) and \(\{Y_t\}\) be a pair of two-dimensional It\^o processes,
+and let \(f(t,x,y)\) be a function of class \(C^{2}\). Then, for every \(T\ge
+0\), we have
+\begin{align*}
+f(T,X_{T},Y_{T})&=f(0,X_{0},Y_{0})+\int_{0}^{T}f_{t}(t,X_t,Y_t)\odif{t}
++\int_{0}^{T}f_{x}(t,X_t,Y_t)\odif{X_t}
++\int_{0}^{T}f_{x}(t,X_t,Y_t)\odif{Y_t} \\
+&\quad+\frac{1}{2}\int_{0}^{T}f_{xx}(t,X_t,Y_t)\odif{X_t}\odif{X_t}
++\int_{0}^{T}f_{xy}(t,X_t,Y_t)\odif{X_t}\odif{Y_t}
++\frac{1}{2}\int_{0}^{T}f_{xx}(t,X_t,Y_t)\odif{Y_t}\odif{Y_t}
+\end{align*}
+where the ``product'' of differentials appearing here are to be interpreted as
+in the SDEs from \labelcref{it:two-ito-processes-diff-rule}, e.g.,
+``\(\int_{0}^{T}f_{xy}(t,X_t,Y_t)\odif{X_t}\odif{Y_t}\)'' should be interpreted as
+``\(\int_{0}^{T}f_{xy}(t,X_t,Y_t)(\sigma_{t,2,1}^{2}+\sigma_{t,2,2}^{2})\odif{t}\)''.
+\end{theorem}
+\begin{pf}
+The proof is similar to the one for \Cref{thm:ito-fmla-ito-process}, but is
+considerably more tedious. So we will omit it here.
+\end{pf}
+
+\emph{Differential form.} The integral form of this It\^o formula is rather
+complicated. Usually, for It\^o formula in this level of
+generality, it would be much more convenient to work with the differential
+form, given by
+\begin{align*}
+\odif{{f(t,X_t,Y_t)}}&=
+f_{t}(t,X_t,Y_t)\odif{t}+f_{x}(t,X_t,Y_t)\odif{X_t}+f_{y}(t,X_t,Y_t)\odif{Y_t} \\
+&\quad+\frac{1}{2}f_{xx}(t,X_t,Y_t)\odif{X_t}\odif{X_t}+f_{xy}(t,X_t,Y_t)\odif{X_t}\odif{Y_t}
++\frac{1}{2}f_{yy}(t,X_t,Y_t)\odif{Y_t}\odif{Y_t}.
+\end{align*}
+A corollary of the It\^o formula here is the \emph{It\^o product rule}, which
+is a stochastic version of the product rule for calculus. Just like how It\^o
+formula has extra terms compared with the ordinary chain rule in calculus,
+the It\^o product rule also carries an extra term compared with the ordinary
+product rule in calculus.
+
+\begin{corollary}[It\^o product rule]
+\label{cor:ito-product}
+Let \(\{X_t\}\) and \(\{Y_t\}\) be a pair of two-dimensional It\^o processes.
+Then, \(\odif{X_tY_t}=X_t\odif{Y_t}+Y_t\odif{X_t}+\odif{X_t}\odif{Y_t}\).
+\end{corollary}
+\begin{pf}
+Take \(f(t,x,y)=xy\) in \Cref{thm:two-dim-ito-fmla} (with \(f_{t}=0\), \(f_{x}=y\), \(f_{y}=x\),
+\(f_{xx}=0\), \(f_{xy}=1\), and \(f_{yy}=0\)).
+\end{pf}
+\item \textbf{L\'evy's characterization theorem.} In stochastic calculus, we
+need to work with Brownian motions frequently, and so the first step is often
+to identify whether the processes in consideration are Brownian motions. In
+\Cref{prp:bm-char}, we have provided several characterizations of Brownian
+motion. Here, we will study one more characterization, given by the
+\emph{L\'evy's characterization theorem}.
+
+\begin{theorem}[L\'evy's characterization theorem]
+\label{thm:levy-char}
+Let \(\{\mathcal{F}_t\}_{t\ge 0}\) be a filtration and \(\{M_t\}_{t\ge 0}\) be
+a \(\{\mathcal{F}_t\}\)-martingale. The process \(\{M_t\}\) is a Brownian
+motion iff
+\begin{enumerate}[label={(\arabic*)}]
+\item \emph{(Starting at zero)} \(M_0=0\).
+\item \emph{(Continuous paths)} For every fixed \(\omega\in\Omega\),
+\(M_t(\omega)\) is continuous in \(t\).
+\item \emph{(Unit quadratic variations)} \([M,M]_{t}=t\) for all \(t\ge 0\).
+\end{enumerate}
+\end{theorem}
+\begin{pf}
+The ``\(\Rightarrow\)'' direction follows by the definition of Brownian motion
+and \Cref{prp:bm-unit-rate-quad-var}. So it remains to prove the
+``\(\Leftarrow\)'' direction. By the definition of Brownian motion, it suffices
+to prove that \(M_t\sim\ndist{0,t}\) for all \(t\ge 0\) with the three
+conditions assumed. 
+
+While \(\{M_t\}\) is just a
+martingale (we have not yet shown that it is a Brownian motion for this direction),
+we can indeed apply the It\^o formula for Brownian motion from
+\Cref{thm:ito-fmla-bm} with \(\{W_t\}\) replaced by \(\{M_t\}\) here. To see why,
+observe that the proof of \Cref{thm:ito-fmla-bm} only utilizes the
+properties of continuous path and accumulation of quadratic variation at unit
+rate, which are satisfied by \(\{M_t\}\) by assumption. Furthermore, one can
+define the ``It\^o integral with respect to the martingale \(\{M_t\}\)'' in an
+analogous fashion as the one for Brownian motion. Particularly, it can be shown
+that such It\^o integral with respect to the martingale \(\{M_t\}\),
+\(\int_{0}^{t}\Delta_u\odif{M_u}\), still forms a martingale.\footnote{The rough
+idea is to first note that it is a martingale for simple integrand \(\Delta_t\)
+(by \Cref{prp:lin-comb-mart-is-mart}), and then show that taking limit
+preserves the martingale properties.}
+
+Now, let \(f(t,x)=e^{ux-u^{2}t/2}\) and fix any \(t\ge 0\). Applying the It\^o
+formula gives
+\[
+f(t,M_t)=\underbrace{f(0,M_0)}_{1}
++\int_{0}^{t}\underbrace{f_{t}(u,M_u)}_{-\frac{u^{2}}{2}e^{uM_u-u^{2}t/2}}
++\frac{1}{2}\underbrace{f_{xx}(u,M_u)}_{u^{2}e^{uM_u-u^{2}t/2}}\odif{u}
++\int_{0}^{t}f_{x}(u,M_u)\odif{M_u}
+=1+\int_{0}^{t}f_{x}(u,M_u)\odif{M_u}.
+\]
+From this, we know that \(\{f(t,M_t)\}\) is a martingale. Hence, we have
+\(\expv{e^{uM_t-u^{2}t/2}}=\expv{f(t,M_t)}=\expv{\expv{f(t,M_t)}|\mathcal{F_0}}
+=\expv{f(0,M_0)}=1\). This implies that the moment generating function of
+\(M_t\) is \(\expv{e^{uM_t}}=e^{u^{2}t/2}\), and so \(M_t\sim\ndist{0,t}\).
+\end{pf}
+\item \textbf{Two-dimensional L\'evy's characterization theorem.}
+When working with two-dimensional stochastic calculus, we need to deal with
+two-dimensional Brownian motions that are formed by pairs of independent
+Brownian motions. It turns out that there is a two-dimensional version of the
+L\'evy's characterization theorem for providing a characterization of such
+independent Brownian motions.
+
+\begin{theorem}[Two-dimensional L\'evy's characterization theorem]
+\label{thm:two-dim-levy-char}
+Let \(\{\mathcal{F}_{t}\}_{t\ge 0}\) be a filtration, and \(\{M_{t,1}\}_{t\ge
+0}\) and \(\{M_{t,2}\}_{t\ge 0}\) be \(\{\mathcal{F}_t\}\)-martingales. The
+processes \(\{M_{t,1}\}\) and \(\{M_{t,2}\}\) are \emph{independent} Brownian
+motions iff
+\begin{enumerate}[label={(\arabic*)}]
+\item \emph{(Starting at zero)} \(M_{0,1}=M_{0,2}=0\).
+\item \emph{(Continuous paths)} For every fixed \(\omega\in\Omega\), the functions
+\(t\mapsto M_{t,1}(\omega)\) and \(t\mapsto M_{t,2}(\omega)\) are continuous.
+\item \emph{(Unit quadratic variations and zero cross variations)}
+\([M_{1},M_{1}]_{t}=[M_{2},M_{2}]_{t}=t\) and
+\([M_1,M_2]_{t}=0\) for all \(t\ge 0\).
+\end{enumerate}
+\end{theorem}
+\begin{pf}
+``\(\Rightarrow\)'': Like before, it follows by definition,
+\Cref{prp:bm-unit-rate-quad-var}, and \Cref{prp:d-dim-bm-zero-cross-var} (also
+applicable for independent Brownian motions).
+
+``\(\Leftarrow\)'': Under such assumptions, by \Cref{thm:levy-char} we know
+that \(\{M_{t,1}\}\) and \(\{M_{t,2}\}\) are Brownian motions individually. It
+then suffices to show that they are independent. We establish this by
+considering the moment generating function. Fix any \(u_1,u_2\in\R\), and any
+\(t\ge 0\). By the two-dimensional It\^o formula (\Cref{thm:two-dim-ito-fmla})
+with \(f(t,x,y)=e^{u_1x+u_{2}y-(u_1^{2}+u_{2}^{2})t/2}\), we have
+\begin{align*}
+\odif{{f(t,M_{t,1},M_{t,2})}}&=
+f_{t}(t,M_{t,1},M_{t,2})\odif{t}
++f_{x}(t,M_{t,1},M_{t,2})\odif{M_{t,1}}
++f_{y}(t,M_{t,1},M_{t,2})\odif{M_{t,2}} \\
+&\quad+\frac{1}{2}f_{xx}(t,M_{t,1},M_{t,2})
+\underbrace{\odif{M_{t,1}}\odif{M_{t,1}}}_{\text{\(\odif{t}\) by assumption}}
++f_{xy}(t,M_{t,1},M_{t,2})
+\underbrace{\odif{M_{t,1}}\odif{M_{t,2}}}_{\text{\(0\) by assumption}} \\
+&\quad+\frac{1}{2}f_{yy}(t,M_{t,1},M_{t,2})
+\underbrace{\odif{M_{t,2}}\odif{M_{t,2}}}_{\text{\(\odif{t}\) by assumption}} \\
+&=\biggl(\underbrace{f_{t}(t,M_{t,1},M_{t,2})}_{-\frac{(u_1^{2}+u_2^{2})}{2}f(t,M_{t,1},M_{t,2})}
++\frac{1}{2}\underbrace{f_{xx}(t,M_{t,1},M_{t,2})}_{u_1^{2}f(t,M_{t,1},M_{t,2})}
++\frac{1}{2}\underbrace{f_{yy}(t,M_{t,1},M_{t,2})}_{u_2^{2}f(t,M_{t,1},M_{t,2})}
+\biggr)\odif{t} \\
+&\quad+f_{x}(t,M_{t,1},M_{t,2})\odif{M_{t,1}}
++f_{y}(t,M_{t,1},M_{t,2})\odif{M_{t,2}} \\
+&=f_{x}(t,M_{t,1},M_{t,2})\odif{M_{t,1}}
++f_{y}(t,M_{t,1},M_{t,2})\odif{M_{t,2}}.
+\end{align*}
+Hence,
+\[
+f(t,M_{t,1},M_{t,2})=\underbrace{f(0,M_{0,1},M_{0,2})}_{1}
++\int_{0}^{t}f_{x}(u,M_{u,1},M_{u,2})\odif{M_{u,1}}
++\int_{0}^{t}f_{y}(u,M_{u,1},M_{u,2})\odif{M_{u,2}}.
+\]
+Since both It\^o integrals here are martingales, by
+\Cref{prp:lin-comb-mart-is-mart} we know that \(\{f(t,M_{t,1},M_{t,2})\}\) is a
+martingale. Thus,
+\[
+\expv{e^{u_1M_{t,1}+u_{2}M_{t,2}-\frac{1}{2}(u_1^{2}+u_2^{2})t}}
+=\expv{f(t,M_{t,1},M_{t,2})}=1,
+\]
+which implies that \(\expv{e^{u_1M_{t,1}+u_{2}M_{t,2}}}
+=e^{\frac{1}{2}u_{1}^{2}t}e^{\frac{1}{2}u_{2}^{2}t}\), meaning that the joint
+moment generating function of \(M_{t,1}\) and \(M_{t,2}\) can be written as a
+product of the two respective marginal moment generating functions.  Hence,
+\(M_{t,1}\) and \(M_{t,2}\) are independent. Hence, the Brownian motions
+\(\{M_{t,1}\}\) and \(\{M_{t,2}\}\) are independent.
+\end{pf}
+\item \textbf{Constructing correlated stock price processes from independent
+Brownian motions.}
+From the preceding discussion on multivariable stochastic calculus, we have
+worked with \emph{independent} Brownian motions. Despite the independence, we
+can actually construct some \emph{correlated} stock price processes from them.
+To see this, consider the following example.
+
+Let \(\{S_{t,1}\}\) and \(\{S_{t,2}\}\) be stock price processes
+(two-dimensional It\^o processes) with dynamics given by the following SDEs:
+\begin{align*}
+\odif{S_{t,1}}&=\alpha_1 S_{t,1}\odif{t}+\sigma_1\odif{W_{t,1}} \\
+\odif{S_{t,2}}&=\alpha_2 S_{t,2}\odif{t}+\sigma_2 
+S_{t,2}\left[\rho\odif{W_{t,1}}+\sqrt{1-\rho^{2}}\odif{W_{t,2}}\right]
+\end{align*}
+where \(\{W_{t,1}\}\) and \(\{W_{t,2}\}\) are independent Brownian motions,
+\(\alpha_1,\alpha_2\in\R\), \(\sigma_1>0,\sigma_2>0\), and \(-1\le\rho\le 1\).
+Define \(W_{t,3}=\rho W_{t,1}+\sqrt{1-\rho^{2}}W_{t,2}\) for all \(t\). Then,
+\(\{W_{t,3}\}\) is a martingale with continuous paths, which satisfies that (i) 
+\(W_{0,3}=0\), and (ii)
+\[
+\odif{W_{t,3}}\odif{W_{t,3}=\rho^{2}\odif{W_{t,1}}\odif{W_{t,1}}}
++2\rho\sqrt{1-\rho^{2}}\odif{W_{t,1}}\odif{W_{t,2}}
++(1-\rho)^{2}\odif{W_{t,2}}\odif{W_{t,2}}
+=\rho^{2}\odif{t}+(1-\rho^{2})\odif{t}=\odif{t},
+\]
+meaning that \([W_{3},W_{3}]_{t}=t\), for every \(t\ge 0\). Thus, by
+\Cref{thm:levy-char}, we know that \(\{W_{t,3}\}\) is a Brownian motion.
+Writing \(\odif{S_{t,2}}=\alpha_2 S_{t,2}\odif{t}+\sigma_2 S_{t,2}W_{t,3}\),
+we can readily observe that \(\{S_{t,2}\}\) follows a geometric Brownian motion,
+like \(\{S_{t,1}\}\).
+
+After establishing that both processes are geometric Brownian motions under
+such SDEs, we will then show that they are indeed correlated. To start with,
+applying \Cref{cor:ito-product} gives
+\begin{align*}
+\odif{W_{t,1}W_{t,3}}&=W_{t,1}\odif{W_{t,3}}+W_{t,3}\odif{W_{t,1}}+\odif{W_{t,1}}\odif{W_{t,3}} \\
+&=W_{t,1}\odif{W_{t,3}}+W_{t,3}\odif{W_{t,1}}+\odif{W_{t,1}}(\rho W_{t,1}+\sqrt{1-\rho^{2}}W_{t,2}) \\
+&=W_{t,1}\odif{W_{t,3}}+W_{t,3}\odif{W_{t,1}}+\rho\odif{t}.
+\end{align*}
+Expressing this in integral form, we have
+\[
+W_{t,1}W_{t,3}=\underbrace{W_{0,1}W_{0,3}}_{0}
++\int_{0}^{t}W_{u,1}\odif{W_{u,3}}+\int_{0}^{t}W_{u,3}\odif{W_{u,1}}
++\underbrace{\int_{0}^{t}\rho\odif{t}}_{\rho t}.
+\]
+Since It\^o integral has zero mean, taking expectation yields
+\(\expv{W_{t,1}W_{t,3}}=\rho t\). Hence, the correlation of \(W_{t,1}\) and \(W_{t,3}\)
+is
+\[
+\corr{W_{t,1},W_{t,3}}
+=\frac{\cov{W_{t,1},W_{t,3}}}
+{\sqrt{\vari{W_{t,1}}}\sqrt{\vari{W_{t,3}}}}
+=\frac{\expv{W_{t,1}W_{t,3}}}
+{\sqrt{t}\sqrt{t}}
+=\rho,
+\]
+for every \(t\). This means that the Brownian motions that drive the dynamics
+of the stock price processes (geometric Brownian motions) \(\{S_{t,1}\}\) and
+\(\{S_{t,2}\}\) are correlated with coefficient \(\rho\).
+\end{enumerate}
