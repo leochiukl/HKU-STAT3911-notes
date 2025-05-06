@@ -1,0 +1,1003 @@
+\section{Risk-Neutral Pricing}
+\label{sect:risk-neutral-pricing}
+\begin{enumerate}
+\item Equipped with the tools developed in \Cref{sect:stochastic-calculus}, we
+are now able to study the mathematical details of an extremely powerful method
+for pricing derivatives, known as \emph{risk-neutral pricing}, which lies in
+the heart of modern financial economics. In STAT3905/STAT3910, we have
+briefly investigated the risk-neutral pricing and carried out some numerical
+computations about those risk-neutral pricing formulas; the mathematical
+details about the risk-neutral pricing have not been fully discussed. In
+\Cref{sect:risk-neutral-pricing}, we will delve into the mathematical details
+and justify rigorously why the risk-neutral pricing works, using tools from
+previous sections.
+\item \textbf{Basic idea of risk-neutral pricing.} Mathematically, the method
+of risk-neutral pricing is closely related to the notion of \emph{martingale}
+(hence it is sometimes called \emph{martingale pricing}). The idea is to change
+the probability measure (as suggested in \Cref{subsect:change-of-meas}) such
+that a martingale is formed from the stock prices discounted by the risk-free
+rate, \(e^{-rt}S_t\).  With \(\{e^{-rt}S_t\}\) being a
+\(\{\mathcal{F}_t\}\)-martingale, we know that
+\(\expv{e^{-rt}S_t}=\expv{\expv{e^{-rt}S_t|\mathcal{F}_0}}=\expv{e^{-0}S_0}=S_0\)
+(assuming \(S_0\) is nonrandom), meaning that the future discounted stock price
+\(e^{-rt}S_t\) can be ``passed'' to the present price \(S_0\) upon taking
+expectation.
+
+Rearranging this equation yields \(\expv{S_t}=S_0e^{rt}\), which tells us that
+the mean return rate of the (risky) stock is still the risk-free rate. As such
+mean return rate would arise under the \emph{risk-neutral} preference, we call
+this pricing method as \underline{risk-neutral} pricing.
+
+\begin{note}
+In the real market (with actual probability measure), the mean return rate of
+risky stock is usually higher than the risk-free rate (the difference is known
+as the \emph{risk premium})), which corresponds to the case of
+\emph{risk-averse} preference, under which extra return is demanded for
+investing in the risky stock.
+\end{note}
+\end{enumerate}
+\subsection{Risk-Neutral Measure}
+\begin{enumerate}
+\item\label{it:rn-meas-absorb-drift} \textbf{Absorbing drift terms through
+changing to risk-neutral measure.} Intuitively, changing the probability
+measure to a \emph{risk-neutral measure} can be interpreted as ``absorbing''
+the drift term in the stock price process.
+
+ To understand this better, consider a stock price process \(\{S_t\}\)
+following a geometric Brownian motion: \(\odif{S_t}=\alpha S_t\odif{t} +\sigma
+S_{t}\odif{W_t}\), where \(\{W_t\}\) is a Brownian motion, \(\alpha\in\R\), and
+\(\sigma>0\). Let \(r\) be the risk-free rate and \(D_t=e^{-rt}\) be the
+time-\(t\) discount factor for every \(t\). Then, by It\^o formula with
+\(f(t,x)=e^{-rt}x=D_tx\), we have
+\begin{align*}
+\odif{(D_tS_t)}
+&=f_{t}(t,S_t)\odif{t}+f_{x}(t,S_t)\odif{S_t}+0
+=-rD_tS_t\odif{t}+D_t\odif{S_t} \\
+&=-rD_tS_t\odif{t}+\alpha D_tS_t\odif{t} +\sigma D_t S_{t}\odif{W_t}
+=\vc{D_tS_t(\alpha-r)}\odif{t}+\sigma D_tS_t\odif{W_t} \\
+&=\sigma D_tS_t\left(\frac{\alpha-r}{\sigma}\odif{t}+\odif{W_t}\right)
+\overset{(\widetilde{W}_t=\int_{0}^{t}\frac{\alpha-r}{\sigma}\odif{u}
++\int_{0}^{t}1\odif{W_u}=\frac{\alpha-r}{\sigma}t+W_t)}{=}
+\sigma D_tS_t\odif{\widetilde{W}_t}.
+\end{align*}
+Under the original probability measure, \(\{\widetilde{W}_t\}\) would generally
+\emph{not} be a Brownian motion, and so one cannot just apply
+\labelcref{it:zero-drift-mart} to conclude that \(\{D_tS_t\}\) is martingale.
+However, after changing the probability measure to a \emph{risk-neutral} one,
+the process \(\{\widetilde{W}_t\}\) would indeed become a Brownian motion.
+Therefore, in such case, changing the probability measure to the risk-neutral
+measure does ``absorb'' the original drift term \(\vc{D_tS_t(\alpha-r)}\), without
+influencing the volatility term (still \(\sigma D_t S_{t}\)). As the drift term
+becomes zero, we can then apply \labelcref{it:zero-drift-mart} to conclude that
+\(\{D_tS_t\}\) is a martingale \emph{under the risk-neutral measure}.
+
+\item \textbf{Preliminaries.} The idea put forward in
+\labelcref{it:rn-meas-absorb-drift} can be mathematically supported through the
+\emph{Girsanov theorem}. Here we will lay some groundwork that will be helpful
+in proving the Girsanov theorem. In the following, we are going to establish a
+``conditional version'' of \Cref{prp:exp-change-of-meas}, which tells us the
+effect on \emph{conditional} expectation after change of measure.
+
+\begin{lemma}
+\label{lma:cond-change-of-meas}
+Let \(\{\mathcal{F}_t\}_{t\in [0,T]}\) be a filtration, \(Z\) be an almost
+surely positive random variable satisfying \(\expv{Z}=1\). Let \(\tpr\) be
+defined as in \Cref{eq:change-of-measure}, i.e., \(
+\tprob{A}=\int_{A}^{}Z(\omega)\odif{\prob{\omega}}\) for every
+\(A\in\mathcal{F}\). Define a process \(\{Z_t\}_{t\in [0,T]}\) by
+\(Z_t=\expv{Z|\mathcal{F}_t}\) for every \(t\in [0,T]\) (which is a Doob
+martingale). Let \(Y\) be a \(\mathcal{F}_t\)-measurable random
+variable.
+\begin{enumerate}
+\item For all \(t\in [0,T]\), \(\texpv{Y}=\expv{YZ_t}\).
+\item For all \(0\le s\le t\le T\), \(\texpv{Y|\mathcal{F}_s}=\expv{YZ_t|\mathcal{F}_s}/Z_s\).
+\end{enumerate}
+\end{lemma}
+\begin{pf}
+\begin{enumerate}
+\item Note that
+\[
+\texpv{Y}\overset{\text{(\Cref{prp:exp-change-of-meas})}}{=}\expv{YZ}
+=\expv{\expv{YZ|\mathcal{F}_t}}\overset{\text{(TOWIK)}}{=}\expv{Y\expv{Z|\mathcal{F}_t}}
+=\expv{YZ_t}.
+\]
+\item With the assumption that \(Z>0\) almost surely, it can be shown that
+\(Z_s=\expv{Z|\mathcal{F}_s}>0\) almost surely, so the (almost sure) equality is
+well-defined. Next, we verify the two properties of conditional expectations:
+\begin{enumerate}[label={(\arabic*)}]
+\item Since \(\expv{YZ_t|\mathcal{F}_s}\) and \(Z_s\) are both
+\(\mathcal{F}_s\)-measurable, \(\expv{YZ_t|\mathcal{F}_s}/Z_s\) is
+\(\mathcal{F}_s\)-measurable.
+\item Fix any \(A\in\mathcal{F}_s\). Then, 
+\begin{align*}
+\int_{A}^{}\frac{\expv{YZ_t|\mathcal{F}_s}}{Z_s}\odif{\tpr}
+&=\texpv{\indic_{A}\frac{1}{Z_s}\expv{YZ_t|\mathcal{F}_s}}
+\underset{(\times Z_s)}{\overset{\text{(a)}}{=}}
+=\expv{\indic_{A}\expv{YZ_t|\mathcal{F}_s}}
+\overset{\text{(TOWIK)}}{=}
+\expv{\expv{\indic_{A}YZ_t|\mathcal{F}_s}} \\
+\overset{\text{(iterated conditioning)}}&{=}\expv{\indic_{A}YZ_t}
+\overset{\text{(a)}}{=}\texpv{\indic_{A}Y}
+=\int_{A}^{}Y\odif{\tpr}.
+\end{align*}
+\end{enumerate}
+\end{enumerate}
+\end{pf}
+\item \textbf{Girsanov theorem.} Now, we are ready to study the \emph{Girsanov
+theorem}, which justifies the idea of ``absorbing drift term'' from
+\labelcref{it:rn-meas-absorb-drift}.
+\begin{theorem}[Girsanov]
+\label{thm:girsanov}
+Let \(\{W_t\}_{t\in[0,T]}\) be a Brownian motion on a probability space
+\((\Omega,\mathcal{F},\pr)\), where \(T>0\) is a constant,
+\(\{\mathcal{F}_t\}_{t\in [0,T]}\) be a filtration for the Brownian motion, and
+\(\{\Theta_t\}_{t\in[0,T]}\) be a \(\{\mathcal{F}_t\}\)-adapted process. For
+all \(t\in [0,T]\), define
+\begin{align*}
+Z_t&=\exp\left[-\int_{0}^{t}\Theta_u\odif{W_u}
+-\frac{1}{2}\int_{0}^{t}\Theta_{u}^{2}\odif{u}\right],\\
+\widetilde{W}_t&=W_t+\int_{0}^{t}\Theta_{u}\odif{u}.
+\end{align*}
+Suppose the square-integrability condition
+\(\expv{\int_{0}^{T}\Theta_{u}^{2}Z_u^{2}\odif{u}}<\infty\) is satisfied. Let
+\(Z=Z_T>0\) and define \(\tpr\) as in \Cref{eq:change-of-measure}, i.e., \(
+\tprob{A}=\int_{A}^{}Z(\omega)\odif{\prob{\omega}}\) for every
+\(A\in\mathcal{F}\). Then, \(\{\widetilde{W}_t\}_{t\in [0,T]}\) is a Brownian
+motion on the probability space \((\Omega,\mathcal{F},\tpr)\).
+\end{theorem}
+\begin{pf}
+\textbf{Showing that \(\{\widetilde{W}_t\}\) accumulates quadratic variations
+at unit rate.} Note that we can write
+\(\widetilde{W}_t=\int_{0}^{t}\vc{1}\odif{W_u}+\int_{0}^{t}\Theta_{u}\odif{u}\)
+for all \(t\), and hence \(\{\widetilde{W}_t\}\) is an It\^o process (under
+\(\pr\)). Thus, by \Cref{prp:ito-process-quad-var}, we know that
+\(\odif{\widetilde{W}_t,\widetilde{W}_t}=\vc{1}^{2}\odif{t}=\odif{t}\).
+
+\textbf{Showing that \(\{\widetilde{W}_tZ_t\}\) is a martingale under \(\pr\).}
+Let \(X_t=-\int_{0}^{t}\Theta_u\odif{W_u}
+-\frac{1}{2}\int_{0}^{t}\Theta_{u}^{2}\odif{u}\). Then, \(\{X_t\}\) is an It\^o
+process and we have \(\odif{X_t}=-\frac{1}{2}\Theta_t^{2}\odif{t}-\Theta_t\odif{W_t}\).
+Writing \(Z_t=e^{X_t}\), by the It\^o formula for It\^o process we have
+\[
+\odif{Z_t}=Z_t\odif{X_t}+\frac{1}{2}Z_t\odif{X_t}\odif{X_t}
+=-\frac{1}{2}\Theta_t^{2}Z_t\odif{t}-\Theta_tZ_t\odif{W_t}+\frac{1}{2}Z_t\Theta_t^{2}\odif{t}
+=-\Theta_tZ_t\odif{W_t}.
+\]
+Therefore, applying the It\^o product rule gives
+\begin{align*}
+\odif{\widetilde{W}_tZ_t}
+&=\widetilde{W}_t\odif{Z_t}+Z_t\odif{\widetilde{W}_t}+\odif{\widetilde{W}_t,Z_t} \\
+&=\widetilde{W_t}(-\Theta_tZ_t\odif{W_t})+Z_t(\odif{W_t}+\Theta_t\odif{t})
++(\odif{W_t}+\Theta_t\odif{t})(-\Theta_tZ_t\odif{W_t}) \\
+&=(-\widetilde{W_t}\Theta_tZ_t+Z_t)\odif{W_t}.
+\end{align*}
+Since the drift term is zero, by \labelcref{it:zero-drift-mart} we conclude
+that \(\{\widetilde{W}_tZ_t\}\) is a martingale under \(\pr\).
+
+\textbf{Showing that \(\{\widetilde{W}_t\}\) is a martingale under \(\tpr\).}
+It is straightforward to see that \(\widetilde{W}_t\) is both integrable and
+\(\mathcal{F}_t\)-measurable for all \(t\in [0,T]\). Thus, it remains to show
+that \(\texpv{\widetilde{W_t}|\mathcal{F}_s}=\widetilde{W_s}\) for all \(0\le
+s\le t\le T\).  Fix any \(0\le s\le t\le T\). Since the drift term is zero in
+the SDE \(\odif{Z_t}=-\Theta_tZ_t\odif{W_t}\), we know by
+\labelcref{it:zero-drift-mart} that \(\{Z_t\}\) is a martingale under \(\pr\),
+and so \(\expv{Z}=\expv{Z_T}=\expv{\expv{Z_T|\mathcal{F}_0}}=\expv{Z_0}=1\).
+Hence, we can apply \Cref{lma:cond-change-of-meas} to get
+\[
+\texpv{\widetilde{W}_t|\mathcal{F}_s}
+=\frac{1}{Z_s}\expv{\widetilde{W}_tZ_t|\mathcal{F}_s}
+=\frac{1}{Z_s}\widetilde{W}_sZ_s
+=\widetilde{W}_s,
+\]
+as desired.
+\end{pf}
+
+\item\label{it:rn-meas} \textbf{Risk-neutral measure.} The probability measure
+\(\tpr\) from the Girsanov theorem is indeed a \emph{risk-neutral measure}.
+Like \labelcref{it:rn-meas-absorb-drift}, it can be interpreted as being
+designed for absorbing the drift term. But here, rather than working with only
+the geometric Brownian motion, we are considering a more general setting with
+\emph{generalized} geometric Brownian motion.
+
+Let \(\{W_t\}_{t\in [0,T]}\)
+be a Brownian motion and \(\{\mathcal{F}_t\}_{t\in [0,T]}\) be a filtration for
+the Brownian motion, where \(T>0\) is fixed. Suppose that the stock price
+process \(\{S_t\}_{t\in [0,T]}\) follows a generalized geometric Brownian
+motion:
+\[
+\odif{S_t}=\alpha_tS_t\odif{t}+\sigma_tS_t\odif{W_t}
+\]
+where \(\{\alpha_t\}\) and \(\{\sigma_{t}\}\) are \(\{\mathcal{F}_t\}\)-adapted
+processes, with \(\sigma_{t}>0\) for all \(t\in [0,T]\). In integral form, we
+can express it as
+\[
+S_t=S_0\exp\left[\int_{0}^{t}\sigma_u\odif{W_u}
++\int_{0}^{t}\left(\alpha_u-\frac{1}{2}\sigma_{u}^{2}\right)\odif{u}\right]\qquad
+\text{for all \(t\in [0,T]\).}
+\]
+Furthermore, suppose that the risk-free rate process \(\{r_t\}\) is
+\(\{\mathcal{F}_t\}\)-adapted.  For every \(t\in [0,T]\), let
+\(D_t=e^{-\int_{0}^{t}r_u\odif{u}}\) be the time-\(t\) discount factor.
+Then, we have
+\[
+D_tS_t=S_0\exp\left[\int_{0}^{t}\sigma_u\odif{W_u}
++\int_{0}^{t}\left(\alpha_u-r_u-\frac{1}{2}\sigma_{u}^{2}\right)\odif{u}\right].
+\]
+Now, applying It\^o formula with \(X_t
+=\int_{0}^{t}\sigma_u\odif{W_u}
++\int_{0}^{t}\left(\alpha_u-r_u-\frac{1}{2}\sigma_{u}^{2}\right)\odif{u}\)
+and \(f(t,x)=S_0e^{x}\) gives
+\begin{align*}
+\odif{(D_tS_t)}&=S_0e^{X_t}\odif{X_t}+\frac{1}{2}S_0e^{X_t}\sigma_t^{2}\odif{t}
+=D_tS_t\left[(\alpha_t-r_t-\sigma_t^{2}/2)\odif{t}+\sigma_t\odif{W_t}\right]
++\frac{1}{2}D_tS_t\sigma_t^{2}\odif{t} \\
+&=\sigma_tD_tS_t\left(\frac{\alpha_t-r_t}{\sigma_t}\odif{t}+\odif{W_t}\right)
+=\sigma_tD_tS_t(\Theta_t\odif{t}+\odif{W_t})
+\overset{(\widetilde{W}_t=W_t+\int_{0}^{t}\Theta_u\odif{u})}{=}
+=\sigma_t D_tS_t\odif{\widetilde{W}_t},
+\end{align*}
+where \(\Theta_t=(\alpha_t-r_t)/\sigma_t\) is known as the \defn{market price of
+risk} (which satisfies the square-integrability condition mentioned in the
+Girsanov theorem).
+
+Applying Girsanov theorem, we know that \(\{\widetilde{W}_t\}\) is a Brownian
+motion under the probability measure \(\tpr\), and so the drift term of
+\(\{D_tS_t\}\) is ``absorbed'' after changing the probability measure to \(\tpr\),
+and \(\{D_tS_t\}\) is a martingale under the probability measure \(\tpr\).
+In addition, by \Cref{prp:z-positive-equiv-prob}, we know that \(\tpr\) and
+\(\pr\) are equivalent.
+
+Mathematically, a probability measure \(\tpr\) is said to be a
+\defn{risk-neutral measure} (or \defn{(equivalent) martingale measure}) if
+\begin{enumerate}[label={(\arabic*)}]
+\item \(\tpr\) and \(\pr\) are equivalent.
+\item Under \(\tpr\), the discounted stock price process \(\{D_tS_t\}\) is a
+\(\{\mathcal{F}_t\}\)-martingale.
+\end{enumerate}
+\begin{note}
+In \labelcref{it:multi-dim-rn-meas}, we will revisit the concept of
+risk-neutral measure in a more general setting.
+\end{note}
+\item \textbf{Dynamics under risk-neutral measure.} After studying the
+theoretical foundation of risk-neutral measure, we are going to analyze the
+behaviour of the prices of different assets under the risk-neutral measure, to
+better understand the impacts on the market dynamics from changing the
+probability measure to the risk-neural one.
+\begin{enumerate}
+\item \emph{(Stock)}
+Combining the SDE \(\odif{S_t}=\alpha_tS_t\odif{t}+\sigma_tS_t\odif{W_t}\) for
+the generalized geometric Brownian motion and the SDE
+\(\odif{\widetilde{W}_t}=\Theta_t\odif{t}+\odif{W_t}\), we get
+\[
+\odif{S_t}=\alpha_tS_t\odif{t}+\sigma_tS_t(\odif{\widetilde{W}_t}-\Theta_t\odif{t})
+=r_tS_t\odif{t}+\sigma_tS_t\odif{\widetilde{W}_t}.
+\]
+This suggests that under the risk-neutral measure \(\tpr\), the stock price
+process \(\{S_t\}\) still follows a generalized geometric Brownian motion with
+the drift term changed to \(r_tS_t\) (mean return being risk-free rate)
+and the volatility term unchanged.
+\item\label{it:self-fin-port-rn} \emph{(Self-financing portfolio)}
+Consider a self-financing portfolio analogous to the one in
+\labelcref{it:construct-self-fin-port}, but for the case of generalized
+geometric Brownian motion here.
+
+Like \labelcref{it:construct-self-fin-port}, at each time \(t\), let \(X_t\)
+denote the investor's portfolio value and \(\Delta_t\) denote the number of
+shares of stock held by the investor. Suppose that \(\{\Delta_t\}\) is
+adapted to a filtration \(\{\mathcal{F}_t\}\) for the Brownian motion
+\(\{W_t\}\), and at each time \(t\), the non-stock component of the portfolio,
+with value \(X_t-\Delta_t S_t\), is all invested in the bond.
+
+Then, the ``change'' \(\odif{X}_t\) for investor's portfolio at time \(t\)
+sources from (i) the gain \(\Delta_t\odif{S_t}\) on the stock position and (ii) the
+interest earning \(r_{\vc{t}}(X_t-\Delta_tS_t)\odif{t}\) on the bond position.
+Hence, we can write
+\begin{align*}
+\odif{X_t}&=\Delta_t\underbrace{\odif{S_t}}_{\mathclap{\alpha_tS_t\odif{t}+\sigma_tS_t\odif{W_t}}}
++r_t(X_t-\Delta_tS_t)\odif{t}
+=r_tX_t\odif{t}+\Delta_t(\alpha_t-r_t)S_t\odif{t}+\Delta_t\sigma_tS_t\odif{W_t} \\
+&=r_tX_t\odif{t}+\Delta_t\sigma_tS_t(\Theta_t\odif{t}+\odif{W_t})
+\overset{(\widetilde{W}_t=W_t+\int_{0}^{t}\Theta_u\odif{u})}{=}
+r_tX_t\odif{t}+\Delta_t\sigma_t S_t\odif{\widetilde{W}_t}.
+\end{align*}
+where \(\Theta_t=(\alpha_t-r_t)/\sigma_t\). This suggests that under the
+risk-neutral measure, the (undiscounted) portfolio values also follow a
+generalized geometric Brownian motion, where the mean return is still risk-free
+rate like the stock, but the volatility term differs and depends on the stock
+position \(\Delta_t\).
+
+Further insights can be gained by studying the behaviour of \emph{discounted}
+portfolio values. Again, let \(D_t=e^{-\int_{0}^{t}r_u\odif{u}}\) be the
+time-\(t\) discount factor for every \(t\). Applying It\^o formula with
+\(X_t=\int_{0}^{t}r_u\odif{u}\) and \(f(t,x)=e^{-x}\) gives
+\[
+\odif{D_t}=-\underbrace{e^{-X_t}}_{D_t}\underbrace{\odif{X_t}}_{r_t\odif{t}}+0
+=-r_tD_t\odif{t}.
+\]
+Hence, by It\^o product rule, we have
+\begin{align*}
+\odif{(D_tX_t)}&=D_t\odif{X_t}+X_t\odif{D_t}+\odif{D_t}\odif{X_t}
+=D_t(r_tX_t\odif{t}+\Delta_t\sigma_t S_t\odif{\widetilde{W}_t})
++X_t(-r_tD_t\odif{t})+0 \\
+&=\Delta_t\underbrace{\sigma_t D_tS_t\odif{\widetilde{W}_t}}_{\odif{D_tS_t}}
+=\Delta_t\odif{(D_tS_t)}.
+\end{align*}
+This shows that \(\{D_tX_t\}\) is a martingale under the risk-neutral measure,
+like the stock prices. Furthermore, the SDE above indicates that the ``change''
+in discounted portfolio value \(\odif{(D_tX_t)}\) indeed only sources from the
+``discounted gain'' \(\Delta_t\odif{(D_tS_t)}\) on the stock position.
+\item\label{it:rn-pricing} \emph{(Derivative)} In the proof of
+\Cref{thm:bs-eqn}, we have utilized a replication argument for an European call
+option. Here, we extend this idea to \emph{any} derivative that can be
+replicated; we shall still impose the usual assumption that the market is
+arbitrage-free, with a stock and a (risk-free) bond which can be freely bought
+or (short) sold in any amount without transaction cost.
+
+\begin{note}
+We will have more discussions on the existence of replicating portfolio in
+\labelcref{it:one-stock-rep}.
+\end{note}
+
+Consider a \(T\)-year derivative with time-\(T\) payoff \(V_T\). Under the
+assumption that it can be replicated, there is a self-financing portfolio with
+price process \(\{X_t\}\) such that \(X_T=V_T\). Under the no-arbitrage
+condition, this implies that \(X_t=V_t\) for all \(0\le t<T\) also, where
+\(V_t\) denotes the time-\(t\) price of the derivative.
+
+After having such self-financing portfolio constructed, by
+\labelcref{it:self-fin-port-rn} we know that \(\{D_tX_t\}\) is a martingale
+under the risk-neutral measure \(\tpr\). Thus, for every \(t\in [0,T]\), we
+have
+\[
+D_tV_t\overset{(X_t=V_t)}{=}D_tX_t=\texpv{D_TX_T|\mathcal{F}_t}
+\overset{(X_T=V_T)}{=}\texpv{D_TV_T|\mathcal{F}_t}.
+\]
+Since \(D_T/D_t=e^{-\int_{0}^{T}r_u\odif{u}}/e^{-\int_{0}^{t}r_u\odif{u}}
+=e^{-\int_{t}^{T}r_u\odif{u}}\), rearranging the equation gives
+\[
+V_t=\texpv{\left. e^{-\int_{t}^{T}r_u\odif{u}}V_T\right|\mathcal{F}_t}
+\quad\text{for all \(t\in [0,T]\),}
+\]
+which is the \emph{risk-neutral pricing formula}.
+\end{enumerate}
+\item \textbf{Deriving Black-Scholes equation and Black-Scholes formula through
+risk-neutral measure.}
+In \Cref{subsect:bs-eqn}, we have derived the Black-Scholes equation and
+formula purely by stochastic calculus. However, this is not the only way to do
+so, and the notion of \emph{risk-neutral measure} gives us an alternative route
+for deriving them. Let \(c(t,S_t)\) denote the time-\(t\) value of a \(T\)-year
+\(K\)-strike European call. Assume that \(r_t=r\) and \(\sigma_t=\sigma\) for
+all \(t\in [0,T]\), where \(r\) and \(\sigma>0\) are constants.
+\begin{enumerate}
+\item \emph{(Deriving Black-Scholes formula)} Previously the Black-Scholes
+formula is derived as the solution to the Black-Scholes equation. A more direct
+way of deriving the formula is to utilize the \emph{risk-neutral pricing
+formula} from \labelcref{it:rn-pricing}; such approach is indeed used in
+STAT3905/STAT3910, where the Black-Scholes formula is derived through suitable
+algebraic manipulations. The key idea is as follows.
+\[
+c(t,S_t)\overset{\text{\labelcref{it:rn-pricing}}}{=}\expv{e^{-r(T-t)}(S_T-K)_{+}|\mathcal{F}_t}
+\overset{\text{(algebra)}}{=}
+S_t\Phi(d_{+}(T-t,S_t))-Ke^{-r(T-t)}\Phi(d_{-}(T-t,S_t)).
+\]
+\item\label{it:deriv-bs-eq-rn} \emph{(Deriving Black-Scholes equation)} The
+idea of risk-neutral measure also leads to an alternative method for deriving
+the Black-Scholes equation, by working with the differentials directly and
+applying the converse of \labelcref{it:zero-drift-mart} (which can be shown to
+hold), i.e., being a martingale implies that the drift term is zero.
+
+Consider the process \(\{c(t,S_t)\}\) of call prices, and its corresponding
+replicating portfolio \(\{X_t\}\), satisfying that \(X_t=c(t,S_t)\) for all
+\(t\in[0,T]\). From the proof of \Cref{thm:bs-eqn}, we know
+\begin{align*}
+\odif{{c(t,S_t)}}
+&=\left[c_{t}(t,S_t)+\alpha S_tc_{x}(t,S_t)
++\frac{1}{2}\sigma^{2}S_{t}^{2}c_{xx}(t,S_t)\right]\odif{t}
++\sigma S_{t}c_{x}(t,S_t)\odif{W_t} \\
+\overset{(\widetilde{W}_t=\frac{\alpha-r}{\sigma}t+W_t)}&{=}
+\left[c_{t}(t,S_t)+\alpha S_tc_{x}(t,S_t)
++\frac{1}{2}\sigma^{2}S_{t}^{2}c_{xx}(t,S_t)\right]\odif{t}
++\sigma S_{t}c_{x}(t,S_t)\left(\odif{\widetilde{W}_t}-\frac{\alpha-r}{\sigma}\odif{t}\right) \\
+&=\left[c_{t}(t,S_t)+\vc{r}S_tc_{x}(t,S_t)
++\frac{1}{2}\sigma^{2}S_{t}^{2}c_{xx}(t,S_t)\right]\odif{t}
++\sigma S_{t}c_{x}(t,S_t)\odif{\widetilde{W}_t}.
+\end{align*}
+Hence, letting \(D_t=e^{-rt}\) denote the time-\(t\) discount factor and
+applying It\^o product rule, we have
+\begin{align*}
+\odif{{(D_tc(t,S_t))}}
+&=c(t,S_t)\underbrace{\odif{D_t}}_{\mathclap{-rD_t\odif{t}}}
++D_t\odif{{c(t,S_t)}}+\underbrace{\odif{D_t}\odif{{c(t,S_t)}}}_{0} \\
+&=-rD_tc(t,S_t)\odif{t}+D_t\left\{
+\left[c_{t}(t,S_t)+rS_tc_{x}(t,S_t)
++\frac{1}{2}\sigma^{2}S_{t}^{2}c_{xx}(t,S_t)\right]\odif{t}
++\sigma S_{t}c_{x}(t,S_t)\odif{\widetilde{W}_t}\right\} \\
+&=D_t\left[c_{t}(t,S_t)+rS_tc_{x}(t,S_t)
++\frac{1}{2}\sigma^{2}S_t^{2}c_{xx}(t,S_t)-rc(t,S_t)\right]\odif{t}
++\sigma D_tS_{t}c_{x}(t,S_t)\odif{\widetilde{W}_t}.
+\end{align*}
+By \labelcref{it:self-fin-port-rn}, we know that \(\{D_tX_t\}=\{D_tc(t,S_t)\}\)
+is a martingale. Therefore, applying the converse of
+\labelcref{it:zero-drift-mart} gives
+\[
+c_{t}(t,S_t)+rS_tc_{x}(t,S_t)
++\frac{1}{2}\sigma^{2}S_t^{2}c_{xx}(t,S_t)-rc(t,S_t)=0.
+\]
+Rearranging this yields the Black-Scholes equation.
+\end{enumerate}
+\end{enumerate}
+\subsection{Martingale Representation Theorem}
+\begin{enumerate}
+\item \textbf{Martingale representation theorem.} Recall from
+\labelcref{it:ito-int-gen-prop} that It\^o integral forms a martingale. It
+turns out that we can also work backwards, and establish that a
+\underline{martingale} can be \underline{represented} in terms of an It\^o
+integral, as suggested by the \emph{martingale representation theorem}.
+\begin{theorem}[Martingale representation]
+\label{thm:mart-rep}
+Let \(\{W_t\}\) be a Brownian motion on a probability space
+\((\Omega,\mathcal{F},\pr)\), and let \(\{\mathcal{F}_t\}\) be the filtration
+generated by \(\{W_t\}\)\footnote{This means that for all \(t\),
+\(\mathcal{F}_t\) is the smallest \(\sigma\)-algebra for which \(W_s\) is
+\(\mathcal{F}_t\)-measurable for all \(0\le s\le t\).  Intuitively, this means
+\(\mathcal{F}_t\) contains only the information arising from the Brownian
+motion up to time \(t\). Particularly, \(\{\mathcal{F}_t\}\) is a special kind
+of filtration for Brownian motion. For a more formal definition, see
+STAT7610.}. If \(\{M_t\}\) is a
+\(\{\mathcal{F}_t\}\)-martingale under \(\pr\), then there is a
+\(\{\mathcal{F}_t\}\)-adapted process \(\{\Gamma_u\}\) such that \(
+M_t=M_0+\int_{0}^{t}\Gamma_u\odif{W_u}\) for all \(t\).
+\end{theorem}
+
+\begin{pf}
+Omitted.
+\end{pf}
+
+There is also a version of martingale representation theorem for the
+risk-neutral measure as follows.
+\begin{theorem}[Martingale representation (risk-neutral)]
+\label{thm:mart-rep-rn}
+Let \(\{W_t\}\) be a Brownian motion on a probability space
+\((\Omega,\mathcal{F},\pr)\), and let \(\{\mathcal{F}_t\}\) be the filtration
+generated by \(\{W_t\}\). Consider the risk-neutral probability measure
+\(\tpr\) and the corresponding Brownian motion \(\{\widetilde{W}_t\}\) as
+specified in the Girsanov theorem (assuming the conditions there hold). If
+\(\{\widetilde{M}_t\}\) is a \(\{\mathcal{F}_t\}\)-martingale under \(\tpr\),
+then there is a \(\{\mathcal{F}_t\}\)-adapted process
+\(\{\widetilde{\Gamma}_u\}\) such that
+\(\widetilde{M}_t=\widetilde{M}_0+\int_{0}^{t}\widetilde{\Gamma}_u\odif{\widetilde{W}_u}\)
+for all \(t\).
+\end{theorem}
+
+\begin{note}
+This does not immediately follow from \Cref{thm:mart-rep} since the
+filtration \(\{\mathcal{F}_t\}\) is generated by the Brownian motion
+\(\{W_t\}\) on \((\Omega,\mathcal{F},\pr)\), rather than the Brownian motion
+\(\{\widetilde{W}_t\}\) on \((\Omega,\mathcal{F},\tpr)\).
+\end{note}
+
+\begin{pf}
+Omitted.
+\end{pf}
+\item\label{it:one-stock-rep} \textbf{Replication with one stock.} We are now
+equipped with enough tools to show that the existence of replication portfolio
+as specified in \labelcref{it:rn-pricing}. It turns out that a requirement for
+the existence is that the underlying filtration \(\{\mathcal{F}_t\}\) needs to
+be the one generated by the Brownian motion \(\{W_t\}\), i.e., there
+should not be ``extra'' information available other than the ones coming from
+Brownian motion.
+
+\begin{proposition}
+\label{prp:rep-port-exist}
+Let \(\{W_t\}\) be a Brownian motion on a probability space
+\((\Omega,\mathcal{F},\pr)\), and let \(\{\mathcal{F}_t\}\) be the filtration
+generated by \(\{W_t\}\). Let \(T>0\) and consider any derivative with
+time-\(T\) payoff \(V_T\), where \(V_T\) is integrable (with respect to the
+risk-neutral measure \(\tpr\)) and \(\mathcal{F}_T\)-measurable\footnote{This
+condition just means that the payoff can be determined based on the information
+at time \(T\), which is satisfied for derivatives with \(T\)-year term.}. Then,
+the derivative can be replicated, by a self-financing portfolio with
+\(X_0=\texpv{D_TV_T|\mathcal{F}_0}\) and
+\(\Delta_t=\widetilde{\Gamma}_t/(\sigma_tD_tS_t)\) for all \(t\in [0,T]\),
+where \(\widetilde{\Gamma}_t\) comes from \Cref{thm:mart-rep-rn}, and the other
+notations carry their usual meanings.
+\end{proposition}
+\begin{pf}
+Let \(\widetilde{M}_t=\texpv{D_TV_T|\mathcal{F}_t}\) for all \(t\in[0,T]\).
+Note that \(\{\widetilde{M}_t\}\) is a Doob martingale under \(\tpr\). Thus, by
+\Cref{thm:mart-rep-rn} we have
+\[
+\widetilde{M}_T=\widetilde{M}_0+\int_{0}^{T}\widetilde{\Gamma}_t\odif{\widetilde{W}_t}
+\]
+where \(\{\widetilde{\Gamma}_t\}\) is a \(\{\mathcal{F}_t\}\)-adapted process.
+
+Next, consider any self-financing portfolio with time-\(t\) value \(X_t\) and
+time-\(t\) stock position \(\Delta_t\) (with \(\{\Delta_t\}\) being
+\(\{\mathcal{F}_t\}\)-adapted and the non-stock component being invested in the
+risk-free bond). By \labelcref{it:self-fin-port-rn}, we know that
+\(\{D_tX_t\}\) follows the SDE
+\(\odif{D_tX_t}=\Delta_t\sigma_tD_tS_t\odif{\widetilde{W}_t}\). This implies
+that
+\[
+D_TX_T=\underbrace{D_0}_{1}X_0+\int_{0}^{T}\Delta_t\sigma_tD_tS_t\odif{\widetilde{W}_t}
+=X_0+\int_{0}^{T}\Delta_t\sigma_tD_tS_t\odif{\widetilde{W}_t}.
+\]
+Hence, by setting \(X_0=\widetilde{M}_0=\expv{D_TV_T|\mathcal{F}_0}\) and
+\(\Delta_t=\widetilde{\Gamma}_t/(\sigma_tD_tS_t)\) for all \(t\in [0,T]\), we
+can ensure that
+\(D_TX_T=\widetilde{M}_{T}=\texpv{D_TV_T|\mathcal{F}_T}\overset{\text{(TOWIK)}}{=}D_TV_T\).
+This implies that \(X_T=V_T\), and so a replicating portfolio is constructed.
+\end{pf}
+
+\begin{note}
+While \Cref{prp:rep-port-exist} assures the \emph{existence} of replicating
+portfolio under such conditions, the explicit construction of such portfolio
+remains unclear since \Cref{thm:mart-rep-rn} does not give us a method for
+finding \(\widetilde{\Gamma}_t\).
+\end{note}
+\end{enumerate}
+\subsection{Market with Multiple Stocks}
+\label{subsect:mult-stocks}
+\begin{enumerate}
+\item So far, we have exclusively worked in an arbitrage-free market consisting
+of a \emph{single} stock and a (risk-free) bond which can be freely bought or
+(short) sold in any amount without transaction cost, and studied the
+replication of a \emph{single} derivative under such market. In
+\Cref{subsect:mult-stocks}, we will generalize the idea and allow the market
+to have more than one stock (which can all be transacted freely without cost
+still), through which \emph{multiple} derivatives (whose payoffs may depend on
+more than one stock) can be replicated.
+\item \textbf{Multidimensional Girsanov theorem and martingale representation theorem.}
+Like before, the \emph{Girsanov theorem} and the \emph{martingale
+representation theorem} serve as two important tools for justifying the
+replication argument here. However, since we are working in a multidimensional
+market (having multiple stocks), we need the \emph{multidimensional version} of
+these results. They will be stated without proof below.
+
+\begin{theorem}[Girsanov (multidimensional)]
+\label{thm:multi-dim-girsanov}
+Fix a constant \(T>0\).
+Let \(\{\vect{W}_{t}\}_{t\in [0,T]}\) be a \(d\)-dimensional Brownian motion on
+a probability space \((\Omega,\mathcal{F},\pr)\), with
+\(\vect{W}_t=(W_{t}^{(1)},\dotsc,W_{t}^{(d)})\) for all \(t\),
+\(\{\mathcal{F}_t\}_{t\in [0,T]}\) be a filtration for the \(d\)-dimensional
+Brownian motion, and \(\{\vect{\Theta}_t\}_{t\in[0,T]}\) be a \(d\)-dimensional
+\(\{\mathcal{F}_t\}\)-adapted process, with
+\(\vect{\Theta}_t=(\Theta_{t}^{(1)},\dotsc,\Theta_{t}^{(d)})\) for all \(t\).
+For all \(t\in [0,T]\), define
+\begin{align*}
+Z_t&=\exp\left[-\int_{0}^{t}\vect{\Theta}_u\cdot \odif{\vect{W}_u}
+-\frac{1}{2}\int_{0}^{t}\|\vect{\Theta}_u\|^{2}\odif{u}\right],\\
+\widetilde{\vect{W}}_t&=\vect{W}_t+\int_{0}^{t}\vect{\Theta}_{u}\odif{u},
+\end{align*}
+where \(\int_{0}^{t}\vect{\Theta}_u\cdot \odif{\vect{W}_u}
+:=\sum_{j=1}^{d}\int_{0}^{t}\Theta_u^{(j)}\odif{W_u^{(j)}}
+\) \emph{(``dot product'' notation)} and \(\int_{0}^{t}\vect{\Theta}_u\odif{u}
+:=(\int_{0}^{t}\Theta_u^{(1)}\odif{u},\dotsc,\int_{0}^{t}\Theta_u^{(d)}\odif{u})\)
+\emph{(``vectorized'' notation)}.
+
+Suppose the square-integrability condition
+\(\expv{\int_{0}^{T}\|\Theta_{u}\|^{2}Z_u^{2}\odif{u}}<\infty\) is satisfied. Let
+\(Z=Z_T>0\) and define \(\tpr\) as in \Cref{eq:change-of-measure}, i.e., \(
+\tprob{A}=\int_{A}^{}Z(\omega)\odif{\prob{\omega}}\) for every
+\(A\in\mathcal{F}\). Then, \(\{\widetilde{\vect{W}}_t\}_{t\in [0,T]}\) is a
+\(d\)-dimensional Brownian motion on the probability space
+\((\Omega,\mathcal{F},\tpr)\).
+\end{theorem}
+\begin{pf}
+Omitted.
+\end{pf}
+\begin{theorem}[Martingale representation (multidimensional)]
+\label{thm:multi-dim-mart-rep}
+Let \(\{\vect{W}_t\}\) be a \(d\)-dimensional Brownian motion on a probability
+space \((\Omega,\mathcal{F},\pr)\), and let \(\{\mathcal{F}_t\}\) be the
+filtration generated by \(\{\vect{W}_t\}\). If \(\{M_t\}\) is a
+\(\{\mathcal{F}_t\}\)-martingale under \(\pr\), then there is a
+\(\{\mathcal{F}_t\}\)-adapted and \(d\)-dimensional process
+\(\{\vect{\Gamma}_u\}\), with \(\vect{\Gamma}_u=(\Gamma_{u}^{(1)},\dotsc,\Gamma_{u}^{(d)})\)
+for all \(u\), such that \(M_t=M_0+\int_{0}^{t}\vect{\Gamma}_u\cdot
+\odif{\vect{W}_u}\) for all \(t\).
+
+Consider the probability measure \(\tpr\) and the
+corresponding Brownian motion \(\{\widetilde{\vect{W}}_t\}\) as specified in
+the multidimensional Girsanov theorem (\Cref{thm:multi-dim-girsanov}) (assuming
+the conditions there hold).  If \(\{\widetilde{M}_t\}\) is a
+\(\{\mathcal{F}_t\}\)-martingale under \(\tpr\), then there is a
+\(\{\mathcal{F}_t\}\)-adapted and \(d\)-dimensional process
+\(\{\widetilde{\vect{\Gamma}}_u\}\), with
+\(\widetilde{\vect{\Gamma}}_u=(\widetilde{\Gamma}_{u}^{(1)},\dotsc,
+\widetilde{\Gamma}_{u}^{(d)})\) for all \(u\), such that
+\(\widetilde{M}_t=\widetilde{M}_0+\int_{0}^{t}\widetilde{\vect{\Gamma}}_u\cdot
+\odif{\widetilde{\vect{W}}_u}\) for all \(t\).
+
+\end{theorem}
+\item\label{it:market-dynamics} \textbf{Assumptions on the market dynamics.} In
+addition to the usual no-arbitrage and free-transaction assumptions on the
+multidimensional market, we will impose the following assumptions on the market
+dynamics (i.e., the behaviours of the price processes).
+
+Let \(\{\vect{W}_t\}_{t\in [0,T]}\) be a \(d\)-dimensional Brownian motion on a
+probability space \((\Omega,\mathcal{F},\pr)\), associated with a filtration
+\(\{\mathcal{F}_t\}_{t\in [0,T]}\), where \(T>0\) is a constant. Suppose that
+\(\mathcal{F}=\mathcal{F}_T\), and there are \(m\) stocks, whose time-\(t\)
+prices are \(S_t^{(1)},\dotsc,S_t^{(m)}\) respectively, driven by the following
+SDEs:
+\begin{equation}
+\label{eq:mult-stock-sde}
+\odif{S_{t}^{(i)}}
+=\alpha_t^{(i)}S_t^{(i)}\odif{t}+S_{t}^{(i)}\sum_{j=1}^{d}\sigma_{t}^{(ij)}\odif{W_{t}^{(j)}}
+,\quad i=1,\dotsc,m,
+\end{equation}
+where \(\{(\alpha_t^{(1)},\dotsc,\alpha_t^{(m)})\}_{t}\) and \(\{
+[\sigma_{t}^{(ij)}]_{i,j=1}^{m,d}\}_{t}\) are
+\(\{\mathcal{F}_t\}\)-adapted\footnote{Intuitively, this means that at each
+time \(t\) these vectors and matrices can be determined based on the
+information from \(\{\mathcal{F}_t\}\). We will not give a formal definition here;
+see STAT7610 if interested.}, with \(\sigma_{t}^{(ij)}\ge 0\) and
+\(\sum_{j=1}^{d}\sigma_{t}^{(ij)}>0\)
+for all \(t\). Furthermore, we suppose the risk-free rate process \(\{r_t\}\) is
+\(\{\mathcal{F}_t\}\)-adapted.
+
+\begin{note}
+The parameters can be interpreted as follows. The value \(\alpha_t^{(i)}\)
+refers to the mean return rate of stock \(i\) at time \(t\), and the value
+\(\sigma_t^{(ij)}\) refers to the volatility contribution from the \(j\)th
+component of Brownian motion to the stock \(i\).
+\end{note}
+
+\item \textbf{Analysis of the stock price behaviours.}
+\begin{enumerate}
+\item \emph{(Generalized geometric Brownian motion for each stock)} For every
+\(i=1,\dotsc,m\), define a process \(\{B_t^{(i)}\}\) by \[
+B_t^{(i)}=\sum_{j=1}^{d}\int_{0}^{t}\frac{\sigma_{u}^{(ij)}}{\sigma_{u}^{(i)}}\odif{W_{u}^{(j)}}
+\]
+where \(\sigma_u^{(i)}:=\sqrt{\sum_{j=1}^{d}(\sigma_{u}^{(ij)})^{2}}>0\). In
+differential form, we can write \(\odif{B_t^{(i)}}=\sum_{j=1}^{d}
+(\sigma_{t}^{(ij)})/(\sigma_{t}^{(i)})\odif{W_{t}^{(j)}}\). As a sum of It\^o
+integrals, by \labelcref{it:ito-int-gen-prop} and
+\Cref{prp:lin-comb-mart-is-mart} we know that each \(\{B_t^{(i)}\}\) has
+continuous paths and is a \(\{\mathcal{F}_t\}\)-martingale. Moreover, we have
+\(B_0^{(i)}=0\) and
+\[
+\odif{B_{t}^{(i)},B_{t}^{(i)}}=\sum_{j=1}^{d}
+\frac{(\sigma_{t}^{(ij)})^{2}}{(\sigma_{t}^{(i)})^{2}}\odif{t}
+=\odif{t}
+\]
+for each \(i=1,\dotsc,m\). Therefore, by L\'evy's characterization theorem
+(\Cref{thm:levy-char}), we conclude that each \(\{B_t^{(i)}\}\) is a Brownian motion.
+Using \(B_t^{(i)}\), we can rewrite the SDEs in \labelcref{eq:mult-stock-sde} as
+\[
+\odif{S_{t}^{(i)}}
+=\alpha_t^{(i)}S_t^{(i)}\odif{t}
++\sigma_t^{(i)}S_{t}^{(i)}\odif{B_{t}^{(i)}}
+,\quad i=1,\dotsc,m,
+\]
+indicating that each stock indeed follows a generalized geometric Brownian motion.
+\item \emph{(Relationship between the sources of randomness)} This representation of
+SDEs also allows us to better understand the relationships between the sources
+of randomness for different stocks as follows. Fix any \(i\ne k\). Then we have
+\[
+\odif{B_{t}^{(i)},B_{t}^{(k)}}
+=\sum_{j=1}^{d}\frac{\sigma_{t}^{(ij)}\sigma_{t}^{(kj)}}
+{\sigma_{t}^{(i)}\sigma_{t}^{(k)}}\odif{t}
+=\rho_{t}^{(ik)}\odif{t}
+\]
+where \(\rho_{t}^{(ik)}:=\frac{1}{\sigma_{t}^{(i)}\sigma_{t}^{(k)}}
+\sum_{j=1}^{d}\sigma_{t}^{(ij)}\sigma_{t}^{(kj)}\). By It\^o product rule, we have
+\[
+\odif{B_{t}^{(i)}B_{t}^{(k)}}
+=B_{t}^{(i)}\odif{B_{t}^{(k)}}
++B_{t}^{(k)}\odif{B_{t}^{(i)}}+\odif{B_{t}^{(i)}B_{t}^{(k)}},
+=B_{t}^{(i)}\odif{B_{t}^{(k)}}
++B_{t}^{(k)}\odif{B_{t}^{(i)}}
++\rho_{t}^{(ik)}\odif{t}
+\]
+which can be expressed in integral form as
+\[
+B_{t}^{(i)}B_{t}^{(k)}=\int_{0}^{t}B_{u}^{(i)}\odif{B_{u}^{(k)}}
++\int_{0}^{t}B_{u}^{(k)}\odif{B_{u}^{(i)}}
++\int_{0}^{t}\rho_{u}^{(ik)}\odif{u}.
+\]
+Upon taking expectations, we get the following covariance formula
+\[
+\cov{B_{t}^{(i)},B_{t}^{(k)}}=\expv{\int_{0}^{t}\rho_{u}^{(ik)}\odif{u}},
+\]
+since the expectation of It\^o integral is zero.
+\item\label{it:multi-dim-disc-stock} \emph{(Dynamics of discounted stock
+prices)} Like before, in the replication argument we often need to deal with
+\emph{discounted} prices. So, here we will briefly investigate the behaviour of
+the discounted stock prices.  Let \(D_t=e^{-\int_{0}^{t}r_u\odif{u}}\) be the
+time-\(t\) discount factor, which satisfies that
+\(\odif{D_t}=-r_t\odif{D_t}\odif{t}\).  Fix any \(i=1,\dotsc,m\), and consider
+the discounted stock price process \(\{D_tS_t^{(i)}\}\). By It\^o product rule,
+we have
+\begin{align*}
+\odif{(D_tS_{t}^{(i)})}&=D_t\odif{S_t^{(i)}}+S_{t}^{(i)}\odif{D_{t}}+
+\underbrace{\odif{D_t,S_{t}^{(i)}}}_{0} \\
+&=D_t\left(\alpha_t^{(i)}S_t^{(i)}\odif{t}+S_{t}^{(i)}\sum_{j=1}^{d}\sigma_{t}^{(ij)}\odif{W_{t}^{(j)}}\right)
++S_t^{(i)}(-r_tD_t\odif{t}) \\
+&=D_tS_{t}^{(i)}\left[(\alpha_{t}^{(i)}-r_{t})\odif{t}
++\sum_{j=1}^{d}\sigma_{t}^{(ij)}\odif{W_{t}^{(j)}}\right].
+\end{align*}
+\end{enumerate}
+\item\label{it:multi-dim-rn-meas} \textbf{Risk-neutral measure.}
+In the multidimensional market here, we have a more general definition of
+risk-neutral measure. A probability measure \(\tpr\) is said to be a
+\defn{risk-neutral measure} (or \defn{(equivalent) martingale measure}) if
+\begin{enumerate}[label={(\arabic*)}]
+\item \(\tpr\) and \(\pr\) are equivalent.
+\item Under \(\tpr\), the discounted stock price process \(\{D_tS_t^{(i)}\}\)
+is a \(\{\mathcal{F}_t\}\)-martingale, for every \(i=1,\dotsc,m\).
+\end{enumerate}
+To analyze the second condition that \(\{D_tS_t^{(i)}\}\) is a
+\(\{\mathcal{F}_t\}\)-martingale for every \(i=1,\dotsc,m\), it is helpful to
+write the SDE from \labelcref{it:multi-dim-disc-stock} as follows:
+\[
+\odif{(D_tS_t^{(i)})}
+=D_tS_{t}^{(i)}
+\sum_{j=1}^{d}\sigma_{t}^{(ij)}(\Theta_{t}^{(j)}\odif{t}+\odif{W_{t}^{(j)}})
+\overset{(\widetilde{W}_{t}^{(j)}=W_{t}^{(j)}+\int_{0}^{t}\Theta_{u}^{(j)}\odif{u})}{=}
+D_tS_{t}^{(i)}
+\sum_{j=1}^{d}\sigma_{t}^{(ij)}\odif{\widetilde{W}_{t}^{(j)}}
+\]
+where each \(\{\Theta_{t}^{(j)}\}\) is a process such that
+\(\alpha_{t}^{(i)}-r_t =\sum_{j=1}^{d}\sigma_{t}^{(ij)}\Theta_{t}^{(j)}\) for
+all \(i=1,\dotsc,m\), known as the \defn{market price of risk equations}.
+
+It can be shown that such process \(\{\Theta_{t}^{(j)}\}\) exists for all
+\(j=1,\dotsc,d\) (i.e., a solution to the market price of risk equations
+exists) iff there is no arbitrage in the market. \begin{note} The
+``\(\Rightarrow\)'' direction can be established by the first fundamental
+theorem of asset pricing (\Cref{thm:first-ftap}).
+\end{note}
+
+Hence, under the no-arbitrage assumption, we can then apply the
+multidimensional Girsanov theorem to obtain a probability measure \(\tpr\) that
+is equivalent to \(\pr\), under which \(\{\widetilde{\vect{W}}_t\}\) is a
+\(d\)-dimensional Brownian motion, hence \(\{D_tS_{t}^{(i)}\}\) is a martingale
+under \(\tpr\) for all \(i=1,\dotsc,m\). Therefore, such probability measure
+\(\tpr\) is a risk-neutral measure. This suggests a method for constructing a
+risk-neutral measure in our market.
+\item \textbf{Dynamics of self-financing portfolio under risk-neutral measure.}
+It turns out that, like \labelcref{it:self-fin-port-rn}, the discounted prices
+of a self-financing portfolio always form a martingale under \(\tpr\). This
+result is proved below and serves as a lemma for an important result in
+financial economics, known as the \emph{first fundamental theorem of asset
+pricing}.
+
+\begin{lemma}
+\label{lma:disc-port-price-mart-rn}
+Let \(\tpr\) be a risk-neutral measure and \(X_t\) be the time-\(t\) value of a
+self-financing portfolio, with time-\(t\) position on stock \(i\) being
+\(\Delta_{t}^{(i)}\), where \(\{\Delta_{t}^{(i)}\}\) is
+\(\{\mathcal{F}_t\}\)-adapted for each \(i=1,\dotsc,m\), and the non-stock
+component being invested in the risk-free bond. Then, the discounted portfolio
+value process \(\{D_tX_t\}\) is a \(\{\mathcal{F}_t\}\)-martingale under \(\tpr\).
+\end{lemma}
+\begin{pf}
+By the self-financing property, we have
+\begin{align*}
+\odif{X_t}&=\sum_{i=1}^{m}\Delta_{t}^{(i)}\odif{S_{t}^{(i)}}+r_t
+\underbrace{\left(X_t-\sum_{i=1}^{m}\Delta_{t}^{(i)}S_{t}^{(i)}\right)}
+_{\text{non-stock component}}\odif{t}
+=r_tX_t\odif{t}+\sum_{i=1}^{m}\Delta_{t}^{(i)}
+\left(\odif{S_{t}^{(i)}}-r_tS_{t}^{(i)}\odif{t}\right) \\
+&=r_tX_t\odif{t}+\sum_{i=1}^{m}\frac{\Delta_{t}^{(i)}}{D_t}
+(D_t\odif{S_{t}^{(i)}}-S_{t}^{(i)}r_tD_t\odif{t})
+=r_tX_t\odif{t}+\sum_{i=1}^{m}\frac{\Delta_{t}^{(i)}}{D_t}
+(D_t\odif{S_{t}^{(i)}}+S_{t}^{(i)}\odif{D_t}) \\
+\overset{\text{(It\^o product rule)}}&{=}
+r_tX_t\odif{t}+\sum_{i=1}^{m}\frac{\Delta_{t}^{(i)}}{D_t}\odif{(D_tS_{t}^{(i)})}.
+\end{align*}
+Therefore, for the discounted portfolio value process \(\{D_tX_t\}\), by It\^o
+product rule we have
+\begin{align*}
+\odif{(D_tX_t)}&=D_t\odif{X_t}+X_t\odif{D_t}+\underbrace{\odif{D_t,X_t}}_{0}
+=D_t(\odif{X_t}-r_tX_t\odif{t}) \\
+&=\sum_{i=1}^{m}\Delta_{t}^{(i)}\odif{(D_{t}S_{t}^{(i)})}.
+\end{align*}
+Under the risk-neutral measure \(\tpr\), by definition we know that
+\(\{D_{t}S_{t}^{(i)}\}\) is a \(\{\mathcal{F}_t\}\)-martingale for every
+\(i=1,\dotsc,m\). Hence, each \(\{D_{t}S_{t}^{(i)}\}\) has zero drift term (by
+the converse of \labelcref{it:zero-drift-mart}), implying that \(\{D_tX_t\}\)
+has zero drift term also. So, \(\{D_tX_t\}\) is a
+\(\{\mathcal{F}_t\}\)-martingale under \(\tpr\).
+\end{pf}
+\item \textbf{Arbitrage.} The \emph{first fundamental theorem of asset pricing}
+relates the concepts of risk-neutral measure and arbitrage. To prove the result
+mathematically, first we need to give a mathematical definition of
+\emph{arbitrage} (though we already have some understanding on what it means
+from previous courses). An \defn{arbitrage} is a portfolio value process
+\(\{X_t\}\) satisfying that
+\begin{enumerate}[label={(\arabic*)}]
+\item \emph{(no initial investment)} \(X_0=0\).
+\item \emph{(potential for earning profit without risk)} For some \(T>0\),
+\(\prob{X_T\ge 0}=1\) and \(\prob{X_T>0}>0\).
+\end{enumerate}
+Basically, this is a mathematical way to express the idea that arbitrage is a
+way to potentially earn profit without initial investment and without any risk,
+essentially a \emph{free lunch}.
+
+A criterion for the existence of arbitrage is the following.
+\begin{proposition}
+\label{prp:arbitrage-crit}
+An arbitrage exists iff there is a portfolio price process \(\{Y_t\}\)
+satisfying that
+\begin{enumerate}[label={(\arabic*)}]
+\item \emph{(positive initial investment)} \(Y_0>0\).
+\item \emph{(earning at least risk-free rate and potentially earning more than
+risk-free rate)} For some \(T>0\), \(\prob{Y_T\ge Y_0/D_T}=1\) and
+\(\prob{Y_T>Y_0/D_T}>0\).
+\end{enumerate}
+\begin{note}
+We have \(Y_0/D_T=Y_0e^{\int_{0}^{T}r_t\odif{t}}\). So, this condition means
+that the portfolio earns at least the risk-free rate almost surely, and has a
+positive probability to earn more than risk-free rate.
+\end{note}
+\end{proposition}
+\begin{pf}
+``\(\Rightarrow\)'': Assume that an arbitrage \(\{X_t\}\) exists. We can
+construct a portfolio by investing \(Y_0>0\) in the risk-free bond and having a
+long position in the portfolio corresponding to the arbitrage. Then the
+resulting portfolio price process, denoted by \(\{Y_t\}\), satisfies two
+conditions above.
+
+``\(\Leftarrow\)'': Assume such portfolio price process \(\{Y_t\}\) exists. We
+can construct a portfolio by having a long position in the portfolio
+corresponding to such process, and borrowing \(Y_0>0\) at risk-free rate.
+Then, the resulting portfolio price process, denoted by \(\{X_t\}\), satisfies
+the two conditions for qualifying as an arbitrage.
+\end{pf}
+\item \textbf{First fundamental theorem of asset pricing.}
+We are now ready to prove the first fundamental theorem of asset pricing,
+which is about the \emph{existence} of risk-neutral measure.
+\begin{theorem}[First fundamental theorem of asset pricing]
+\label{thm:first-ftap}
+If a risk-neutral measure \emph{exists} in a market (having the dynamics
+suggested by \labelcref{it:market-dynamics}), then the market has no
+arbitrage.
+\end{theorem}
+\begin{pf}
+Assume that the market has a risk-neutral measure \(\tpr\). By
+\Cref{lma:disc-port-price-mart-rn}, every discounted portfolio value process
+\(\{D_tX_t\}\) is a \(\{\mathcal{F}_t\}\)-martingale under \(\tpr\), which
+particularly implies that \(\texpv{D_TX_T}=D_0X_0=X_0\). Now, consider any
+portfolio value process \(\{X_t\}\) with \(X_0=0\). We then have
+\(\texpv{D_TX_T}=X_0=0\).
+
+Now, assume to the contrary that \(\prob{X_T\ge 0}=1\) and \(\prob{X_T>0}>0\)
+(so arbitrage exists). From this, we know that \(\prob{X_T<0}=0\). Since
+\(\tpr\) and \(\pr\) are equivalent, we have \(\tprob{X_T<0}=0\),
+and hence \(\tprob{X_T\ge 0}=1\). As we have \(\texpv{D_TX_T}=0\), this forces
+that \(\tprob{X_T=0}=1\) and \(\tprob{X_T>0}=0\); otherwise, we would have
+\(\texpv{D_TX_T}>0\). Applying the equivalence of \(\tpr\) and \(\pr\) again gives
+\(\prob{X_T>0}=0\), contradiction.
+\end{pf}
+
+The first fundamental theorem of asset pricing provides a sufficient condition
+for ensuring that our market model to be arbitrage-free, namely the existence
+of risk-neutral measure. From the discussion in
+\labelcref{it:multi-dim-rn-meas}, we know that the existence of solution to the
+\emph{market price of risk equations} (existence of those
+\(\{\Theta_{t}^{(j)}\}\)'s) implies that a risk-neutral measure exists, which in turn implies
+that the market has no arbitrage, by the first fundamental theorem of asset
+pricing. In short, the existence of solution to the market price of risk
+equations is a guarantee for having no arbitrage in the market.
+\item \textbf{Completeness of market.} As one may expect,
+there is also a \emph{second} fundamental theorem of asset pricing. This time,
+it relates the \emph{uniqueness} of risk-neutral measure and the possibility of
+replicating derivatives. Prior to the discussion of the theorem, we first lay
+some groundwork about the replication of derivatives.  A market is said to be
+\defn{complete} if every derivative can be replicated (or hedged). Now, let us
+consider what we need for the market to be complete, by utilizing an argument
+similar to the one in \labelcref{it:one-stock-rep}.
+
+Consider a market where the underlying filtration \(\{\mathcal{F}_t\}_{t\in
+[0,T]}\) is the one generated by the \(d\)-dimensional Brownian motion
+\(\{\vect{W}_t\}_{t\in [0,T]}\). Suppose that we have found a solution to the
+market price of risk equations, thereby getting a risk-neutral measure \(\tpr\)
+by applying the multidimensional Girsanov theorem (and implying the market is
+arbitrage-free by the first fundamental theorem of asset pricing).
+
+Consider any derivative with time-\(T\) payoff \(V_T\), which is
+\(\mathcal{F}_T\)-measurable and integrable. Let
+\(\widetilde{M}_t=\texpv{D_TV_T|\mathcal{F}_t}\) for all \(t\in[0,T]\). Since
+\(\{\widetilde{M}_t\}\) is a Doob martingale under \(\tpr\), by
+\Cref{thm:multi-dim-mart-rep} we have
+\[
+\widetilde{M}_T
+=\widetilde{M}_0+\sum_{j=1}^{d}\int_{0}^{T}\widetilde{\Gamma}_t\odif{\widetilde{W}_t^{(j)}}
+\]
+where \(\{\widetilde{\Gamma}_t^{(1)}\},\dotsc,\{\widetilde{\Gamma}_t^{(d)}\} \)
+are \(\{\mathcal{F}_t\}\)-adapted processes.
+
+Next, consider any self-financing portfolio with time-\(t\) position on stock
+\(i\) being \(\Delta_{t}^{(i)}\), where \(\{\Delta_{t}^{(i)}\}\) is
+\(\{\mathcal{F}_t\}\)-adapted for each \(i=1,\dotsc,m\), and the non-stock
+component being invested in the risk-free bond. Let \(X_t\) be the time-\(t\)
+value of the portfolio.
+
+From the proof of \Cref{lma:disc-port-price-mart-rn}, we have
+\begin{align*}
+\odif{(D_tX_t)}&=\sum_{i=1}^{m}\Delta_{t}^{(i)}\odif{(D_tS_{t}^{(i)})}
+\overset{\text{\labelcref{it:multi-dim-rn-meas}}}{=}
+\sum_{i=1}^{m}\Delta_{t}^{(i)}D_tS_{t}^{(i)}
+\sum_{j=1}^{d}\sigma_{t}^{(ij)}\odif{\widetilde{W}_{t}^{(j)}}
+=\sum_{j=1}^{d}\sum_{i=1}^{m}
+\Delta_{t}^{(i)}D_{t}S_{t}^{(i)}\sigma_{t}^{(ij)}\odif{\widetilde{W}_{t}^{(j)}}.
+\end{align*}
+This implies that
+\[
+D_TX_T=X_0+\sum_{j=1}^{d}\int_{0}^{T}\sum_{i=1}^{m}
+\Delta_{t}^{(i)}D_{t}S_{t}^{(i)}\sigma_{t}^{(ij)}\odif{\widetilde{W}_{t}^{(j)}}.
+\]
+Therefore, for this self-financing portfolio to replicate the derivative, we
+need to set \(X_0=\widetilde{M}_0=\texpv{D_TV_T|\mathcal{F}_0}\), and the
+positions \(\Delta_{t}^{(1)},\dotsc,\Delta_t^{(m)}\) such that
+the \defn{hedging equations}
+\[
+\frac{\widetilde{\Gamma}_t^{(j)}}{D_t}
+=\sum_{i=1}^{m}\Delta_{t}^{(i)}S_{t}^{(i)}\sigma_{t}^{(ij)},\quad j=1,\dotsc,d
+\]
+are satisfied for all \(t\in [0,T]\). Note that the hedging equations form a
+system of \(d\) equations in \(m\) unknowns
+\(\Delta_{t}^{(1)},\dotsc,\Delta_t^{(m)}\).  Unlike \Cref{prp:rep-port-exist},
+here in general we cannot guarantee that there \emph{are} positions that solve
+the hedging equations, and so generally we cannot ensure that every derivative
+can be replicated, i.e., the market may not be complete. Nonetheless, the second
+fundamental theorem of asset pricing gives us a criterion for the
+completeness of the market, namely the \emph{uniqueness of risk-neutral measure}.
+\item \textbf{Second fundamental theorem of asset pricing.}
+\begin{theorem}[Second fundamental theorem of asset pricing]
+\label{thm:second-ftap}
+Consider a market (having the dynamics suggested by
+\labelcref{it:market-dynamics}) that has a risk-neutral measure. The market is
+complete iff the risk-neutral measure is unique.
+\end{theorem}
+\begin{pf}
+(Sketch)
+``\(\Rightarrow\)'': Assume the market is complete. Let \(\tpr_1\) and
+\(\tpr_2\) be risk-neutral measures, and fix any
+\(A\in\mathcal{F}_T\overset{\text{\labelcref{it:market-dynamics}}}{=}\mathcal{F}\).
+Consider a derivative with payoff \(V_T=\indic_{A}/D_T\). Due to the
+completeness of the market, this derivative can be replicated. Let \(\{X_t\}\)
+be the value process of the replicating portfolio. By
+\Cref{lma:disc-port-price-mart-rn}, the discounted portfolio value process
+\(\{D_tX_t\}\) is a \(\{\mathcal{F}_t\}\)-martingale under both \(\tpr_1\) and
+\(\tpr_2\). Hence, we have
+\[
+\tprobs{1}{A}=\texpvs{1}{D_TV_T}\overset{(X_T=V_T)}{=}
+\texpvs{1}{D_TX_T}\overset{\text{(martingale)}}{=}D_0X_0
+\overset{\text{(martingale)}}{=}
+\texpvs{2}{D_TX_T}\overset{(X_T=V_T)}{=}
+\texpvs{2}{D_TV_T}=\tprobs{2}{A}.
+\]
+It follows that \(\tpr_{1}=\tpr_{2}\), establishing the uniqueness.
+
+``\(\Leftarrow\)'': Assume the risk-neutral measure \(\tpr\) is unique. It can
+then be shown that the underlying filtration \(\{\mathcal{F}_t\}\) must be the
+one generated by the \(d\)-dimensional Brownian motion \(\{\vect{W}_t\}\).
+Knowing this, one can further show that the uniqueness of risk-neutral measure
+forces that there is only one solution to the market
+price of risk equations. Now, fix any \(t\in [0,T]\) and \(\omega\in\Omega\).
+The market price of risk equations can be expressed as a system of linear
+equations in matrix-vector form: \(A\vect{x}=\vect{b}\), where
+\(A=[\sigma_{t}^{(ij)}(\omega)]_{i,j=1,1}^{m,d}\in\R^{m\times d}\),
+\(\vect{x}=(\Theta_{t}^{(1)}(\omega),\dotsc,\Theta_{t}^{(d)}(\omega))\in\R^{d}\),
+and \(\vect{b}=(\alpha_{t}^{(1)}(\omega)-r_t(\omega),\dotsc,
+\alpha_{t}^{(m)}(\omega)-r_t(\omega))\in\R^{m}\). Then, we know that there is a
+unique solution \(\vect{x}\) to the system.
+
+In a similar way, we express the hedging equations as a system of linear
+equations in matrix-vector form: \(A^{T}\vect{y}=\vect{c}\), where \(A\) is
+defined above, \(\vect{y}=(y_1,\dotsc,y_m)
+:=(\Delta_{t}^{(1)}(\omega)S_{t}^{(1)}(\omega),\dotsc,
+\Delta_{t}^{(m)}(\omega)S_{t}^{(m)}(\omega))\in\R^{m}\), and
+\(\vect{c}=(\widetilde{\Gamma}_{t}^{(1)}(\omega)/D_t
+,\dotsc,\widetilde{\Gamma}_{t}^{(d)}(\omega)/D_t)\in\R^{d}\). Based on the
+unique solution \(\vect{x}\), it can be shown that this system
+has a solution \(\vect{y}\) for every \(\vect{c}\in\R^{d}\), meaning that there
+always exists a solution to the hedging equations, and so every derivative can
+be replicated, i.e., the market is complete.
+\end{pf}
+\end{enumerate}
