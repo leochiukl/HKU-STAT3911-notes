@@ -606,11 +606,12 @@ e^{\sigma W_s-\sigma^2 t/2}e^{\frac{1}{2}(t-s)\vc{\sigma}^{2}}
 \end{align*}
 \end{enumerate}
 \end{pf}
-\item \textbf{First passage time and stopping time.} Let \(m\) be a real number
-and \(\{W_t\}\) be a Brownian motion. Then the \defn{first passage time of
-Brownian motion to level \(m\)} is \(\tau_m:=\inf\{t\ge 0: W_t=m\}\).
-Particularly, if \(W_t\ne m\) for all \(t\ge 0\), then the first passage time
-would be \(\tau_m=\inf\varnothing=\infty\).
+\item\label{it:first-pass-max-min-relate} \textbf{First passage time, stopping
+time, and maximum/minimum of Brownian motions.} Let \(m\) be a real number and
+\(\{W_t\}\) be a Brownian motion. Then the \defn{first passage time of Brownian
+motion to level \(m\)} is \(\tau_m:=\inf\{t\ge 0: W_t=m\}\).  Particularly, if
+\(W_t\ne m\) for all \(t\ge 0\), then the first passage time would be
+\(\tau_m=\inf\varnothing=\infty\).
 
 \begin{remark}
 \item As long as \(\{t\ge 0: W_t=m\}\) is nonempty, we have \(\inf\{t\ge 0:
@@ -640,6 +641,19 @@ so \(\{\omega\in\Omega:\tau(\omega)\le t\}
 =\{\omega\in\Omega:\tau_m(\omega)>t\}^{c}\in\mathcal{F}_t\) for all \(t>0\).
 \item \emph{(\(m=0\))} \(\{\omega\in\Omega:\tau_0(\omega)\le t\}=\Omega\in\mathcal{F}_t\) for all \(t>0\).
 \end{itemize}
+The argument here also leads to an useful relationship between the first passage
+time and the maximum/minimum of Brownian motions, namely
+\[
+\boxed{\tau_m\le t\iff \begin{cases}
+M_t\ge m&\text{if \(m>0\),} \\
+m_t\le m&\text{if \(m<0\),}
+\end{cases}}
+\]
+where \(M_t=\max_{0\le s\le t}W_s\) and \(m_t=\min_{0\le s\le t}W_s\), for all
+\(t>0\). This allows us to deduce the distribution of maximum/minimum of
+Brownian motions through the one for the first passage time (which will be
+investigated in
+\Cref{prp:first-pass-time-prop,prp:first-pass-time-dist-dens-fun}).
 \item \textbf{Optional stopping theorem.} A remarkable result that is related
 to both the concepts of \emph{martingale} and \emph{stopping time} is the
 \emph{optional stopping theorem}, which suggests that a martingale that is
@@ -745,8 +759,8 @@ Now, consider first the case where \(m>0\). Fix any \(\alpha>0\), and then set
 \(\sigma=\sqrt{2\alpha}\). After that, we have \(\sigma^{2}/2=\alpha\), and
 thus the equation above implies that
 \(\expv{e^{-\alpha\tau_{m}}}=e^{-m\sqrt{2\alpha}}=e^{-|m|\sqrt{2\alpha}}\).
-Next, for the case where \(m<0\), note that \(\tau_{m}\) and
-\(\tau_{|m|}=\tau_{-m}\) have the same distribution by symmetry of the Brownian
+Next, for the case where \(m<0\), it can be shown that \(\tau_{m}\) and
+\(\tau_{|m|}=\tau_{-m}\) have the same distribution by the symmetry of the Brownian
 motion. Therefore, we have \(\expv{e^{-\alpha\tau_{m}}}
 =\expv{e^{-\alpha\tau_{-m}}}
 \overset{(-m>0)}{=}e^{- |-m|\sqrt{2\alpha}}=e^{-|m|\sqrt{2\alpha}}\)
@@ -765,7 +779,7 @@ surely}, its mean is still \emph{infinite} (quite counterintuitive)!
 \end{enumerate}
 \subsection{Reflection Principle}
 \begin{enumerate}
-\item \textbf{Idea of reflection principle.} To derive further distributions
+\item \textbf{Reflection principle.} To derive further distributions
 about Brownian motion, the \emph{reflection principle} serves as an useful
 tool. The idea of reflection principle is as follows. First fix \(m>0\) and \(t>0\).
 Our task here is to count the number of Brownian motion paths that reach level
@@ -823,8 +837,8 @@ Applying this argument repetitively to numerous paths, the ``number'' of paths
 that reach level \(m\) before time \(t\) and locate at a level \(\le w\) at
 time \(t\) would ``equal'' the ``number'' of paths that are at or above the
 level \(2m-w\) at time \(t\). Therefore, intuitively, it is of equal
-probability to have a path realized from any one of these types. This leads
-to the \emph{reflection equality}:
+probability to have a path realized from any one of these types. This leads to
+the \emph{reflection equality}.
 \begin{theorem}[Reflection equality]
 \label{thm:reflection-equality}
 Let \(m>0\), \(\{W_t\}\) be a Brownian motion, and \(\tau_{m}\) be the first
@@ -914,8 +928,9 @@ f_{M_t|W_t}(m|w)=\frac{2(2m-w)}{t}e^{2m(m-w)/t},\quad m>0,\; w<m.
 \end{proposition}
 \begin{pf}
 \begin{enumerate}
-\item Fix any \(m>0\) and \(w\le m\). Note that \(M_t\ge m\) iff \(\tau_m\le
-t\). Hence, we have
+\item Fix any \(m>0\) and \(w\le m\). By
+\labelcref{it:first-pass-max-min-relate}, we have \(M_t\ge m\) iff \(\tau_m\le
+t\). Hence,
 \[
 \prob{M_t\ge m, W_t\le w}
 =\prob{\tau_m\le t, W_t\le w}

@@ -819,6 +819,10 @@ for some (possibly random) \(Y\) and \(Z\).
 \item Show that the drift term \(Y\) equals \(0\) always, and hence conclude that \(\{M_t\}\)
 is a martingale.
 \end{enumerate}
+\begin{note}
+It can be shown that the converse of this result also holds, i.e., being a
+martingale implies that the drift term is zero.
+\end{note}
 \item \textbf{Normality of It\^o integral for a nonrandom integrand.} As an
 application of the technique in \labelcref{it:zero-drift-mart}, we will prove a
 result that asserts the normality of It\^o integral for a nonrandom integrand.
@@ -882,7 +886,7 @@ the solution would be in exponential form as this kind of expression arises
 from ``differentiating exponentials'': More specifically, applying It\^o
 formula (for It\^o process) with \(f(t,x)=e^{\beta t}x\) gives
 \[
-\odif{e^{\beta t}R_t}=\odif{{f(t,R_t)}}
+\odif{(e^{\beta t}R_t)}=\odif{{f(t,R_t)}}
 =\underbrace{f_{t}(t,R_t)}_{\beta e^{\beta t}R_t}\odif{t}
 +\underbrace{f_{x}(t,R_t)}_{e^{\beta t}}\odif{R_t}+0
 =e^{\beta t}(\vc{\beta R_t\odif{t}+\odif{R_t}}),
@@ -892,7 +896,7 @@ observation then inspires us to ``complete the exponential'' as follows.
 \item \emph{Completing the exponential.} Multiplying both sides of the rewritten SDE
 by \(e^{\beta t}\), we get
 \[
-\odif{e^{\beta t}R_t}\overset{\text{(previous)}}{=}
+\odif{(e^{\beta t}R_t)}\overset{\text{(previous)}}{=}
 \mgc{e^{\beta t}}(\odif{R_t}+\beta R_t\odif{t})
 =\alpha \mgc{e^{\beta t}}\odif{t}+\sigma\mgc{e^{\beta t}}\odif{W_t}.
 \]
@@ -1082,11 +1086,12 @@ Particularly, we have \(\lim_{t\to\infty}\vari{R_t}=\alpha\sigma^{2}/(2\beta^{2}
 \subsection{Black-Scholes Equation}
 \label{subsect:bs-eqn}
 \begin{enumerate}
-\item In STAT3905/STAT3910, we have studied option pricing under the Black-Scholes
-model, via the \emph{Black-Scholes formula}. Here, we will explore the
-mathematical details underlying the Black-Scholes model and derive an important
-partial differential equation that describes the dynamics of option prices
-under the Black-Scholes model. It can be derived based on a replication argument.
+\item In STAT3905/STAT3910, we have studied option pricing under the
+Black-Scholes model, via the \emph{Black-Scholes formula}. Here, we will
+explore the mathematical details underlying the Black-Scholes model and derive
+an important partial differential equation that describes the dynamics of
+option prices under the Black-Scholes model. It can be derived based on a
+replication argument.
 \item \textbf{Black-Scholes model.} Under the \defn{Black-Scholes model}, we
 assume that the market is arbitrage-free, with a stock and a (risk-free) bond
 which can be freely bought or (short) sold in any amount without transaction
@@ -1097,7 +1102,7 @@ Brownian motion}:
 \odif{S_t}=\alpha S_t\odif{t}+\sigma S_t\odif{W_t}
 \]
 where \(\alpha\in\R\) and \(\sigma>0\) are constants.
-\item\label{it:construct-self-fin-port} \textbf{Constructing a self-financing
+\item \label{it:construct-self-fin-port} \textbf{Constructing a self-financing
 portfolio.} In the derivation of Black-Scholes equation, a
 \emph{self-financing} portfolio is utilized for replicating the option payoffs.
 So, we will first develop such portfolio here as a preparation. At each time
@@ -1152,49 +1157,51 @@ It\^o process) with \(f(t,x)=e^{-rt}x\):
 =\Delta_t\odif{(e^{-rt}S_t)}.
 \end{align*}
 \end{itemize}
-\item \textbf{Deriving the Black-Scholes equation through a replication argument.}
-One way to derive the famous \emph{Black-Scholes equation} is to utilize a
-replication argument. The basic idea is that, if the European call in
-consideration can be replicated by a self-financing portfolio (more on this
-condition will be discussed in \labelcref{it:one-stock-rep}), then the call
-prices must obey a certain dynamic described by the \emph{Black-Scholes
+\item \textbf{Deriving the Black-Scholes equation through a replication
+argument.} One way to derive the famous \emph{Black-Scholes equation} is to
+utilize a replication argument. The basic idea is that, if the European call
+(or more generally, derivative whose payoff depends only on the terminal stock
+price) in consideration can be replicated by a self-financing portfolio (more
+on this condition will be discussed in \labelcref{it:one-stock-rep}), then the
+call prices must obey a certain dynamic described by the \emph{Black-Scholes
 equation}, and the solution to that equation gives us the call price formula
 (known as \emph{Black-Scholes formula}).
 \begin{theorem}[Black-Scholes equation]
 \label{thm:bs-eqn}
-Let \(c(t,x)=c(t,S_t)\) denote the time-\(t\) value of a \(T\)-year \(K\)-strike
-European call with the time-\(t\) stock price being \(S_t\). Suppose that the
-function \(c(t,S_t)\) is of class \(C^2\), and the European call can be
-\defn{replicated} (or \defn{hedged}), i.e., there is a self-financing
-portfolio, having a price process \(\{X_t\}\), such that \(X_T=c(T,S_T)\)
+Let \(V(t,x)=V(t,S_t)\) denote the time-\(t\) value of a \(T\)-year derivative,
+with the time-\(t\) stock price being \(S_t\), for all \(0\le t\le T\). Suppose
+that the payoff of the derivative depends only on the terminal stock price
+\(S_T\), the function \(V(t,S_t)\) is of class \(C^2\), and the derivative
+can be \defn{replicated} (or \defn{hedged}), i.e., there is a self-financing
+portfolio, having a price process \(\{X_t\}\), such that \(X_T=V(T,S_T)\)
 (known as a \defn{replicating portfolio} or \defn{hedging portfolio}). Under
-the Black-Scholes model, the function \(c(t,S_t)\) satisfies the following
+the Black-Scholes model, the function \(V(t,S_t)\) satisfies the following
 \emph{Black-Scholes partial differential equation (PDE)}:
 \[
-c_{t}(t,S_t)+rS_t c_{x}(t,S_t)+\frac{1}{2}\sigma^{2}S_t^{2}c_{xx}(t,S_t)
-=rc(t,S_t).
+V_{t}(t,S_t)+rS_t V_{x}(t,S_t)+\frac{1}{2}\sigma^{2}S_t^{2}V_{xx}(t,S_t)
+=rV(t,S_t).
 \]
 \end{theorem}
 \begin{pf}
 By the It\^o formula for the It\^o process \(\{S_t\}\), we have
 \begin{align*}
-\odif{{c(t,S_t)}}&=c_{t}(t,S_t)\odif{t}+c_{x}(t,S_t)
+\odif{{V(t,S_t)}}&=V_{t}(t,S_t)\odif{t}+V_{x}(t,S_t)
 \underbrace{\odif{S_t}}_{\mathclap{\alpha S_t\odif{t}
 +\sigma S_t\odif{W_t}}}
-+\frac{1}{2}c_{xx}(t,S_{t})(\sigma S_t)^{2}\odif{t} \\
-&=\left[c_{t}(t,S_t)+\alpha S_tc_{x}(t,S_t)+\frac{1}{2}\sigma^{2}S_{t}^{2}c_{xx}(t,S_t)\right]\odif{t}
-+\sigma S_{t}c_{x}(t,S_t)\odif{W_t}.
++\frac{1}{2}V_{xx}(t,S_{t})(\sigma S_t)^{2}\odif{t} \\
+&=\left[V_{t}(t,S_t)+\alpha S_tV_{x}(t,S_t)+\frac{1}{2}\sigma^{2}S_{t}^{2}V_{xx}(t,S_t)\right]\odif{t}
++\sigma S_{t}V_{x}(t,S_t)\odif{W_t}.
 \end{align*}
-Next, applying the It\^o formula for the It\^o process \(\{c(t,x)\}_{t\in [0,T]}\) with
+Next, applying the It\^o formula for the It\^o process \(\{V(t,x)\}_{t\in [0,T]}\) with
 \(f(t,x)=e^{-rt}x\), we get
 \begin{align*}
-\odif{{(e^{-rt}c(t,S_t))}}
-&=\underbrace{f_{t}(t,c(t,S_t))}_{-re^{-rt}c(t,S_t)}\odif{t}
-+\underbrace{f_{x}(t,c(t,S_t))}_{e^{-rt}}\odif{{c(t,S_t)}}
-+\frac{1}{2}\underbrace{f_{xx}(t,c(t,S_t))}_{0}\odif{{c(t,S_t)}}\odif{{c(t,S_t)}} \\
-&=e^{-rt}\left[-rc(t,S_t)+c_{t}(t,S_t)+\alpha S_tc_{x}(t,S_t)
-+\frac{1}{2}\sigma^{2}S_{t}^{2}c_{xx}(t,S_t)\right]\odif{t}
-+e^{-rt}\sigma S_{t}c_{x}(t,S_t)\odif{W_t}.
+\odif{{(e^{-rt}V(t,S_t))}}
+&=\underbrace{f_{t}(t,V(t,S_t))}_{-re^{-rt}V(t,S_t)}\odif{t}
++\underbrace{f_{x}(t,V(t,S_t))}_{e^{-rt}}\odif{{V(t,S_t)}}
++\frac{1}{2}\underbrace{f_{xx}(t,V(t,S_t))}_{0}\odif{{V(t,S_t)}}\odif{{V(t,S_t)}} \\
+&=e^{-rt}\left[-rV(t,S_t)+V_{t}(t,S_t)+\alpha S_tV_{x}(t,S_t)
++\frac{1}{2}\sigma^{2}S_{t}^{2}V_{xx}(t,S_t)\right]\odif{t}
++e^{-rt}\sigma S_{t}V_{x}(t,S_t)\odif{W_t}.
 \end{align*}
 On the other hand, we have the following SDE for discounted portfolio value
 from \labelcref{it:construct-self-fin-port}:
@@ -1203,34 +1210,42 @@ from \labelcref{it:construct-self-fin-port}:
 =\Delta_t(\alpha-r)e^{-rt}S_t\odif{t}+\Delta_t\sigma e^{-rt}S_t\odif{W_t}.
 \]
 From the replication nature of the self-financing portfolio, we have
-\(X_T=c(T,S_T)\). Since the portfolio is self-financing and there is no
-arbitrage, this implies that \(X_t=c(t,S_t)\) for all \(0\le t<T\) also.
-Therefore, we must have \(\odif{{(e^{-rt}c(t,S_t))}}=\odif{(e^{-rt}X_t)}\),
+\(X_T=V(T,S_T)\). Since the portfolio is self-financing and there is no
+arbitrage, this implies that \(X_t=V(t,S_t)\) for all \(0\le t<T\) also.
+Therefore, we must have \(\odif{{(e^{-rt}V(t,S_t))}}=\odif{(e^{-rt}X_t)}\),
 i.e.,
 \begin{align*}
 &\quad\Delta_t(\alpha-r)e^{-rt}S_t\odif{t}+\Delta_t\sigma e^{-rt}S_t\odif{W_t} \\
-&=e^{-rt}\left[-rc(t,S_t)+c_{t}(t,S_t)+\alpha S_tc_{x}(t,S_t)
-+\frac{1}{2}\sigma^{2}S_{t}^{2}c_{xx}(t,S_t)\right]\odif{t}
-+e^{-rt}\sigma S_{t}c_{x}(t,S_t)\odif{W_t}.
+&=e^{-rt}\left[-rV(t,S_t)+V_{t}(t,S_t)+\alpha S_tV_{x}(t,S_t)
++\frac{1}{2}\sigma^{2}S_{t}^{2}V_{xx}(t,S_t)\right]\odif{t}
++e^{-rt}\sigma S_{t}V_{x}(t,S_t)\odif{W_t}.
 \end{align*}
 This implies that the drift and volatility terms from both sides are
-equal.  Equating the volatility terms gives \(\Delta_t=c_{x}(t,S_t)\), which is
+equal.  Equating the volatility terms gives \(\Delta_t=V_{x}(t,S_t)\), which is
 known as the \defn{delta-hedging rule} (recall that the partial derivative
-\(c_{x}(t,S_t)\) is known as the \defn{delta} of the call). Next, equating the
-drift terms with \(\Delta_t=c_{x}(t,S_t)\) yields
+\(V_{x}(t,S_t)\) is known as the \defn{delta} of the call). Next, equating the
+drift terms with \(\Delta_t=V_{x}(t,S_t)\) yields
 \begin{align*}
-c_{x}(t,S_t)(\alpha-r)S_t
-&=-rc(t,S_t)+c_{t}(t,S_t)+\alpha S_tc_{x}(t,S_t)
-+\frac{1}{2}\sigma^{2}S_{t}^{2}c_{xx}(t,S_t) \\
-\implies rc(t,S_t)&=c_{t}(t,S_t)+rS_{t}c_{x}(t,S_t)+\frac{1}{2}\sigma^{2}S_{t}^{2}c_{xx}(t,S_t),
+V_{x}(t,S_t)(\alpha-r)S_t
+&=-rV(t,S_t)+V_{t}(t,S_t)+\alpha S_tV_{x}(t,S_t)
++\frac{1}{2}\sigma^{2}S_{t}^{2}V_{xx}(t,S_t) \\
+\implies rV(t,S_t)&=V_{t}(t,S_t)+rS_{t}V_{x}(t,S_t)+\frac{1}{2}\sigma^{2}S_{t}^{2}V_{xx}(t,S_t),
 \end{align*}
 which gives us the Black-Scholes partial differential equation.
 \end{pf}
-\item \textbf{Solving the Black-Scholes equation.} Here we shall omit the
-details in solving the Black-Scholes PDE. However, its solution is well-known
-and is indeed the \emph{Black-Scholes formula}, namely
+\item \textbf{Solving the Black-Scholes equation.} Suppose that the derivative
+in consideration is a \(T-\)-year \(K\)-strike European call. After solving the
+Black-Scholes equation with the \emph{terminal condition}
+\(V(T,S_T)=(S_T-K)_{+}\) and the \emph{boundary conditions} \(V(t,0)=0~\forall
+t\in [0,T]\) and \(\lim_{x\to\infty}[V(t,x)-(x-Ke^{-r(T-t)})]=0~\forall t\in
+[0,T]\)\footnote{ Intuitively, as the stock price goes to infinity, the call
+would almost certainly expire in-the-money, and hence would worth almost the
+same as the time-\(t\) value of a (synthetic) long forward on a stock
+deliverable at the price \(K\) and time \(T\), namely
+\(S_t-Ke^{-r(T-t)}=x-Ke^{-r(T-t)}\).  }, we can get the \emph{Black-Scholes
+formula} for European call, namely
 \[
-c(t,S_t)=S_t\Phi(d_{+}(T-t,S_t))-Ke^{-r(T-t)}\Phi(d_{-}(T-t,S_t))
+V(t,S_t)=S_t\Phi(d_{+}(T-t,S_t))-Ke^{-r(T-t)}\Phi(d_{-}(T-t,S_t))
 \]
 for every \(t\in [0,T)\), where
 \[
@@ -1458,7 +1473,7 @@ product rule in calculus.
 \begin{corollary}[It\^o product rule]
 \label{cor:ito-product}
 Let \(\{X_t\}\) and \(\{Y_t\}\) be a pair of two-dimensional It\^o processes.
-Then, \(\odif{X_tY_t}=X_t\odif{Y_t}+Y_t\odif{X_t}+\odif{X_t}\odif{Y_t}\).
+Then, \(\odif{(X_tY_t)}=X_t\odif{Y_t}+Y_t\odif{X_t}+\odif{X_t}\odif{Y_t}\).
 \end{corollary}
 \begin{pf}
 Take \(f(t,x,y)=xy\) in \Cref{thm:two-dim-ito-fmla} (with \(f_{t}=0\), \(f_{x}=y\), \(f_{y}=x\),

@@ -389,10 +389,11 @@ extend the definition for independence of two \(\sigma\)-algebras in a natural
 way.  Let \((\Omega,\mathcal{F},\pr)\) be a probability space, and
 \(\mathcal{G}_1,\mathcal{G}_2,\dotsc\subseteq \mathcal{F}\) be \(\sigma\)-algebras on
 \(\Omega\). Then the \(\sigma\)-algebras \(\mathcal{G}_1,\dotsc,\mathcal{G}_n\)
-are called \defn{independent} if \(\prob{A_1\cap\dotsb A_n} =\prob{A_1}\dotsb\prob{A_n}\) for all
-\(A_1\in\mathcal{G}_1,\dotsc, A_n\in\mathcal{G}_n\). Also, the sequence of
-\(\sigma\)-algebras \(\mathcal{G}_1,\mathcal{G}_2,\dotsc\) is called \defn{independent}
-if the \(n\) \(\sigma\)-algebras \(\mathcal{G}_1,\dotsc,\mathcal{G}_n\) are
+are called \defn{independent} if \(\prob{A_1\cap\dotsb\cap A_n}
+=\prob{A_1}\dotsb\prob{A_n}\) for all \(A_1\in\mathcal{G}_1,\dotsc,
+A_n\in\mathcal{G}_n\). Also, the sequence of \(\sigma\)-algebras
+\(\mathcal{G}_1,\mathcal{G}_2,\dotsc\) is called \defn{independent} if the
+\(n\) \(\sigma\)-algebras \(\mathcal{G}_1,\dotsc,\mathcal{G}_n\) are
 independent for every \(n\in\N\).
 
 Let \(X_1,X_2,\dotsc\) be random variables. The random variables
@@ -443,8 +444,8 @@ Now, since \(X\) and \(Y\) are independent, we have \(\prob{A\cap
 B}=\prob{A}\prob{B}\), as desired.
 \end{pf}
 \item \emph{(expectation of product is product of expectations)} If \(X\) and
-\(Y\) are independent random variables, then \(\expv{XY}=\expv{X}\expv{Y}\)
-provided that \(\expv{|XY|}<\infty\).
+\(Y\) are independent and integrable random variables, then
+\(\expv{XY}=\expv{X}\expv{Y}\).
 \item \emph{(equivalent characterization of independence of random variables)}
 Let \(X\) and \(Y\) be random variables. The \defn{joint distribution measure}
 of \((X,Y)\) is defined by \[\mu_{X,Y}(C)=\prob{\{(X,Y)\in
@@ -562,7 +563,7 @@ over ``parts'' of \(\Omega\), weighted by probabilities.
 \item \textbf{Definition of conditional expectation.} Let
 \((\Omega,\mathcal{F},\pr)\) be a probability space, \(\mathcal{G}\subseteq
 \mathcal{F}\) be a \(\sigma\)-algebra on \(\Omega\), and \(X\) be a random
-variable that is nonnegative or integrable. The \defn{conditional expectation
+variable that integrable. The \defn{conditional expectation
 of \(X\) given \(\mathcal{G}\)}, denoted by \(\expv{X|\mathcal{G}}\), is
 \emph{any} random variable satisfying:
 \begin{enumerate}[label={(\arabic*)}]
@@ -593,13 +594,12 @@ Let \((\Omega,\mathcal{F},\pr)\) be a probability space and
 Capital roman letters like \(X\), \(Y\), and \(Z\) always denote random
 variables below.
 \begin{enumerate}
-\item \emph{(existence and uniqueness)} Given any nonnegative or integrable
-random variable \(X\), there always exists a conditional expectation
-\(\expv{X|\mathcal{G}}\) (i.e., a random variable satisfying both the
-\emph{measurability} and \emph{partial averaging} requirements). Moreover, such
-random variable is unique in \emph{almost sure} sense, i.e., if \(Y\) and \(Z\)
-both qualify to be a conditional expectation of \(X\) given \(\mathcal{G}\),
-then \(Y\eqas Z\).
+\item \emph{(existence and uniqueness)} Given any integrable random variable
+\(X\), there always exists a conditional expectation \(\expv{X|\mathcal{G}}\)
+(i.e., a random variable satisfying both the \emph{measurability} and
+\emph{partial averaging} requirements). Moreover, such random variable is
+unique in \emph{almost sure} sense, i.e., if \(Y\) and \(Z\) both qualify to be
+a conditional expectation of \(X\) given \(\mathcal{G}\), then \(Y\eqas Z\).
 
 \begin{note}
 Due to the uniqueness in almost sure sense, formulas for conditional
@@ -609,9 +609,9 @@ refers to ``\(\eqas\)''.
 \item \emph{(linearity)} If \(X\) and \(Y\) are integrable random variables,
 and \(c_1\) and \(c_2\) are constants, then \(\expv{c_1X+c_2Y|\mathcal{G}}
 =c_1\expv{X|\mathcal{G}}+c_2\expv{Y|\mathcal{G}}\).
-\item \emph{(monotonicity)} If \(X\le Y\) a.s., then
-\(\expv{X|\mathcal{G}}\le\expv{Y|\mathcal{G}}\) a.s.
-\item \emph{(taking out what is known (TOWIK))} If \(X\), \(Y\), and \(XY\) are
+\item \emph{(monotonicity)} If \(X\le Y\) a.s.\ with \(X\) and \(Y\) being
+integrable, then \(\expv{X|\mathcal{G}}\le\expv{Y|\mathcal{G}}\) a.s.
+\item \emph{(taking out what is known (TOWIK))} If \(Y\) and \(XY\) are
 integrable, and \(X\) is \(\mathcal{G}\)-measurable, then
 \(\expv{XY|\mathcal{G}}=X\expv{Y|\mathcal{G}}\).
 \begin{note}
@@ -638,7 +638,7 @@ Both \(\expv{\expv{X|\mathcal{G}}}\) and \(\expv{X}\) are non-random values, so
 the equality is exact rather than in the almost sure sense.
 \end{note}
 \item \emph{(conditional Jensen's inequality)} If \(\varphi\) is a convex and
-real-valued function on \(\R\) and \(X\) is integrable, then
+real-valued function on \(\R\) and \(X,\varphi(X)\) are integrable, then
 \(\varphi(\expv{X|\mathcal{G}})\le\expv{\varphi(X)|\mathcal{G}}\) a.s.
 \item \label{it:indp-lma} \emph{(independence lemma)} Suppose
 \vc{\(X_1,\dotsc,X_k\)} are \(\mathcal{G}\)-measurable and each of
@@ -648,8 +648,9 @@ real-valued function on \(\R\) and \(X\) is integrable, then
 \(\mathcal{B}(\R^{k+\ell})\) is the Borel \(\sigma\)-algebra on
 \(\R^{k+\ell}\); here we will delve into the details about it.} function and
 define \(g(\vc{x_1,\dotsc,x_k}):=\expv{f(\vc{x_1,\dotsc,x_k},\orc{Y_1,\dotsc,Y_{\ell}})}\).
-Then,
-\(\expv{f(\vc{X_1,\dotsc,X_k},\orc{Y_1,\dotsc,Y_{\ell}})|\mathcal{G}}=g(\vc{X_1,\dotsc,X_k})\).
+Suppose that \(f(\vc{X_1,\dotsc,X_k},\orc{Y_1,\dotsc,Y_{\ell}})\) is
+integrable.  Then,
+\[\expv{f(\vc{X_1,\dotsc,X_k},\orc{Y_1,\dotsc,Y_{\ell}})|\mathcal{G}}=g(\vc{X_1,\dotsc,X_k}).\]
 
 \begin{intuition}
 With \(X_1,\dotsc,X_k\) being \(\mathcal{G}\)-measurable, they may be treated
@@ -662,30 +663,7 @@ as ``constants'' given \(\mathcal{G}\), so they remain in the inputs of \(g\)
 \end{enumerate}
 \begin{pf}
 \begin{enumerate}
-\item We shall omit the proof for the existence part and prove only the
-uniqueness part. Assume \(Y\) and \(Z\) both satisfy the measurability and
-partial averaging requirements. With \(Y\) and \(Z\) both being
-\(\mathcal{G}\)-measurable, it can be shown that \(Y-Z\) is
-\(\mathcal{G}\)-measurable also.
-\begin{intuition}
-If the information contained in \(\mathcal{G}\) is sufficient for determining
-the values of \(Y(\omega)\) and \(Z(\omega)\), then it should also be
-sufficient for determining the value of \(Y(\omega)-Z(\omega)\).
-\end{intuition}
-
-Now, consider the set
-\(A=\{\omega\in\Omega:Y(\omega)-Z(\omega)>0\}\in\mathcal{G}\) (it is in
-\(\mathcal{G}\) since \(Y-Z\) is \(\mathcal{G}\)-measurable). By the partial
-averaging property, we have
-\[
-\int_{A}^{}Y(\omega)\odif{\prob{\omega}}=\int_{A}^{}X(\omega)\odif{\prob{\omega}}
-=\int_{A}^{}Z(\omega)\odif{\prob{\omega}},
-\]
-which implies \(\int_{A}^{}(Y(\omega)-Z(\omega))\odif{\prob{\omega}}=0\). By
-construction of \(A\), the integrand is always positive, forcing that
-\(\prob{A}=\prob{Y>Z}=0\). Using the same argument with the roles of \(Y\) and
-\(Z\) reversed, we can similarly get \(\prob{Y<Z}=0\). Hence, we must have
-\(\prob{Y=Z}=1\), i.e., \(Y\eqas Z\).
+\item Omitted.
 \item With \(\expv{X|\mathcal{G}}\) and \(\expv{Y|\mathcal{G}}\) being
 \(\mathcal{G}\)-measurable, \(c_1\expv{X|\mathcal{G}}+c_2\expv{Y|\mathcal{G}}\)
 is also \(\mathcal{G}\)-measurable. Next, for all \(A\in\mathcal{G}\), we have
@@ -848,10 +826,10 @@ called a \defn{(\(\{\mathcal{F}_t\}\)-)submartingale}.
 ``\(X_s\ge\expv{X_t|\mathcal{F}_s}\) for all \(s\le t\)'' \emph{(no tendency to
 rise)}, then \(\{X_t\}\) is called a \defn{(\(\{\mathcal{F}_t\}\)-)supermartingale}.
 \item If we replace \labelcref{it:mart-no-tendency} by ``For all \(s\le t\) and
-all nonnegative measurable functions \(f\), there exists a measurable function
-\(g\) such that \(\expv{f(X_t)|\mathcal{F}_s}=g(X_s)\)'' \emph{(\defn{Markov
-property})}, then \(\{X_t\}\) is called a \defn{(\(\{\mathcal{F}_t\}\)-)Markov
-process}.
+all nonnegative measurable functions \(f\) such that \(f(X_t)\) is integrable,
+there exists a measurable function \(g\) such that
+\(\expv{f(X_t)|\mathcal{F}_s}=g(X_s)\)'' \emph{(\defn{Markov property})}, then
+\(\{X_t\}\) is called a \defn{(\(\{\mathcal{F}_t\}\)-)Markov process}.
 
 \begin{intuition}
 This suggests that the conditional expectation \(\expv{f(X_t)|\mathcal{F}_s}\)

@@ -86,11 +86,13 @@ defined as in \Cref{eq:change-of-measure}, i.e., \(
 \tprob{A}=\int_{A}^{}Z(\omega)\odif{\prob{\omega}}\) for every
 \(A\in\mathcal{F}\). Define a process \(\{Z_t\}_{t\in [0,T]}\) by
 \(Z_t=\expv{Z|\mathcal{F}_t}\) for every \(t\in [0,T]\) (which is a Doob
-martingale). Let \(Y\) be a \(\mathcal{F}_t\)-measurable random
-variable.
+martingale).
 \begin{enumerate}
-\item For all \(t\in [0,T]\), \(\texpv{Y}=\expv{YZ_t}\).
-\item For all \(0\le s\le t\le T\), \(\texpv{Y|\mathcal{F}_s}=\expv{YZ_t|\mathcal{F}_s}/Z_s\).
+\item For all \(t\in [0,T]\), \(\texpv{Y}=\expv{YZ_t}\), where \(Y\) is
+\(\mathcal{F}_t\)-measurable and \(YZ_t\) is integrable.
+\item For all \(0\le s\le t\le T\),
+\(\texpv{Y|\mathcal{F}_s}=\expv{YZ_t|\mathcal{F}_s}/Z_s\), where \(Y\) is
+\(\mathcal{F}_t\)-measurable and \(YZ_t\) is integrable.
 \end{enumerate}
 \end{lemma}
 \begin{pf}
@@ -123,6 +125,18 @@ well-defined. Next, we verify the two properties of conditional expectations:
 \end{enumerate}
 \end{enumerate}
 \end{pf}
+
+\begin{note}
+\Cref{lma:cond-change-of-meas} is typically applied in the following context.
+Let \(\{Z_t\}\) be a \(\{\mathcal{F}_t\}\)-martingale, and \(Z=Z_T\). Assume
+that \(Z=Z_T\) is an almost surely positive random variable satisfying
+\(\expv{Z}=1\). Noting that
+\(\expv{Z|\mathcal{F}_t}=\expv{Z_T|\mathcal{F}_t}=Z_t\) for all \(t\in [0,T]\)
+in such case, we can then use \Cref{lma:cond-change-of-meas} to conclude that
+\(\texpv{Y}=\expv{YZ_t}\) and
+\(\texpv{Y|\mathcal{F}_s}=\expv{YZ_t|\mathcal{F}_s}/Z_s\), where \(Y\) is
+\(\mathcal{F}_t\)-measurable, for all \(0\le s\le t\le T\).
+\end{note}
 \item \textbf{Girsanov theorem.} Now, we are ready to study the \emph{Girsanov
 theorem}, which justifies the idea of ``absorbing drift term'' from
 \labelcref{it:rn-meas-absorb-drift}.
@@ -192,12 +206,12 @@ Hence, we can apply \Cref{lma:cond-change-of-meas} to get
 as desired.
 \end{pf}
 
-\item\label{it:rn-meas} \textbf{Risk-neutral measure.} The probability measure
-\(\tpr\) from the Girsanov theorem is indeed a \emph{risk-neutral measure}.
-Like \labelcref{it:rn-meas-absorb-drift}, it can be interpreted as being
-designed for absorbing the drift term. But here, rather than working with only
-the geometric Brownian motion, we are considering a more general setting with
-\emph{generalized} geometric Brownian motion.
+\item\label{it:multi-dim-rn-meas} \textbf{Risk-neutral measure.} The
+probability measure \(\tpr\) from the Girsanov theorem is indeed a
+\emph{risk-neutral measure}.  Like \labelcref{it:rn-meas-absorb-drift}, it can
+be interpreted as being designed for absorbing the drift term. But here, rather
+than working with only the geometric Brownian motion, we are considering a more
+general setting with \emph{generalized} geometric Brownian motion.
 
 Let \(\{W_t\}_{t\in [0,T]}\)
 be a Brownian motion and \(\{\mathcal{F}_t\}_{t\in [0,T]}\) be a filtration for
@@ -298,7 +312,7 @@ Hence, we can write
 =r_tX_t\odif{t}+\Delta_t(\alpha_t-r_t)S_t\odif{t}+\Delta_t\sigma_tS_t\odif{W_t} \\
 &=r_tX_t\odif{t}+\Delta_t\sigma_tS_t(\Theta_t\odif{t}+\odif{W_t})
 \overset{(\widetilde{W}_t=W_t+\int_{0}^{t}\Theta_u\odif{u})}{=}
-r_tX_t\odif{t}+\Delta_t\sigma_t S_t\odif{\widetilde{W}_t}.
+r_tX_t\odif{t}+\Delta_t\sigma_t S_t\odif{\widetilde{W}_t}
 \end{align*}
 where \(\Theta_t=(\alpha_t-r_t)/\sigma_t\). This suggests that under the
 risk-neutral measure, the (undiscounted) portfolio values also follow a
@@ -365,65 +379,68 @@ risk-neutral measure.}
 In \Cref{subsect:bs-eqn}, we have derived the Black-Scholes equation and
 formula purely by stochastic calculus. However, this is not the only way to do
 so, and the notion of \emph{risk-neutral measure} gives us an alternative route
-for deriving them. Let \(c(t,S_t)\) denote the time-\(t\) value of a \(T\)-year
-\(K\)-strike European call. Assume that \(r_t=r\) and \(\sigma_t=\sigma\) for
-all \(t\in [0,T]\), where \(r\) and \(\sigma>0\) are constants.
+for deriving them. Let \(V(t,S_t)\) denote the time-\(t\) value of a \(T\)-year
+derivative satisfying the assumptions specified in \Cref{thm:bs-eqn}.
+Assume that \(r_t=r\) and \(\sigma_t=\sigma\) for all \(t\in [0,T]\), where
+\(r\) and \(\sigma>0\) are constants.
 \begin{enumerate}
 \item \emph{(Deriving Black-Scholes formula)} Previously the Black-Scholes
-formula is derived as the solution to the Black-Scholes equation. A more direct
-way of deriving the formula is to utilize the \emph{risk-neutral pricing
-formula} from \labelcref{it:rn-pricing}; such approach is indeed used in
-STAT3905/STAT3910, where the Black-Scholes formula is derived through suitable
-algebraic manipulations. The key idea is as follows.
+formula is derived as the solution to the Black-Scholes equation, for European
+call. A more direct way of deriving the formula is to utilize the
+\emph{risk-neutral pricing formula} from \labelcref{it:rn-pricing}; such
+approach is indeed used in STAT3905/STAT3910, where the Black-Scholes formula
+is derived through suitable algebraic manipulations. The key idea is as
+follows. Suppose the derivative in consideration is a \(T\)-year \(K\)-strike
+European call.
 \[
-c(t,S_t)\overset{\text{\labelcref{it:rn-pricing}}}{=}\expv{e^{-r(T-t)}(S_T-K)_{+}|\mathcal{F}_t}
+V(t,S_t)\overset{\text{\labelcref{it:rn-pricing}}}{=}\expv{e^{-r(T-t)}(S_T-K)_{+}|\mathcal{F}_t}
 \overset{\text{(algebra)}}{=}
 S_t\Phi(d_{+}(T-t,S_t))-Ke^{-r(T-t)}\Phi(d_{-}(T-t,S_t)).
 \]
 \item\label{it:deriv-bs-eq-rn} \emph{(Deriving Black-Scholes equation)} The
 idea of risk-neutral measure also leads to an alternative method for deriving
 the Black-Scholes equation, by working with the differentials directly and
-applying the converse of \labelcref{it:zero-drift-mart} (which can be shown to
-hold), i.e., being a martingale implies that the drift term is zero.
+applying the converse of \labelcref{it:zero-drift-mart}.
 
-Consider the process \(\{c(t,S_t)\}\) of call prices, and its corresponding
-replicating portfolio \(\{X_t\}\), satisfying that \(X_t=c(t,S_t)\) for all
+Consider the process \(\{V(t,S_t)\}\) of derivative prices, and its corresponding
+replicating portfolio \(\{X_t\}\), satisfying that \(X_t=V(t,S_t)\) for all
 \(t\in[0,T]\). From the proof of \Cref{thm:bs-eqn}, we know
 \begin{align*}
-\odif{{c(t,S_t)}}
-&=\left[c_{t}(t,S_t)+\alpha S_tc_{x}(t,S_t)
-+\frac{1}{2}\sigma^{2}S_{t}^{2}c_{xx}(t,S_t)\right]\odif{t}
-+\sigma S_{t}c_{x}(t,S_t)\odif{W_t} \\
+\odif{{V(t,S_t)}}
+&=\left[V_{t}(t,S_t)+\alpha S_tV_{x}(t,S_t)
++\frac{1}{2}\sigma^{2}S_{t}^{2}V_{xx}(t,S_t)\right]\odif{t}
++\sigma S_{t}V_{x}(t,S_t)\odif{W_t} \\
 \overset{(\widetilde{W}_t=\frac{\alpha-r}{\sigma}t+W_t)}&{=}
-\left[c_{t}(t,S_t)+\alpha S_tc_{x}(t,S_t)
-+\frac{1}{2}\sigma^{2}S_{t}^{2}c_{xx}(t,S_t)\right]\odif{t}
-+\sigma S_{t}c_{x}(t,S_t)\left(\odif{\widetilde{W}_t}-\frac{\alpha-r}{\sigma}\odif{t}\right) \\
-&=\left[c_{t}(t,S_t)+\vc{r}S_tc_{x}(t,S_t)
-+\frac{1}{2}\sigma^{2}S_{t}^{2}c_{xx}(t,S_t)\right]\odif{t}
-+\sigma S_{t}c_{x}(t,S_t)\odif{\widetilde{W}_t}.
+\left[V_{t}(t,S_t)+\alpha S_tV_{x}(t,S_t)
++\frac{1}{2}\sigma^{2}S_{t}^{2}V_{xx}(t,S_t)\right]\odif{t}
++\sigma S_{t}V_{x}(t,S_t)\left(\odif{\widetilde{W}_t}-\frac{\alpha-r}{\sigma}\odif{t}\right) \\
+&=\left[V_{t}(t,S_t)+\vc{r}S_tV_{x}(t,S_t)
++\frac{1}{2}\sigma^{2}S_{t}^{2}V_{xx}(t,S_t)\right]\odif{t}
++\sigma S_{t}V_{x}(t,S_t)\odif{\widetilde{W}_t}.
 \end{align*}
 Hence, letting \(D_t=e^{-rt}\) denote the time-\(t\) discount factor and
 applying It\^o product rule, we have
 \begin{align*}
-\odif{{(D_tc(t,S_t))}}
-&=c(t,S_t)\underbrace{\odif{D_t}}_{\mathclap{-rD_t\odif{t}}}
-+D_t\odif{{c(t,S_t)}}+\underbrace{\odif{D_t}\odif{{c(t,S_t)}}}_{0} \\
-&=-rD_tc(t,S_t)\odif{t}+D_t\left\{
-\left[c_{t}(t,S_t)+rS_tc_{x}(t,S_t)
-+\frac{1}{2}\sigma^{2}S_{t}^{2}c_{xx}(t,S_t)\right]\odif{t}
-+\sigma S_{t}c_{x}(t,S_t)\odif{\widetilde{W}_t}\right\} \\
-&=D_t\left[c_{t}(t,S_t)+rS_tc_{x}(t,S_t)
-+\frac{1}{2}\sigma^{2}S_t^{2}c_{xx}(t,S_t)-rc(t,S_t)\right]\odif{t}
-+\sigma D_tS_{t}c_{x}(t,S_t)\odif{\widetilde{W}_t}.
+\odif{{(D_tV(t,S_t))}}
+&=V(t,S_t)\underbrace{\odif{D_t}}_{\mathclap{-rD_t\odif{t}}}
++D_t\odif{{V(t,S_t)}}+\underbrace{\odif{D_t}\odif{{V(t,S_t)}}}_{0} \\
+&=-rD_tV(t,S_t)\odif{t}+D_t\left\{
+\left[V_{t}(t,S_t)+rS_tV_{x}(t,S_t)
++\frac{1}{2}\sigma^{2}S_{t}^{2}V_{xx}(t,S_t)\right]\odif{t}
++\sigma S_{t}V_{x}(t,S_t)\odif{\widetilde{W}_t}\right\} \\
+&=D_t\left[V_{t}(t,S_t)+rS_tV_{x}(t,S_t)
++\frac{1}{2}\sigma^{2}S_t^{2}V_{xx}(t,S_t)-rV(t,S_t)\right]\odif{t}
++\sigma D_tS_{t}V_{x}(t,S_t)\odif{\widetilde{W}_t}.
 \end{align*}
-By \labelcref{it:self-fin-port-rn}, we know that \(\{D_tX_t\}=\{D_tc(t,S_t)\}\)
+By \labelcref{it:self-fin-port-rn}, we know that \(\{D_tX_t\}=\{D_tV(t,S_t)\}\)
 is a martingale. Therefore, applying the converse of
 \labelcref{it:zero-drift-mart} gives
 \[
-c_{t}(t,S_t)+rS_tc_{x}(t,S_t)
-+\frac{1}{2}\sigma^{2}S_t^{2}c_{xx}(t,S_t)-rc(t,S_t)=0.
+V_{t}(t,S_t)+rS_tV_{x}(t,S_t)
++\frac{1}{2}\sigma^{2}S_t^{2}V_{xx}(t,S_t)-rV(t,S_t)=0.
 \]
 Rearranging this yields the Black-Scholes equation.
+
 \end{enumerate}
 \end{enumerate}
 \subsection{Martingale Representation Theorem}
@@ -536,7 +553,7 @@ remains unclear since \Cref{thm:mart-rep-rn} does not give us a method for
 finding \(\widetilde{\Gamma}_t\).
 \end{note}
 \end{enumerate}
-\subsection{Market with Multiple Stocks}
+\subsection{Market With Multiple Stocks}
 \label{subsect:mult-stocks}
 \begin{enumerate}
 \item So far, we have exclusively worked in an arbitrage-free market consisting
@@ -729,7 +746,7 @@ risk-neutral measure. A probability measure \(\tpr\) is said to be a
 \item Under \(\tpr\), the discounted stock price process \(\{D_tS_t^{(i)}\}\)
 is a \(\{\mathcal{F}_t\}\)-martingale, for every \(i=1,\dotsc,m\).
 \end{enumerate}
-To analyze the second condition that \(\{D_tS_t^{(i)}\}\) is a
+To investigate the second condition that \(\{D_tS_t^{(i)}\}\) is a
 \(\{\mathcal{F}_t\}\)-martingale for every \(i=1,\dotsc,m\), it is helpful to
 write the SDE from \labelcref{it:multi-dim-disc-stock} as follows:
 \[
@@ -740,14 +757,16 @@ write the SDE from \labelcref{it:multi-dim-disc-stock} as follows:
 D_tS_{t}^{(i)}
 \sum_{j=1}^{d}\sigma_{t}^{(ij)}\odif{\widetilde{W}_{t}^{(j)}}
 \]
-where each \(\{\Theta_{t}^{(j)}\}\) is a process such that
-\(\alpha_{t}^{(i)}-r_t =\sum_{j=1}^{d}\sigma_{t}^{(ij)}\Theta_{t}^{(j)}\) for
-all \(i=1,\dotsc,m\), known as the \defn{market price of risk equations}.
+where the processes \(\{\Theta_{t}^{(j)}\}\)'s satisfy \(\alpha_{t}^{(i)}-r_t
+=\sum_{j=1}^{d}\sigma_{t}^{(ij)}\Theta_{t}^{(j)}\) for all \(i=1,\dotsc,m\),
+known as the \defn{market price of risk equations}.
 
-It can be shown that such process \(\{\Theta_{t}^{(j)}\}\) exists for all
-\(j=1,\dotsc,d\) (i.e., a solution to the market price of risk equations
-exists) iff there is no arbitrage in the market. \begin{note} The
-``\(\Rightarrow\)'' direction can be established by the first fundamental
+It can be shown that those processes \(\{\Theta_{t}^{(j)}\}\)'s exist (i.e., a
+solution to the market price of risk equations exists) iff there is no
+arbitrage in the market.
+
+\begin{note}
+The ``\(\Rightarrow\)'' direction can be established by the first fundamental
 theorem of asset pricing (\Cref{thm:first-ftap}).
 \end{note}
 
@@ -810,8 +829,8 @@ mathematically, first we need to give a mathematical definition of
 from previous courses). An \defn{arbitrage} is a portfolio value process
 \(\{X_t\}\) satisfying that
 \begin{enumerate}[label={(\arabic*)}]
-\item \emph{(no initial investment)} \(X_0=0\).
-\item \emph{(potential for earning profit without risk)} For some \(T>0\),
+\item \emph{(No initial investment)} \(X_0=0\).
+\item \emph{(Potential for earning profit without risk)} For some \(T>0\),
 \(\prob{X_T\ge 0}=1\) and \(\prob{X_T>0}>0\).
 \end{enumerate}
 Basically, this is a mathematical way to express the idea that arbitrage is a
@@ -824,8 +843,8 @@ A criterion for the existence of arbitrage is the following.
 An arbitrage exists iff there is a portfolio price process \(\{Y_t\}\)
 satisfying that
 \begin{enumerate}[label={(\arabic*)}]
-\item \emph{(positive initial investment)} \(Y_0>0\).
-\item \emph{(earning at least risk-free rate and potentially earning more than
+\item \emph{(Positive initial investment)} \(Y_0>0\).
+\item \emph{(Earning at least risk-free rate and potentially earning more than
 risk-free rate)} For some \(T>0\), \(\prob{Y_T\ge Y_0/D_T}=1\) and
 \(\prob{Y_T>Y_0/D_T}>0\).
 \end{enumerate}
@@ -1000,4 +1019,18 @@ has a solution \(\vect{y}\) for every \(\vect{c}\in\R^{d}\), meaning that there
 always exists a solution to the hedging equations, and so every derivative can
 be replicated, i.e., the market is complete.
 \end{pf}
+
+\item \textbf{Relationship between arbitrage/completeness and the market price
+of risk equations.} Based on \labelcref{it:multi-dim-rn-meas} and the proof
+sketch of \Cref{thm:second-ftap} above, we can deduce the following connection
+between arbitrage/completeness and the existence/uniqueness of solution to the
+market price of risk equations:
+\begin{enumerate}
+\item\label{it:sol-exist-iff-no-arbitrage} \emph{(Relating arbitrage and
+existence of solution)} The market price of risk equations has a solution iff
+the market has no arbitrage.
+\item\label{it:sol-unique-imp-complete} \emph{(Relating completeness and
+uniqueness of solution)} If the market price of risk equations have a unique
+solution, then the market is complete.
+\end{enumerate}
 \end{enumerate}
