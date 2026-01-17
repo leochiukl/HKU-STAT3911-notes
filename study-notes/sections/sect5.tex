@@ -201,9 +201,12 @@ Hence, we can apply \Cref{lma:cond-change-of-meas} to get
 \texpv{\widetilde{W}_t|\mathcal{F}_s}
 =\frac{1}{Z_s}\expv{\widetilde{W}_tZ_t|\mathcal{F}_s}
 =\frac{1}{Z_s}\widetilde{W}_sZ_s
-=\widetilde{W}_s,
+=\widetilde{W}_s.
 \]
-as desired.
+\textbf{Applying L\'evy's characterization theorem.} Observing that
+\(\{\widetilde{W}_{t}\}\) starts at zero and has continuous paths, by
+\Cref{thm:levy-char} we can then conclude that \(\{\widetilde{W}_{t}\}\) is a
+Brownian motion on the probability space \((\Omega,\mathcal{F},\tpr)\).
 \end{pf}
 
 \item\label{it:multi-dim-rn-meas} \textbf{Risk-neutral measure.} The
